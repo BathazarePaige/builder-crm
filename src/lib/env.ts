@@ -51,6 +51,9 @@ export const esquemaEnv = z.object({
   // --- Agente IA (OpenRouter) ---
   OPENROUTER_API_KEY: opcional,
   AGENT_MODEL: opcional,
+  // Modelo para transcribir notas de voz y describir imagenes entrantes. "off" lo apaga.
+  // Ver src/lib/channels/medios.ts.
+  MEDIOS_MODELO: opcional,
 
   // --- Zernio (WhatsApp + Instagram + Messenger) ---
   ZERNIO_API_KEY: opcional,
