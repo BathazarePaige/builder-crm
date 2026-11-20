@@ -32,6 +32,7 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { listarMigraciones, modulosActivos } from "./lib/migraciones.mjs";
+import { SHIM_AUTH } from "./lib/shim-auth.mjs";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
 const requerir = createRequire(import.meta.url);
@@ -83,30 +84,9 @@ await db.waitReady;
 paso(`base embebida en .local/db${esNueva ? " (nueva)" : ""}`);
 
 // --- 2. lo que Supabase trae de fabrica ------------------------------------
-// Idempotente: correrlo de nuevo no toca nada. auth.users es un remedo minimo con las
-// tres columnas que leen las migraciones del CRM; en una instancia real la crea GoTrue
-// con muchas mas.
-const SHIM_AUTH = `
-create extension if not exists pgcrypto;
-do $$ begin
-  if not exists (select 1 from pg_roles where rolname='anon') then create role anon noinherit; end if;
-  if not exists (select 1 from pg_roles where rolname='authenticated') then create role authenticated noinherit; end if;
-  if not exists (select 1 from pg_roles where rolname='service_role') then create role service_role noinherit bypassrls; end if;
-end $$;
-create schema if not exists auth;
-create table if not exists auth.users (
-  id uuid primary key default gen_random_uuid(),
-  email text unique,
-  raw_user_meta_data jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now()
-);
-create or replace function auth.uid() returns uuid language sql stable as
-  $f$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $f$;
-create or replace function auth.role() returns text language sql stable as
-  $f$ select coalesce(nullif(current_setting('request.jwt.claim.role', true), ''), 'authenticated') $f$;
-create or replace function auth.email() returns text language sql stable as
-  $f$ select nullif(current_setting('request.jwt.claim.email', true), '') $f$;
-`;
+// Roles, esquema auth, auth.uid() y un auth.users minimo. Vive en scripts/lib porque lo
+// comparte con el test de punta a punta del agente (tests/e2e/), que levanta la misma
+// base embebida en memoria.
 
 let sembrar = false;
 try {

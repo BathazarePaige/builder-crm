@@ -71,7 +71,7 @@ reutilizable), `actualizar-desde-original` (traer una version nueva del nucleo a
 instancia adaptada). Las skills `supabase`, `playwright-cli` y `memory-manager` son de
 apoyo.
 
-**Definicion de hecho**: `npm test && npm run typecheck && npm run lint && npm run build`
+**Definicion de hecho**: `npm test && npm run test:e2e && npm run typecheck && npm run lint && npm run build`
 es el piso, y lo mismo corre el CI. Una instancia esta terminada cuando
 `probar-instancia` pasa en verde contra la URL desplegada. No se delega la prueba al
 miembro ni al cliente.
@@ -79,7 +79,11 @@ miembro ni al cliente.
 Los tests de `tests/` cubren los invariantes que **fallan en silencio**: la firma del
 webhook, la ventana de 24 h, el filtro por rol, la validacion de `config/cliente.ts`, el
 bloque de configuracion publica y las plantillas de correo. Corren sin base y sin red en
-un segundo. Lo que necesita base o navegador se prueba con `verificar-instancia`.
+un segundo. Aparte, `npm run test:e2e` (`tests/e2e/`) recorre el flujo entero del agente
+(webhook de Zernio firmado -> ingesta -> worker -> OpenRouter pide `mover_etapa` -> etapa
+cambiada -> respuesta enviada por Zernio) sobre el Postgres embebido en memoria con las
+migraciones reales; la red es un `fetch` falso y cualquier host no simulado hace fallar
+el test. Lo que necesita navegador se prueba con `verificar-instancia`.
 
 ## Convenciones
 
@@ -218,6 +222,7 @@ un segundo. Lo que necesita base o navegador se prueba con `verificar-instancia`
 npm run local               # probarlo sin cuentas: Postgres embebido + demo, sin login
 npm run dev                 # contra tu Supabase (http://localhost:3000)
 npm test                    # invariantes del nucleo (vitest, sin base ni red)
+npm run test:e2e            # flujo del agente de punta a punta (base embebida, red simulada)
 npm run typecheck && npm run lint && npm run build
 npm run db:migrar           # aplica migraciones pendientes (nucleo + modulos activos)
 npm run db:status           # que esta aplicado y que falta

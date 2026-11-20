@@ -18,6 +18,7 @@
     "storage:setup": "node scripts/storage-setup.mjs",
     "typecheck": "node scripts/generar-registro-modulos.mjs && tsc --noEmit",
     "test": "node scripts/generar-registro-modulos.mjs && vitest run",
+    "test:e2e": "node scripts/generar-registro-modulos.mjs && vitest run --config vitest.e2e.config.mts",
     "test:watch": "node scripts/generar-registro-modulos.mjs && vitest",
     "db:migrar": "node scripts/migrar.mjs",
     "db:status": "node scripts/migrar.mjs --status",
