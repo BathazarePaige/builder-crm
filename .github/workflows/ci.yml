@@ -1,4 +1,4 @@
-# CI de Builder CRM: tests + typecheck + lint + build, con modulos apagados y con la
+# CI de Builder CRM: tests + test de punta a punta del agente + typecheck + lint + build, con modulos apagados y con la
 # plantilla inmobiliaria activa (los dos extremos que un cliente puede desplegar).
 #
 # No necesita credenciales, y la falta de DATABASE_URL es a proposito: el build no debe
@@ -45,6 +45,10 @@ jobs:
           printf '{ "activos": %s }\n' '${{ matrix.modulos }}' > config/modulos.json
           cat config/modulos.json
       - run: npm run test
+        if: ${{ !cancelled() }}
+      # Webhook de Zernio -> agente -> etapa -> respuesta, con Postgres embebido y la red
+      # simulada. Sin secretos: Zernio y OpenRouter no se llaman de verdad.
+      - run: npm run test:e2e
         if: ${{ !cancelled() }}
       - run: npm run typecheck
         if: ${{ !cancelled() }}

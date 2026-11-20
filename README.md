@@ -176,6 +176,7 @@ docs/              MCP, agente, Zernio, Supabase en tu VPS, entrar con Google, c
 | `npm run local` | **probarlo en tu PC sin cuentas**: Postgres embebido, datos demo, sin login |
 | `npm run dev` / `build` / `start` | desarrollo contra tu Supabase, build, servidor |
 | `npm test` | invariantes del nucleo (vitest, sin base ni red, ~1 s) |
+| `npm run test:e2e` | el flujo del agente de punta a punta: webhook -> agente -> etapa -> respuesta (base embebida, red simulada, ~3 s) |
 | `npm run typecheck` / `lint` | gate tecnico (CI corre los tres + build) |
 | `npm run db:migrar` / `db:status` | migraciones del nucleo + modulos activos |
 | `npm run admin:crear -- --email --password` | crea o promueve un administrador |

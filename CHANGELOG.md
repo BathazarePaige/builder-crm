@@ -4,6 +4,20 @@ Que trae cada version de Builder CRM y que hacer para actualizar. SemVer segun l
 le importa a quien opera una instancia (ver "Versiones" en el [README](README.md)):
 mayor = pasos manuales, menor = funciones nuevas, parche = arreglos.
 
+## Sin publicar
+
+### Agregado
+
+- **Test de punta a punta del agente** (`npm run test:e2e`, corre en el CI en las dos
+  variantes de modulos). Un mensaje firmado entra por la ruta real del webhook de Zernio,
+  se ingesta, el worker lo toma con `AGENT_WORKER_SECRET`, OpenRouter (simulado) pide
+  `mover_etapa`, la operacion queda en "Calificado" y la respuesta sale por Zernio
+  (simulado). Usa el Postgres embebido del modo local, en memoria y con las migraciones
+  de verdad; no necesita cuentas ni red. Cubre las uniones entre piezas, que es donde
+  una falla deja la bandeja normal y al cliente sin respuesta.
+- El esquema auth minimo del modo local pasa a `scripts/lib/shim-auth.mjs`, compartido
+  por `npm run local` y el test.
+
 ## 2.1.1 — 2026-11-11
 
 ### Actualizar desde 2.1.0
