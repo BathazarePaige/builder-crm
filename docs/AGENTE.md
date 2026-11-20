@@ -67,6 +67,12 @@ OpenRouter (OpenAI-compatible) con `OPENROUTER_API_KEY`. Modelo:
 `agent_configs.model` -> `AGENT_MODEL` (entorno) -> `config.agente.modelo` -> default
 del nucleo. Cualquier modelo con tool calling sirve.
 
+Las notas de voz y las imagenes entrantes se transcriben o describen al llegar, con
+`MEDIOS_MODELO` (default `google/gemini-2.5-flash`, misma clave): el agente lee
+`[audio] Transcripcion: ...` en vez de `[audio]`. Si falla, el mensaje entra con la
+etiqueta de siempre. `MEDIOS_MODELO=off` lo apaga. Ver
+`specs/nucleo/12-medios-entrantes.md`.
+
 ## Probar sin canal
 
 `/simulador` (solo admin): escribes como cliente, el agente responde en la misma
@@ -83,4 +89,5 @@ bandeja con la marca `sim`.
 | Que sepa de un catalogo o reserve citas | un modulo con tools (`modules/README.md`) |
 | El mensaje al derivar | `config.agente.mensajeDerivacion` |
 | Otro modelo | `AGENT_MODEL` |
+| Que no transcriba audios ni describa imagenes | `MEDIOS_MODELO=off` |
 | Distinto tono en Instagram | Ajustes -> Agente -> Instagram (prompt propio del canal) |

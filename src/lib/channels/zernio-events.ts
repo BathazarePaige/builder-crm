@@ -7,6 +7,7 @@ import {
   updateMessageStatus,
   upsertConversation,
 } from "./ingest";
+import { medioDeZernio } from "./medios";
 import { isChannel, type Channel } from "./types";
 import { resolveDefaultTenantId } from "@/lib/tenants";
 import { normalizePhone } from "@/lib/phone";
@@ -168,13 +169,18 @@ async function handleMessageEvent(
   // atribucion del anuncio, que es de donde sale de que aviso vino el lead).
   if (!msg) return { status: "processed", jobIds: [] };
 
+  // Solo entrantes: un saliente con foto se reconoce como eco comparando el body con el
+  // que guardo deliverMessage, y cambiarle la forma lo duplicaria en la bandeja.
+  const medio = direction === "in" ? medioDeZernio(msg.attachments) : null;
+
   const result = await ingestMessage({
     conversation,
     direction,
     // platformMessageId (wamid.* en WhatsApp) y no el id interno de Zernio: mantiene la
     // deduplicacion contra los mensajes que pudo haber guardado el webhook de Meta.
     externalId: msg.platformMessageId ?? msg.id ?? null,
-    body: extractBody(msg),
+    body: medio ? cuerpoBaseConMedio(msg, medio.tipo) : extractBody(msg),
+    medio,
     type: messageType(msg),
     sentAt: parseDate(msg.sentAt ?? payload.timestamp),
     status: direction === "in" && msg.isRead ? "read" : undefined,
@@ -289,6 +295,16 @@ function extractBody(msg: ZernioMessage): string {
   }
 
   return "[mensaje]";
+}
+
+/**
+ * Etiqueta de un mensaje con audio o imagen. A diferencia de `extractBody`, si el
+ * cliente escribio un texto junto a la foto la etiqueta se conserva (`[imagen] texto`),
+ * igual que el webhook de Meta: sin ella el agente no sabria que hubo una imagen.
+ */
+function cuerpoBaseConMedio(msg: ZernioMessage, tipo: "audio" | "imagen"): string {
+  const text = msg.text?.trim();
+  return text ? `[${tipo}] ${text}` : extractBody(msg);
 }
 
 function messageType(msg: ZernioMessage): string {

@@ -12,6 +12,7 @@ import { and, desc, eq, gte, isNull, sql } from "drizzle-orm";
 import { normalizePhone } from "@/lib/phone";
 import { enqueueAgentJob } from "@/lib/agent/queue";
 import { CHANNEL_LABELS, type Channel, type Provider } from "./types";
+import { enriquecerCuerpo, type MedioEntrante } from "./medios";
 
 /**
  * Ingesta de mensajes entrantes/salientes de cualquier canal.
@@ -286,6 +287,11 @@ export interface IngestMessageInput {
   rawPayload?: unknown;
   /** El backfill lo pasa en false para no contestarle a cientos de hilos viejos. */
   enqueueAgent?: boolean;
+  /**
+   * Audio o imagen del mensaje. Si viene, `body` es la etiqueta (`[audio]`) y se le
+   * agrega la transcripcion o la descripcion antes de insertar. Ver medios.ts.
+   */
+  medio?: MedioEntrante | null;
 }
 
 export interface IngestMessageResult {
@@ -344,6 +350,18 @@ export async function ingestMessage(
     }
   }
 
+  const tooOld = Date.now() - sentAt.getTime() > MAX_AGE_FOR_AGENT_MS;
+  const shouldEnqueue = (input.enqueueAgent ?? true) && !tooOld;
+
+  // Se transcribe ANTES de insertar. Si se insertara `[audio]` y se completara despues,
+  // el job del agente de un mensaje anterior podria correr en el medio, leer la etiqueta
+  // vacia y contestar; cuando llegara la transcripcion el hilo ya figuraria respondido.
+  // Mismo criterio que el agente: no se gasta en salientes, backfill ni historial viejo.
+  const body =
+    input.direction === "in" && shouldEnqueue && input.medio && input.body
+      ? await enriquecerCuerpo(input.body, input.medio)
+      : input.body;
+
   let messageId: string;
   try {
     const [inserted] = await db
@@ -355,7 +373,7 @@ export async function ingestMessage(
         provider: conv.provider,
         direction: input.direction,
         type: input.type ?? "text",
-        body: input.body,
+        body,
         externalId: input.externalId,
         status: input.status ?? (input.direction === "in" ? "received" : "sent"),
         rawPayload: input.rawPayload ?? null,
@@ -376,7 +394,7 @@ export async function ingestMessage(
 
   await touchConversation(conv.id, {
     direction: input.direction,
-    body: input.body,
+    body,
     sentAt,
   });
 
@@ -386,8 +404,6 @@ export async function ingestMessage(
 
   await maybeReactivateAfterInactivity(conv.id, conv.contactId);
 
-  const tooOld = Date.now() - sentAt.getTime() > MAX_AGE_FOR_AGENT_MS;
-  const shouldEnqueue = (input.enqueueAgent ?? true) && !tooOld;
   if (!shouldEnqueue || !conv.contactId) {
     return { duplicate: false, messageId, jobId: null };
   }
