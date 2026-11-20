@@ -70,6 +70,9 @@ jobs:
           curl -sS -m 60 -o /dev/null -w "webhooks/zernio -> %{http_code}\n" \
             -H "Authorization: Bearer $SECRETO" \
             "$BASE/api/webhooks/zernio"
+          curl -sS -m 60 -o /dev/null -w "webhooks/whatsapp -> %{http_code}\n" \
+            -H "Authorization: Bearer $SECRETO" \
+            "$BASE/api/webhooks/whatsapp"
 
       - name: Barrer automatizaciones pendientes
         if: steps.config.outputs.listo == 'true'

@@ -293,20 +293,21 @@ export async function getTemplates(
  */
 export function verifyWebhookSignature(
   rawBody: string,
-  signatureHeader: string | null
+  signatureHeader: string | null | undefined,
+  secret: string = APP_SECRET
 ): boolean {
-  if (!APP_SECRET) {
+  if (!secret) {
     console.warn("[meta-whatsapp] WHATSAPP_APP_SECRET no configurado — firma no validada");
     return false;
   }
   if (!signatureHeader) return false;
 
   const expected = crypto
-    .createHmac("sha256", APP_SECRET)
+    .createHmac("sha256", secret)
     .update(rawBody)
     .digest("hex");
 
-  const provided = signatureHeader.replace(/^sha256=/, "");
+  const provided = signatureHeader.replace(/^sha256=/, "").toLowerCase();
 
   if (expected.length !== provided.length) return false;
   try {
@@ -316,6 +317,69 @@ export function verifyWebhookSignature(
     );
   } catch {
     return false;
+  }
+}
+
+// ============================================================
+// Conexion de un numero desde Ajustes
+// ============================================================
+
+export interface NumeroMeta {
+  id: string;
+  displayPhone: string | null;
+  verifiedName: string | null;
+}
+
+/**
+ * Comprueba que el token sirve para ese phone_number_id y trae el numero visible.
+ * Es la validacion antes de guardar: un token o un id equivocados fallan aca, con el
+ * mensaje de Graph, y no el dia que el agente intenta contestar.
+ */
+export async function obtenerNumeroMeta(
+  phoneNumberId: string,
+  accessToken: string
+): Promise<{ success: true; numero: NumeroMeta } | { success: false; error: MetaError }> {
+  const url = `${GRAPH_BASE}/${encodeURIComponent(phoneNumberId)}?fields=display_phone_number,verified_name`;
+  try {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error) {
+      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+    }
+    return {
+      success: true,
+      numero: {
+        id: String(json.id ?? phoneNumberId),
+        displayPhone: json.display_phone_number ?? null,
+        verifiedName: json.verified_name ?? null,
+      },
+    };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
+  }
+}
+
+/**
+ * Suscribe la app de Meta al WABA para que sus mensajes lleguen al webhook. Sin esto el
+ * numero envia pero no recibe, y no hay ningun error que lo avise. Idempotente.
+ */
+export async function suscribirAppAWaba(
+  wabaId: string,
+  accessToken: string
+): Promise<{ success: boolean; error?: MetaError }> {
+  const url = `${GRAPH_BASE}/${encodeURIComponent(wabaId)}/subscribed_apps`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error || json.success === false) {
+      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
   }
 }
 

@@ -129,6 +129,9 @@ async function ejecutarEvento(conector: Conector, eventId: string, payload: unkn
         .update(webhookEvents)
         .set({ attempts: (await intentos(eventId)) + 1, error: result.reason ?? null })
         .where(eq(webhookEvents.eventId, eventId));
+      // Lo que si entro en este intento ya encolo jobs: dispararlos igual. El reintento
+      // no los vuelve a crear (el mensaje ya existe y la ingesta lo ve duplicado).
+      await dispararJobs(conector, result.jobIds, headers);
       return;
     }
 
@@ -137,10 +140,7 @@ async function ejecutarEvento(conector: Conector, eventId: string, payload: unkn
       .set({ status: result.status, error: result.reason ?? null, processedAt: new Date() })
       .where(eq(webhookEvents.eventId, eventId));
 
-    if (result.jobIds.length > 0) {
-      const { triggerAgentWorker, getWorkerBaseUrl } = await import("@/lib/agent/trigger");
-      await triggerAgentWorker(result.jobIds, getWorkerBaseUrl(headers), `${conector.id}-webhook`);
-    }
+    await dispararJobs(conector, result.jobIds, headers);
   } catch (err) {
     console.error(`[webhook ${conector.id}] error procesando evento`, eventId, err);
     await db
@@ -149,6 +149,12 @@ async function ejecutarEvento(conector: Conector, eventId: string, payload: unkn
       .where(eq(webhookEvents.eventId, eventId))
       .catch(() => {});
   }
+}
+
+async function dispararJobs(conector: Conector, jobIds: string[], headers: Headers): Promise<void> {
+  if (jobIds.length === 0) return;
+  const { triggerAgentWorker, getWorkerBaseUrl } = await import("@/lib/agent/trigger");
+  await triggerAgentWorker(jobIds, getWorkerBaseUrl(headers), `${conector.id}-webhook`);
 }
 
 async function intentos(eventId: string): Promise<number> {

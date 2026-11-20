@@ -13,6 +13,7 @@
 const ENDPOINTS = [
   "/api/agent/process",
   "/api/webhooks/zernio",
+  "/api/webhooks/whatsapp",
   "/api/automations/process",
 ];
 

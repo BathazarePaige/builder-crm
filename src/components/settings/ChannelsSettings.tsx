@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels/types";
 import { CHANNEL_COLORS, ChannelIcon } from "@/components/icons/channels";
+import { WhatsappDirectoSettings } from "./WhatsappDirectoSettings";
 
 interface ChannelAccount {
   id: string;
@@ -268,6 +269,8 @@ export function ChannelsSettings() {
           </div>
         ))}
       </div>
+
+      {config.whatsappProvider === "meta" && <WhatsappDirectoSettings onCambio={load} />}
 
       <div className="space-y-2">
         {CHANNELS.map((channel) => {

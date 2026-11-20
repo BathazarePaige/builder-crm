@@ -1,22 +1,23 @@
 import "server-only";
+import { verifyWebhookSignature } from "@/lib/meta-whatsapp";
+import { idEventoMeta } from "../meta-cloud-eventos";
 import type { Conector, EstadoConector } from "../conector";
 
 /**
- * Conector Meta Cloud API (WhatsApp directo, sin Zernio). PARCIAL a proposito.
+ * Conector Meta Cloud API (WhatsApp directo, sin Zernio).
  *
- * Que hay:
  *  - `enviar`: texto y plantillas por Graph API (src/lib/meta-whatsapp.ts), con las
  *    credenciales de `whatsapp_accounts` o del entorno (WHATSAPP_*).
+ *  - `webhook`: firma `X-Hub-Signature-256` con WHATSAPP_APP_SECRET, id de evento por
+ *    `wamid` y la ingesta en `../meta-cloud-ingesta.ts` (import dinamico). La ruta es
+ *    `/api/webhooks/whatsapp`, que suma el GET del handshake del hub.
  *  - `estado`: que falta para operar.
  *
- * Que NO hay todavia (y es lo que implementa el futuro conector "Cloud API / Tech
- * Provider", ver ../README.md):
- *  - `webhook`: la ingesta sigue en la ruta legacy /api/webhooks/whatsapp, que solo
- *    procesa mensajes con WHATSAPP_PROVIDER=meta. Al implementarla aqui, esa ruta
- *    pasa a ser `manejarWebhook(metaCloud, req)` y se borra su logica propia.
- *  - Conexion desde la UI (Embedded Signup). Hoy: scripts/connect-whatsapp-account.ts.
+ * Los numeros se conectan desde Ajustes -> Canales (`/api/channels/meta`), que valida
+ * el token contra Graph y suscribe la app al WABA. Embedded Signup queda pendiente.
  *
- * Se activa como transporte de WhatsApp con WHATSAPP_PROVIDER=meta (valvula de escape).
+ * Se activa como transporte de WhatsApp con WHATSAPP_PROVIDER=meta. Con Zernio como
+ * proveedor, el webhook responde 200 y no ingesta (si no, el agente contestaria dos veces).
  */
 export const metaCloud: Conector = {
   id: "meta",
@@ -57,7 +58,18 @@ export const metaCloud: Conector = {
     return { success: true, externalId: result.messageId ?? null };
   },
 
-  // webhook: pendiente (ver cabecera). La ruta legacy /api/webhooks/whatsapp sigue activa.
+  webhook: {
+    verificar(rawBody, headers) {
+      return verifyWebhookSignature(rawBody, headers.get("x-hub-signature-256"));
+    },
+    idEvento(_rawBody, _headers, payload) {
+      return idEventoMeta(payload);
+    },
+    async procesar(payload) {
+      const { procesarEventoMeta } = await import("../meta-cloud-ingesta");
+      return procesarEventoMeta(payload);
+    },
+  },
 
   async estado(): Promise<EstadoConector> {
     const activo = (process.env.WHATSAPP_PROVIDER || "zernio").toLowerCase() === "meta";
@@ -65,18 +77,15 @@ export const metaCloud: Conector = {
     let cuentas: EstadoConector["cuentas"] = [];
 
     try {
-      const { getPrimaryAccount } = await import("@/lib/whatsapp-accounts");
-      const cuenta = await getPrimaryAccount();
-      if (cuenta) {
-        cuentas = [
-          {
-            id: cuenta.id,
-            canal: "whatsapp",
-            nombre: cuenta.displayPhone ?? cuenta.phoneNumberId,
-            estado: cuenta.accessToken ? "active" : "sin token",
-          },
-        ];
-      }
+      const { listarCuentasWhatsapp } = await import("@/lib/whatsapp-accounts");
+      cuentas = (await listarCuentasWhatsapp())
+        .filter((c) => c.status === "active")
+        .map((c) => ({
+          id: c.id,
+          canal: "whatsapp" as const,
+          nombre: c.displayPhone ?? c.phoneNumberId,
+          estado: c.tieneToken ? "active" : "sin token",
+        }));
     } catch {
       /* sin base o sin tabla: se evalua solo por entorno */
     }
@@ -90,10 +99,12 @@ export const metaCloud: Conector = {
 
     const notas = [
       activo
-        ? "Activo como transporte de WhatsApp (WHATSAPP_PROVIDER=meta). La ingesta entra por /api/webhooks/whatsapp."
+        ? "Activo como transporte de WhatsApp (WHATSAPP_PROVIDER=meta). Los mensajes entran por /api/webhooks/whatsapp."
         : "Inactivo: WhatsApp va por Zernio. Para usarlo, WHATSAPP_PROVIDER=meta.",
-      "Conector parcial: envio y estado. El conector Cloud API / Tech Provider completo esta documentado en src/lib/channels/conectores/README.md.",
     ];
+    if (activo && cuentas.length === 0) {
+      notas.push("Sin numero conectado: cargalo abajo, en WhatsApp directo.");
+    }
 
     return {
       id: "meta",
