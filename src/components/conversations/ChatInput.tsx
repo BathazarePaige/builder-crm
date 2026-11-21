@@ -140,7 +140,7 @@ export function ChatInput({
           onKeyDown={handleKey}
           placeholder="Escribe un mensaje..."
           rows={1}
-          className="flex-1 resize-none min-h-[40px] max-h-32 bg-muted/30 border border-transparent rounded-2xl px-4 py-2.5 text-base md:text-[13px] outline-none hover:bg-muted/50 focus:bg-card focus:border-primary/40 focus:ring-2 focus:ring-primary/15 transition-all"
+          className="flex-1 resize-none min-h-[40px] max-h-32 bg-muted/30 border border-transparent rounded-2xl px-4 py-2.5 text-base md:text-[13px] outline-none hover:bg-muted/50 focus:bg-card focus:border-primary-ink/40 focus:ring-2 focus:ring-primary/15 transition-all"
           style={{ fieldSizing: "content" } as React.CSSProperties}
           disabled={sending}
         />

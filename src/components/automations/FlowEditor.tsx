@@ -139,7 +139,7 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
           disabled={readOnly}
           onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
           placeholder="Nombre de la regla"
-          className="flex-1 min-w-50 h-10 bg-transparent text-lg md:text-xl font-heading font-semibold tracking-tight outline-none placeholder:text-muted-foreground/60 border-b border-transparent focus:border-primary/40 transition-colors disabled:opacity-100"
+          className="flex-1 min-w-50 h-10 bg-transparent text-lg md:text-xl font-heading font-semibold tracking-tight outline-none placeholder:text-muted-foreground/60 border-b border-transparent focus:border-primary-ink/40 transition-colors disabled:opacity-100"
         />
 
         <StatusToggle
@@ -286,7 +286,7 @@ function AddButton({ catalog, onPick }: { catalog: Catalog; onPick: (type: strin
         render={
           <button
             type="button"
-            className="h-8 w-8 rounded-full border border-border bg-card shadow-sm flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:shadow-md cursor-pointer transition-all"
+            className="h-8 w-8 rounded-full border border-border bg-card shadow-sm flex items-center justify-center text-muted-foreground hover:text-primary-ink hover:border-primary-ink hover:shadow-md cursor-pointer transition-all"
             aria-label="Agregar accion"
           />
         }

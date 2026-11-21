@@ -51,7 +51,7 @@ export function PipelineToolbar({
                 type="button"
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-medium transition-colors hover:bg-muted/40 cursor-pointer",
-                  filterCount > 0 && "border-primary/40 text-primary"
+                  filterCount > 0 && "border-primary-ink/40 text-primary-ink"
                 )}
               />
             }
@@ -121,7 +121,7 @@ export function PipelineToolbar({
                   "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-medium transition-colors hover:bg-muted/40 cursor-pointer",
                   (sort.field !== DEFAULT_SORT.field ||
                     sort.dir !== DEFAULT_SORT.dir) &&
-                    "border-primary/40 text-primary"
+                    "border-primary-ink/40 text-primary-ink"
                 )}
               />
             }

@@ -72,6 +72,12 @@ export function zonaHoraria(): string {
   return getConfig().zonaHoraria;
 }
 
+/** Locale de Intl para la interfaz, segun `idioma` de la config. */
+export function localeIntl(): string {
+  const { idioma } = getConfig();
+  return idioma === "fr" ? "fr-FR" : idioma === "en" ? "en-US" : "es";
+}
+
 /** true si una funcion del nucleo o un modulo de `modules/` esta activo. */
 export function moduloActivo(nombre: string): boolean {
   const { modulos } = getConfig();
@@ -107,35 +113,64 @@ export function textoSobre(hex: string): "#FFFFFF" | "#0A1628" {
   return luminancia(hexARgb(hex)) > 0.4 ? "#0A1628" : "#FFFFFF";
 }
 
+function contraste(a: string, b: string): number {
+  const la = luminancia(hexARgb(a));
+  const lb = luminancia(hexARgb(b));
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
+/**
+ * El primario usable como texto sobre blanco: si la marca es clara (un cian, un
+ * amarillo) se oscurece hacia el tinta hasta llegar a 4.5:1 (WCAG AA).
+ */
+export function primarioTinta(hex: string): string {
+  for (let peso = 0; peso <= 1; peso += 0.05) {
+    const c = mezclar(hex, [24, 24, 27], peso);
+    if (contraste(c, "#FFFFFF") >= 4.5) return c;
+  }
+  return "#18181B";
+}
+
 /**
  * Variables CSS derivadas de la marca. Se inyectan en <head> durante el SSR para que
  * no haya "flash" del color por defecto. `:root:root` gana en especificidad a los
  * defaults de globals.css sin depender del orden de carga.
+ *
+ * La sidebar puede ser clara u oscura: sus tonos (hover, borde, texto atenuado) se
+ * derivan de colorSidebar para que cualquier color de la config se lea bien.
  */
 export function cssVariablesMarca(): string {
   const { colorPrimario, colorSidebar } = marca();
   const primario = colorPrimario;
   const sobrePrimario = textoSobre(primario);
+  const tinta = primarioTinta(primario);
   const suave = mezclar(primario, [255, 255, 255], 0.9);
-  const suaveTexto = mezclar(primario, [10, 22, 40], 0.4);
-  const claro = mezclar(primario, [255, 255, 255], 0.35);
+  const suaveTexto = mezclar(tinta, [24, 24, 27], 0.3);
+  const claro = mezclar(primario, [255, 255, 255], 0.45);
   const sidebar = colorSidebar;
-  const sobreSidebar = textoSobre(sidebar);
-  const sidebarTexto = sobreSidebar === "#FFFFFF" ? "#E8EDF5" : "#0A1628";
+  const oscura = textoSobre(sidebar) === "#FFFFFF";
+  const sidebarTexto = oscura ? "#EDEDF0" : "#18181B";
+  const sidebarAtenuado = oscura ? mezclar(sidebar, [237, 237, 240], 0.62) : mezclar(sidebar, [24, 24, 27], 0.66);
+  const sidebarHover = oscura ? mezclar(sidebar, [255, 255, 255], 0.08) : mezclar(sidebar, [24, 24, 27], 0.05);
+  const sidebarBorde = oscura ? mezclar(sidebar, [255, 255, 255], 0.1) : mezclar(sidebar, [24, 24, 27], 0.08);
   return [
     ":root:root{",
     `--primary:${primario};`,
     `--primary-foreground:${sobrePrimario};`,
-    `--ring:${primario};`,
+    `--primary-ink:${tinta};`,
+    `--ring:${tinta};`,
     `--accent:${suave};`,
     `--accent-foreground:${suaveTexto};`,
-    `--chart-1:${primario};`,
+    `--chart-1:${tinta};`,
     `--chart-3:${claro};`,
     `--sidebar:${sidebar};`,
     `--sidebar-foreground:${sidebarTexto};`,
-    `--sidebar-primary:${claro};`,
-    `--sidebar-ring:${claro};`,
+    `--sidebar-foreground-muted:${sidebarAtenuado};`,
+    `--sidebar-accent:${sidebarHover};`,
+    `--sidebar-accent-foreground:${sidebarTexto};`,
+    `--sidebar-border:${sidebarBorde};`,
+    `--sidebar-primary:${oscura ? claro : tinta};`,
+    `--sidebar-ring:${oscura ? claro : tinta};`,
     "}",
-    `:root:root *:focus-visible{outline-color:${primario};}`,
   ].join("");
 }

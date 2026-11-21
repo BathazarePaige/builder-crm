@@ -21,7 +21,7 @@ export default async function ConversationsPage() {
 
       <section className="flex-1 hidden md:flex flex-col items-center justify-center bg-muted/50">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl border bg-card shadow-sm mb-4">
-          <MessageSquare className="h-5 w-5 text-primary" />
+          <MessageSquare className="h-5 w-5 text-primary-ink" />
         </div>
         <h2 className="text-base font-medium tracking-tight">
           Selecciona una conversacion

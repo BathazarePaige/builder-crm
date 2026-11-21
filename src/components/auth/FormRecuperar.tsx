@@ -64,7 +64,7 @@ export function FormRecuperar() {
         Mandame el enlace
       </Button>
       <p className="text-center text-sm text-muted-foreground">
-        <Link href="/login" className="font-medium text-foreground hover:text-primary">
+        <Link href="/login" className="font-medium text-foreground hover:text-primary-ink">
           Volver
         </Link>
       </p>

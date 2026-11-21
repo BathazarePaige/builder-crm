@@ -35,7 +35,7 @@ export function KanbanColumn({ id, name, color, deals }: KanbanColumnProps) {
       ref={setNodeRef}
       className={cn(
         "flex flex-col w-65 shrink-0 rounded-xl border border-border/60 bg-card transition-colors",
-        isOver && "border-primary/50 bg-primary/5",
+        isOver && "border-primary-ink/50 bg-primary/5",
       )}
     >
       <div className="sticky top-0 z-10 flex items-center gap-2 px-3.5 py-3 border-b border-border/60 bg-card rounded-t-xl">

@@ -183,7 +183,7 @@ export function TemplatePicker({
                 </p>
                 <a
                   href="/plantillas"
-                  className="mt-1 inline-block text-xs text-primary hover:underline"
+                  className="mt-1 inline-block text-xs text-primary-ink hover:underline"
                 >
                   Crear una plantilla
                 </a>
@@ -199,7 +199,7 @@ export function TemplatePicker({
                       setSelected(t);
                       setValues([]);
                     }}
-                    className="w-full text-left rounded-lg border border-border/60 bg-card p-3 hover:bg-muted/40 hover:border-primary/40 transition-colors cursor-pointer"
+                    className="w-full text-left rounded-lg border border-border/60 bg-card p-3 hover:bg-muted/40 hover:border-primary-ink/40 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[13px] font-medium font-mono truncate">

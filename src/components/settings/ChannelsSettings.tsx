@@ -430,7 +430,7 @@ function WaModeButton({
       className={cn(
         "rounded-full border px-2.5 py-0.5 text-[11px] transition-colors",
         active
-          ? "border-primary bg-primary/10 text-primary font-medium"
+          ? "border-primary-ink bg-primary/10 text-primary-ink font-medium"
           : "border-border text-muted-foreground hover:text-foreground"
       )}
     >

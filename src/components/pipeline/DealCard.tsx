@@ -54,7 +54,7 @@ export function DealCard({
       style={style}
       {...attributes}
       {...listeners}
-      className="group relative p-3.5 cursor-grab active:cursor-grabbing border-border/60 hover:border-primary/30 hover:shadow-md transition-all"
+      className="group relative p-3.5 cursor-grab active:cursor-grabbing border-border/60 hover:border-primary-ink/30 hover:shadow-md transition-all"
     >
       <GripVertical
         aria-hidden
@@ -101,7 +101,7 @@ export function DealCard({
           <Tag className="h-3.5 w-3.5" aria-hidden />
           {docCount > 0 ? (
             <span
-              className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-primary"
+              className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-primary-ink"
               title={`${docCount} documento${docCount === 1 ? "" : "s"} en la ficha`}
             >
               <FileText className="h-3.5 w-3.5" aria-hidden />

@@ -177,7 +177,7 @@ export function ContactDetailClient({
             {contact.email && (
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <a href={`mailto:${contact.email}`} className="text-primary hover:underline flex-1 truncate">
+                <a href={`mailto:${contact.email}`} className="text-primary-ink hover:underline flex-1 truncate">
                   {contact.email}
                 </a>
                 <button
@@ -301,7 +301,7 @@ export function ContactDetailClient({
                           {isPending && (
                             <Badge
                               variant="outline"
-                              className="text-xs text-primary border-primary cursor-pointer"
+                              className="text-xs text-primary-ink border-primary-ink cursor-pointer"
                               onClick={() => handleCompleteActivity(activity.id)}
                             >
                               Completar

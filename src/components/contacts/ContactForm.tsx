@@ -195,7 +195,7 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[11px] font-medium"
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary-ink border border-primary-ink/20 px-2 py-0.5 text-[11px] font-medium"
                 >
                   {tag}
                   <button

@@ -209,7 +209,7 @@ export function TeamSettings() {
                 {m.active ? (
                   <UserX className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <UserCheck className="h-4 w-4 text-primary" />
+                  <UserCheck className="h-4 w-4 text-primary-ink" />
                 )}
               </Button>
             )}

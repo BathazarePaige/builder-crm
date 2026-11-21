@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { getConfig } from "@/lib/config";
+import { getConfig, localeIntl } from "@/lib/config";
 import { renderSystemPrompt } from "@/lib/agent/prompt";
 import { formatRelativeDate } from "@/lib/constants";
 
@@ -12,7 +12,7 @@ import { formatRelativeDate } from "@/lib/constants";
  */
 
 const dia = (zona: string, instante: Date) =>
-  new Intl.DateTimeFormat("es", { timeZone: zona, day: "numeric", month: "long" }).format(instante);
+  new Intl.DateTimeFormat(localeIntl(), { timeZone: zona, day: "numeric", month: "long" }).format(instante);
 
 afterEach(() => {
   vi.useRealTimers();
@@ -45,7 +45,7 @@ describe("zona horaria de la instancia", () => {
     vi.useFakeTimers();
     vi.setSystemTime(ahora);
     expect(formatRelativeDate(hace20h)).toBe(
-      diaLocal(hace20h) === diaLocal(ahora) ? "Hoy" : "Ayer"
+      diaLocal(hace20h) === diaLocal(ahora) ? "Aujourd'hui" : "Hier"
     );
   });
 

@@ -188,7 +188,7 @@ export function TriggerCard({
               <button
                 type="button"
                 onClick={add}
-                className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline cursor-pointer pt-0.5"
+                className="inline-flex items-center gap-1 text-xs font-medium text-primary-ink hover:underline cursor-pointer pt-0.5"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Añadir filtro

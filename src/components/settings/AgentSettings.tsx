@@ -311,7 +311,7 @@ export function AgentSettings() {
               "shrink-0 inline-flex items-center h-5 px-2 rounded-sm text-[10px] font-semibold uppercase tracking-wide",
               isUsingDefaultPrompt
                 ? "bg-muted text-muted-foreground"
-                : "bg-primary/10 text-primary border border-primary/20"
+                : "bg-primary/10 text-primary-ink border border-primary-ink/20"
             )}
           >
             {isUsingDefaultPrompt ? "Default" : "Personalizado"}

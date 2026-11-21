@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { contacts, crmSettings, deals, pipelineStages, pipelines } from "@/db/schema";
 import { and, desc, eq } from "drizzle-orm";
-import { camposContacto, getConfig } from "@/lib/config";
+import { camposContacto, getConfig, localeIntl } from "@/lib/config";
 import { resumirCampos } from "@/lib/config/campos";
 
 export const SYSTEM_PROMPT_SETTINGS_KEY = "agent.system_prompt";
@@ -78,11 +78,11 @@ export const getGlobalSystemPromptTemplate = getSystemPromptTemplate;
 export function renderSystemPrompt(template: string, opts: { now?: Date; channel?: string } = {}): string {
   const now = opts.now ?? new Date();
   const channel = opts.channel ?? "whatsapp";
-  const { marca, agente, idioma, zonaHoraria } = getConfig();
+  const { marca, agente, zonaHoraria } = getConfig();
 
   // La zona es la del negocio, no la del proceso: el contenedor corre en UTC, y sin esto
   // el agente le dice "manana" al cliente que escribe de noche.
-  const fecha = now.toLocaleDateString(idioma === "en" ? "en-US" : "es", {
+  const fecha = now.toLocaleDateString(localeIntl(), {
     timeZone: zonaHoraria,
     weekday: "long",
     year: "numeric",

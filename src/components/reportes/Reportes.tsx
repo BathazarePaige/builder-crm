@@ -114,7 +114,7 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
             href={`/reportes?dias=${r}`}
             className={cn(
               "rounded-full border px-3 py-1 text-xs transition-colors",
-              r === dias ? "border-primary bg-primary/10 text-primary font-medium" : "border-border text-muted-foreground hover:text-foreground"
+              r === dias ? "border-primary-ink bg-primary/10 text-primary-ink font-medium" : "border-border text-muted-foreground hover:text-foreground"
             )}
           >
             Ultimos {r} dias

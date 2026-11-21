@@ -255,7 +255,7 @@ export function ContactDetailPanel({
         {attribution && (
           <div className="px-4 py-3 border-b border-border">
             <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-2">
-              <Megaphone className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
+              <Megaphone className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary-ink" />
               <div className="min-w-0">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                   Vino de un anuncio
@@ -268,7 +268,7 @@ export function ContactDetailPanel({
                     href={attribution.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] text-primary hover:underline break-all"
+                    className="text-[11px] text-primary-ink hover:underline break-all"
                   >
                     Ver anuncio
                   </a>
@@ -390,7 +390,7 @@ export function ContactDetailPanel({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[11px] font-medium"
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary-ink border border-primary-ink/20 px-2 py-0.5 text-[11px] font-medium"
                 >
                   {tag}
                   <button

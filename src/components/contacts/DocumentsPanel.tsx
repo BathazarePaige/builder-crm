@@ -201,7 +201,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
             type="button"
             disabled={!storageReady}
             onClick={() => inputRef.current?.click()}
-            className="w-full rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground hover:border-primary/50 hover:text-foreground cursor-pointer transition-colors disabled:cursor-not-allowed"
+            className="w-full rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground hover:border-primary-ink/50 hover:text-foreground cursor-pointer transition-colors disabled:cursor-not-allowed"
           >
             <UploadCloud className="h-5 w-5 mx-auto mb-2" />
             Arrastra un PDF o una imagen, o toca para elegir.
@@ -216,7 +216,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
                 {u.error ? (
                   <FileText className="h-4 w-4 text-destructive shrink-0" />
                 ) : (
-                  <Loader2 className="h-4 w-4 text-primary animate-spin shrink-0" />
+                  <Loader2 className="h-4 w-4 text-primary-ink animate-spin shrink-0" />
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate">{u.name}</p>

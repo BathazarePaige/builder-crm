@@ -1,5 +1,5 @@
 import type { LeadSource, ActivityType } from "@/types";
-import { getConfig } from "@/lib/config";
+import { getConfig, localeIntl } from "@/lib/config";
 
 export const SOURCE_LABELS: Record<LeadSource, string> = {
   website: "Sitio web",
@@ -32,7 +32,7 @@ export const ACTIVITY_TYPE_CONFIG: Record<
 
 /** Montos en centavos; la moneda sale de config/cliente.ts (`moneda`). */
 export function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat("es", {
+  return new Intl.NumberFormat(localeIntl(), {
     style: "currency",
     currency: getConfig().moneda,
     maximumFractionDigits: 0,
@@ -53,7 +53,7 @@ function toDate(date: Date | number): Date {
 export function formatDate(date: Date | number | null): string {
   if (!date) return "-";
   const d = toDate(date);
-  return new Intl.DateTimeFormat("es-MX", {
+  return new Intl.DateTimeFormat(localeIntl(), {
     timeZone: getConfig().zonaHoraria,
     day: "numeric",
     month: "short",
@@ -84,9 +84,10 @@ export function formatRelativeDate(date: Date | number): string {
       86_400_000
   );
 
-  if (dias <= 0) return "Hoy";
-  if (dias === 1) return "Ayer";
-  if (dias < 7) return `Hace ${dias} dias`;
-  if (dias < 30) return `Hace ${Math.floor(dias / 7)} semanas`;
+  if (dias <= 0) return "Aujourd'hui";
+  if (dias === 1) return "Hier";
+  if (dias < 7) return `Il y a ${dias} jours`;
+  if (dias < 14) return "Il y a 1 semaine";
+  if (dias < 30) return `Il y a ${Math.floor(dias / 7)} semaines`;
   return formatDate(date);
 }

@@ -161,7 +161,7 @@ export function Simulador() {
                     title={CHANNEL_LABELS[c]}
                     className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-full border transition-colors cursor-pointer",
-                      canal === c ? "border-primary bg-primary/10" : "border-border bg-muted/40",
+                      canal === c ? "border-primary-ink bg-primary/10" : "border-border bg-muted/40",
                       CHANNEL_COLORS[c]
                     )}
                   >
@@ -242,7 +242,7 @@ export function Simulador() {
                 {conversationId && (
                   <>
                     {" · "}
-                    <Link href={`/conversations/${conversationId}`} className="text-primary hover:underline inline-flex items-center gap-0.5">
+                    <Link href={`/conversations/${conversationId}`} className="text-primary-ink hover:underline inline-flex items-center gap-0.5">
                       ver en la bandeja <ExternalLink className="h-3 w-3" />
                     </Link>
                   </>
@@ -304,7 +304,7 @@ export function Simulador() {
                   </ul>
                 </div>
                 {contactId && (
-                  <Link href={`/contacts/${contactId}`} className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+                  <Link href={`/contacts/${contactId}`} className="text-xs text-primary-ink hover:underline inline-flex items-center gap-1">
                     Abrir la ficha <ExternalLink className="h-3 w-3" />
                   </Link>
                 )}

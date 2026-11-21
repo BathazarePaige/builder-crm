@@ -95,7 +95,7 @@ export default async function DashboardPage() {
 
       <div className="space-y-5">
       {isFirstRun && (
-        <div className="rounded-2xl border border-primary/15 bg-primary/5 p-6">
+        <div className="rounded-2xl border border-primary-ink/15 bg-primary/5 p-6">
           <h2 className="text-lg font-semibold tracking-tight font-heading mb-2">
             Todo listo para empezar
           </h2>

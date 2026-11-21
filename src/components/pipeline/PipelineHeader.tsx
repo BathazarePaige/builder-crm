@@ -114,7 +114,7 @@ export function PipelineHeader({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setCreateOpen(true)}
-                className="cursor-pointer text-primary"
+                className="cursor-pointer text-primary-ink"
               >
                 <Plus className="h-4 w-4" />
                 Crear pipeline nuevo

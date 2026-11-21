@@ -100,7 +100,7 @@ export function PushSettings() {
       <div className="flex items-center justify-between gap-3 p-3 rounded-lg border">
         <div className="flex items-center gap-3 min-w-0">
           {subscribed ? (
-            <BellRing className="h-5 w-5 text-primary shrink-0" />
+            <BellRing className="h-5 w-5 text-primary-ink shrink-0" />
           ) : (
             <Bell className="h-5 w-5 text-muted-foreground shrink-0" />
           )}

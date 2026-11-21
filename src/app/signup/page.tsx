@@ -25,7 +25,7 @@ export default async function SignupPage() {
         <p className="text-sm text-muted-foreground">
           Las cuentas las crea un administrador desde Configuracion → Equipo.
         </p>
-        <Link href="/login" className="text-sm text-primary hover:underline">
+        <Link href="/login" className="text-sm text-primary-ink hover:underline">
           Volver a iniciar sesion
         </Link>
       </div>

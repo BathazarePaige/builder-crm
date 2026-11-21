@@ -77,7 +77,7 @@ export function NotificationToggle() {
     <div className="flex items-center justify-between p-3 rounded-lg border">
       <div className="flex items-center gap-3">
         {enabled ? (
-          <Bell className="h-5 w-5 text-primary" />
+          <Bell className="h-5 w-5 text-primary-ink" />
         ) : (
           <BellOff className="h-5 w-5 text-muted-foreground" />
         )}

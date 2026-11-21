@@ -20,7 +20,7 @@ export default function SinAccesoPage() {
       <form action={signOut}>
         <button
           type="submit"
-          className="text-sm text-primary hover:underline cursor-pointer"
+          className="text-sm text-primary-ink hover:underline cursor-pointer"
         >
           Cerrar sesion
         </button>

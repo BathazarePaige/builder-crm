@@ -32,7 +32,7 @@ import type { CatalogAction, RuleAction } from "./types";
 
 /** Color e icono por tipo de accion: la cadena se lee de un vistazo. */
 export const ACTION_STYLE: Record<string, { icon: typeof Bell; bg: string; fg: string; ring: string }> = {
-  push: { icon: Bell, bg: "bg-primary/10", fg: "text-primary", ring: "ring-primary/20" },
+  push: { icon: Bell, bg: "bg-primary/10", fg: "text-primary-ink", ring: "ring-primary/20" },
   add_tag: { icon: Tag, bg: "bg-amber-500/10", fg: "text-amber-700", ring: "ring-amber-500/20" },
   remove_tag: { icon: Tag, bg: "bg-zinc-500/10", fg: "text-zinc-600", ring: "ring-zinc-500/20" },
   assign_owner: { icon: UserCircle2, bg: "bg-indigo-500/10", fg: "text-indigo-700", ring: "ring-indigo-500/20" },
@@ -182,7 +182,7 @@ export function ActionCard({
                       key={ph}
                       type="button"
                       onClick={() => insertPlaceholder(p.key, ph)}
-                      className="rounded-md border border-border bg-card px-1.5 py-0.5 text-[10.5px] font-mono text-foreground/80 hover:border-primary hover:text-primary cursor-pointer transition-colors"
+                      className="rounded-md border border-border bg-card px-1.5 py-0.5 text-[10.5px] font-mono text-foreground/80 hover:border-primary-ink hover:text-primary-ink cursor-pointer transition-colors"
                     >
                       {ph}
                     </button>

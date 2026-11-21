@@ -165,7 +165,7 @@ const esquemaDemo = z.object({
 
 export const esquemaConfig = z.object({
   marca: esquemaMarca,
-  idioma: z.enum(["es", "en"]).default("es"),
+  idioma: z.enum(["es", "en", "fr"]).default("es"),
   /** Codigo ISO 4217 para formatear montos. */
   moneda: z.string().length(3).default("USD"),
   /**

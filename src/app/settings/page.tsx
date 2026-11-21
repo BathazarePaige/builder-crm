@@ -71,7 +71,7 @@ export default function SettingsPage() {
             </div>
             <p className="text-xs text-muted-foreground mt-3">
               Las etapas se editan desde el{" "}
-              <Link href="/pipeline" className="text-primary hover:underline">
+              <Link href="/pipeline" className="text-primary-ink hover:underline">
                 Pipeline
               </Link>
               .
@@ -116,7 +116,7 @@ export default function SettingsPage() {
           <CardContent>
             <p className="text-sm text-muted-foreground">
               Las reglas, el encendido/apagado y el historial estan en{" "}
-              <Link href="/automatizaciones" className="text-primary hover:underline">
+              <Link href="/automatizaciones" className="text-primary-ink hover:underline">
                 Automatizaciones
               </Link>
               , en el menu lateral.

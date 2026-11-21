@@ -92,7 +92,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
             {!isSignup && authEnviaCorreos && (
               <Link
                 href="/auth/recuperar"
-                className="text-xs text-muted-foreground hover:text-primary"
+                className="text-xs text-muted-foreground hover:text-primary-ink"
               >
                 La olvidaste?
               </Link>
@@ -131,7 +131,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
               Ya tienes cuenta?{" "}
               <Link
                 href="/login"
-                className="font-medium text-foreground hover:text-primary"
+                className="font-medium text-foreground hover:text-primary-ink"
               >
                 Inicia sesion
               </Link>
@@ -141,7 +141,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
               Aun no tienes cuenta?{" "}
               <Link
                 href="/signup"
-                className="font-medium text-foreground hover:text-primary"
+                className="font-medium text-foreground hover:text-primary-ink"
               >
                 Crea una
               </Link>
