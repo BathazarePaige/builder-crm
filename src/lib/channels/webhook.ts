@@ -27,13 +27,13 @@ const MAX_ATTEMPTS = 3;
 
 export async function manejarWebhook(conector: Conector, request: NextRequest): Promise<NextResponse> {
   if (!conector.webhook) {
-    return NextResponse.json({ error: "Este conector no recibe webhooks" }, { status: 404 });
+    return NextResponse.json({ error: "Ce connecteur ne reçoit pas de webhooks" }, { status: 404 });
   }
 
   const rawBody = await request.text();
 
   if (!conector.webhook.verificar(rawBody, request.headers)) {
-    console.warn(`[webhook ${conector.id}] firma invalida`);
+    console.warn(`[webhook ${conector.id}] signature invalide`);
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
@@ -98,7 +98,7 @@ export async function barrerWebhook(conector: Conector, request: NextRequest): P
     if (row.attempts >= MAX_ATTEMPTS) {
       await db
         .update(webhookEvents)
-        .set({ status: "failed", error: `sin procesar tras ${row.attempts} intentos`, processedAt: new Date() })
+        .set({ status: "failed", error: `non traite apres ${row.attempts} tentatives`, processedAt: new Date() })
         .where(eq(webhookEvents.eventId, row.eventId));
       continue;
     }
@@ -142,10 +142,10 @@ async function ejecutarEvento(conector: Conector, eventId: string, payload: unkn
 
     await dispararJobs(conector, result.jobIds, headers);
   } catch (err) {
-    console.error(`[webhook ${conector.id}] error procesando evento`, eventId, err);
+    console.error(`[webhook ${conector.id}] erreur pendant le traitement de l'evenement`, eventId, err);
     await db
       .update(webhookEvents)
-      .set({ status: "failed", error: err instanceof Error ? err.message : "error desconocido", processedAt: new Date() })
+      .set({ status: "failed", error: err instanceof Error ? err.message : "erreur inconnue", processedAt: new Date() })
       .where(eq(webhookEvents.eventId, eventId))
       .catch(() => {});
   }

@@ -128,7 +128,7 @@ export async function findOrCreateContactByIdentity(
 
   await db.insert(activities).values({
     type: "note",
-    description: `Nuevo contacto via ${CHANNEL_LABELS[input.channel]} (escribio primero)`,
+    description: `Nouveau contact via ${CHANNEL_LABELS[input.channel]} (a écrit en premier)`,
     contactId: created.id,
     createdAt: now,
   });
@@ -470,7 +470,7 @@ async function maybeReactivateAfterInactivity(
   if (contactId) {
     await db.insert(activities).values({
       type: "note",
-      description: "Bot reactivado automaticamente por inactividad (7 dias)",
+      description: "Agent réactivé automatiquement après 7 jours d’inactivité",
       contactId,
       createdAt: new Date(),
     });

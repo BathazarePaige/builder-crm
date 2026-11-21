@@ -95,7 +95,7 @@ export function getEnv(): Env {
     const detalle = resultado.error.issues
       .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
       .join("\n");
-    throw new Error(`Variables de entorno invalidas o faltantes:\n${detalle}\nRevisa .env.example.`);
+    throw new Error(`Variables d’environnement invalides ou manquantes :\n${detalle}\nVoir .env.example.`);
   }
   cache = resultado.data;
   return cache;

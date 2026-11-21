@@ -22,7 +22,7 @@ import type { ResultadoWebhook } from "./conector";
  */
 export async function procesarEventoMeta(payload: unknown): Promise<ResultadoWebhook> {
   if (!esPayloadWhatsapp(payload)) {
-    return { status: "ignored", reason: "objeto distinto de whatsapp_business_account", jobIds: [] };
+    return { status: "ignored", reason: "objet different de whatsapp_business_account", jobIds: [] };
   }
 
   // Con WhatsApp por Zernio, este conector no ingesta: si los dos caminos guardaran el
@@ -41,7 +41,7 @@ export async function procesarEventoMeta(payload: unknown): Promise<ResultadoWeb
     // nuestro, y crear contactos con sus mensajes seria basura (o robarselos).
     const cuenta = await getAccountByPhoneNumberId(cambio.phoneNumberId);
     if (!cuenta) {
-      ignorados.push(`phone_number_id no registrado: ${cambio.phoneNumberId}`);
+      ignorados.push(`phone_number_id non enregistre : ${cambio.phoneNumberId}`);
       continue;
     }
 
@@ -125,10 +125,10 @@ export async function procesarEventoMeta(payload: unknown): Promise<ResultadoWeb
   // Un estado de un mensaje que todavia no existe (el `sent` llega antes de que
   // `deliverMessage` guarde el wamid): se reintenta en el barrido en vez de perderlo.
   if (estadosPendientes > 0) {
-    return { status: "retry", reason: `${estadosPendientes} estado(s) sin mensaje todavia`, jobIds };
+    return { status: "retry", reason: `${estadosPendientes} statut(s) sans message pour l'instant`, jobIds };
   }
   if (procesados === 0) {
-    return { status: "ignored", reason: ignorados[0] ?? "sin mensajes ni estados", jobIds };
+    return { status: "ignored", reason: ignorados[0] ?? "ni messages ni statuts", jobIds };
   }
   return { status: "processed", jobIds };
 }

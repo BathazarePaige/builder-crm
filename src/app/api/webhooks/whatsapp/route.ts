@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   const challenge = respuestaHub(params, process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || "");
   if (challenge === null) {
-    console.warn("[whatsapp-webhook] handshake del hub rechazado");
+    console.warn("[whatsapp-webhook] verification du hub refusee");
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   return new NextResponse(challenge, { status: 200, headers: { "Content-Type": "text/plain" } });

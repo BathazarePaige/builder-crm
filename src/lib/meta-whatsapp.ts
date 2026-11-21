@@ -41,7 +41,7 @@ function resolveCreds(
   }
   if (PHONE_NUMBER_ID && ACCESS_TOKEN) {
     console.warn(
-      "[meta-whatsapp] sin cuenta resuelta, usando credenciales de env (fallback)"
+      "[meta-whatsapp] aucun compte resolu, identifiants de l'environnement utilises (secours)"
     );
     return { phoneNumberId: PHONE_NUMBER_ID, accessToken: ACCESS_TOKEN };
   }
@@ -73,7 +73,7 @@ export async function sendTextMessage(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin credenciales de WhatsApp (ni cuenta ni env)" },
+      error: { message: "Aucun identifiant WhatsApp (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -123,7 +123,7 @@ export async function sendTemplateMessage(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin credenciales de WhatsApp (ni cuenta ni env)" },
+      error: { message: "Aucun identifiant WhatsApp (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -196,7 +196,7 @@ function resolveWabaCreds(
   }
   if (WABA_ID && ACCESS_TOKEN) {
     console.warn(
-      "[meta-whatsapp] sin cuenta resuelta para plantillas, usando env (fallback)"
+      "[meta-whatsapp] aucun compte resolu pour les modeles, variables d'environnement utilisees (secours)"
     );
     return { wabaId: WABA_ID, accessToken: ACCESS_TOKEN };
   }
@@ -211,7 +211,7 @@ export async function createTemplate(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin WABA/token para crear plantilla (ni cuenta ni env)" },
+      error: { message: "Aucun WABA ni jeton pour créer le modèle (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -262,7 +262,7 @@ export async function getTemplates(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin WABA/token para listar plantillas (ni cuenta ni env)" },
+      error: { message: "Aucun WABA ni jeton pour lister les modèles (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -297,7 +297,7 @@ export function verifyWebhookSignature(
   secret: string = APP_SECRET
 ): boolean {
   if (!secret) {
-    console.warn("[meta-whatsapp] WHATSAPP_APP_SECRET no configurado — firma no validada");
+    console.warn("[meta-whatsapp] WHATSAPP_APP_SECRET non defini : signature non verifiee");
     return false;
   }
   if (!signatureHeader) return false;
@@ -344,7 +344,7 @@ export async function obtenerNumeroMeta(
     const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || json.error) {
-      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
     }
     return {
       success: true,
@@ -385,7 +385,7 @@ export async function suscribirAppAWaba(
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || json.error || json.success === false) {
-      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
     }
     return { success: true };
   } catch (err) {
@@ -408,7 +408,7 @@ export async function intercambiarCodigoMeta(
     const res = await fetch(`${GRAPH_BASE}/oauth/access_token?${params}`);
     const json = await res.json().catch(() => ({}));
     if (!res.ok || json.error || !json.access_token) {
-      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
     }
     return { success: true, accessToken: String(json.access_token) };
   } catch (err) {
@@ -433,7 +433,7 @@ export async function registrarNumeroMeta(
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || json.error || json.success === false) {
-      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
     }
     return { success: true };
   } catch (err) {
