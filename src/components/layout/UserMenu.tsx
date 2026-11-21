@@ -8,6 +8,7 @@ import { leerConfigPublica } from "@/lib/config-publica";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -107,10 +108,14 @@ export function UserMenu() {
         <ChevronsUpDown className="h-3.5 w-3.5 text-sidebar-foreground/50 shrink-0" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="top" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <p className="text-sm font-medium truncate">{displayName}</p>
-          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-        </DropdownMenuLabel>
+        {/* Base UI exige que la etiqueta viva dentro de un grupo: suelta, el menu
+            revienta al abrirse y se lleva la pagina entera. */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal">
+            <p className="text-sm font-medium truncate">{displayName}</p>
+            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem render={<Link href="/settings" />}>
           <UserIcon className="h-4 w-4" />
