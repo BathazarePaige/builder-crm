@@ -75,7 +75,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
         <Header />
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="mx-auto max-w-[1440px] px-4 py-6 md:px-8 md:py-8 min-w-0">
+          <div className="mx-auto max-w-[1760px] px-4 py-6 md:px-8 md:py-8 min-w-0">
             {children}
           </div>
         </main>
