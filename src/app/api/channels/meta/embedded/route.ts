@@ -16,12 +16,12 @@ export async function POST(request: NextRequest) {
 
   const faltan = faltanParaSignup(process.env);
   if (faltan.length > 0) {
-    return NextResponse.json({ error: `Configuration Meta incomplete : ${faltan.join(", ")}` }, { status: 409 });
+    return NextResponse.json({ error: `Configuration Meta incomplète : ${faltan.join(", ")}` }, { status: 409 });
   }
 
   const parsed = altaEmbebidaSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Donnees invalides" }, { status: 400 });
+    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Données invalides" }, { status: 400 });
   }
   const { code, phoneNumberId, wabaId, modo } = parsed.data;
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   const token = await intercambiarCodigoMeta(code, process.env.META_APP_ID!, process.env.WHATSAPP_APP_SECRET!);
   if (!token.success) {
     return NextResponse.json(
-      { error: `Meta n'a pas accepte le code (il expire en 30 secondes) : ${token.error.message ?? "sans detail"}` },
+      { error: `Meta n'a pas accepté le code (il expire en 30 secondes) : ${token.error.message ?? "sans détail"}` },
       { status: 422 }
     );
   }

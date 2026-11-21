@@ -12,7 +12,7 @@ import { z } from "zod";
 const idMeta = z
   .string()
   .trim()
-  .regex(/^\d{5,25}$/, "Doit etre l'identifiant numerique affiche par Meta");
+  .regex(/^\d{5,25}$/, "Doit être l'identifiant numérique affiché par Meta");
 
 export const conexionMetaSchema = z.object({
   phoneNumberId: idMeta,

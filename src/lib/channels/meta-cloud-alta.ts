@@ -28,7 +28,7 @@ export async function darDeAltaNumero(input: AltaNumeroInput): Promise<AltaNumer
 
   const numero = await obtenerNumeroMeta(phoneNumberId, accessToken);
   if (!numero.success) {
-    return { ok: false, status: 422, error: `Meta a refuse le jeton ou l'identifiant : ${numero.error.message ?? "sans detail"}` };
+    return { ok: false, status: 422, error: `Meta a refusé le jeton ou l'identifiant : ${numero.error.message ?? "sans détail"}` };
   }
 
   const avisos: string[] = [];
@@ -37,7 +37,7 @@ export async function darDeAltaNumero(input: AltaNumeroInput): Promise<AltaNumer
     const reg = await registrarNumeroMeta(phoneNumberId, accessToken, input.registrarConPin);
     if (!reg.success) {
       avisos.push(
-        `Meta n'a pas pu enregistrer le numero (${reg.error?.message ?? "sans detail"}). Il recevra mais n'enverra pas tant qu'il n'est pas enregistre.`
+        `Meta n'a pas pu enregistrer le numéro (${reg.error?.message ?? "sans détail"}). Il recevra mais n'enverra pas tant qu’il n’est pas enregistré.`
       );
     }
   }
@@ -50,20 +50,20 @@ export async function darDeAltaNumero(input: AltaNumeroInput): Promise<AltaNumer
     const sub = await suscribirAppAWaba(wabaId, accessToken, webhook);
     if (sub.success && !webhook) {
       avisos.push(
-        "APP_BASE_URL (en https) ou WHATSAPP_WEBHOOK_VERIFY_TOKEN manque : les messages de ce numero iront a l'URL de webhook de l'app Meta, pas forcement a cette instance."
+        "APP_BASE_URL (en https) ou WHATSAPP_WEBHOOK_VERIFY_TOKEN manque : les messages de ce numéro iront à l'URL de webhook de l'app Meta, pas forcément à cette instance."
       );
     }
     if (!sub.success) {
       avisos.push(
-        `Impossible d'abonner l'application au compte WhatsApp Business (${sub.error?.message ?? "sans detail"}) : le numero enverra mais ne recevra rien tant que ce n'est pas fait.`
+        `Impossible d'abonner l'application au compte WhatsApp Business (${sub.error?.message ?? "sans détail"}) : le numero enverra mais ne recevra rien tant que ce n'est pas fait.`
       );
     }
   } else {
-    avisos.push("Sans identifiant WABA, l'application n'est pas abonnee : fais-le depuis Meta ou reconnecte avec le WABA.");
+    avisos.push("Sans identifiant WABA, l'application n'est pas abonnée : fais-le depuis Meta ou reconnecte avec le WABA.");
   }
 
   const tenantId = await resolveDefaultTenantId();
-  if (!tenantId) return { ok: false, status: 500, error: "Le tenant par defaut n'existe pas : migrations manquantes" };
+  if (!tenantId) return { ok: false, status: 500, error: "Le tenant par défaut n'existe pas : migrations manquantes" };
 
   const cuenta = await conectarCuentaWhatsapp({
     tenantId,
@@ -74,7 +74,7 @@ export async function darDeAltaNumero(input: AltaNumeroInput): Promise<AltaNumer
   });
 
   if (whatsappProvider() !== "meta") {
-    avisos.push("Le numero est enregistre, mais WhatsApp passe encore par Zernio tant que l'instance n'a pas WHATSAPP_PROVIDER=meta.");
+    avisos.push("Le numéro est enregistré, mais WhatsApp passe encore par Zernio tant que l'instance n'a pas WHATSAPP_PROVIDER=meta.");
   }
 
   return { ok: true, cuenta, nombre: numero.numero.verifiedName, avisos };

@@ -98,7 +98,7 @@ export function leerEventoSignup(origen: string, datos: unknown): EventoSignup |
     case "CANCEL":
       return { tipo: "cancelado", paso: texto(d.current_step) };
     case "ERROR":
-      return { tipo: "error", mensaje: texto(d.error_message) ?? "Erreur dans la fenetre de Meta" };
+      return { tipo: "error", mensaje: texto(d.error_message) ?? "Erreur dans la fenêtre de Meta" };
     default:
       return null;
   }

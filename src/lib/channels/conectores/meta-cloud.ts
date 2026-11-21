@@ -21,13 +21,13 @@ import type { Conector, EstadoConector } from "../conector";
  */
 export const metaCloud: Conector = {
   id: "meta",
-  nombre: "Meta Cloud API (WhatsApp directo)",
+  nombre: "Meta Cloud API (WhatsApp direct)",
   canales: ["whatsapp"],
 
   async enviar(ctx, msg) {
     const to = ctx.conversation.participantId;
     if (!to) {
-      return { success: false, error: { message: "La conversacion no tiene telefono de destino" } };
+      return { success: false, error: { message: "La conversation n’a pas de numéro de destination" } };
     }
 
     const [{ sendTextMessage, sendTemplateMessage }, { getAccountByTenant }] = await Promise.all([
@@ -99,16 +99,16 @@ export const metaCloud: Conector = {
 
     const notas = [
       activo
-        ? "Activo como transporte de WhatsApp (WHATSAPP_PROVIDER=meta). Los mensajes entran por /api/webhooks/whatsapp."
-        : "Inactivo: WhatsApp va por Zernio. Para usarlo, WHATSAPP_PROVIDER=meta.",
+        ? "Actif comme transport WhatsApp (WHATSAPP_PROVIDER=meta). Les messages arrivent par /api/webhooks/whatsapp."
+        : "Inactif : WhatsApp passe par Zernio. Pour l’utiliser, WHATSAPP_PROVIDER=meta.",
     ];
     if (activo && cuentas.length === 0) {
-      notas.push("Sin numero conectado: cargalo abajo, en WhatsApp directo.");
+      notas.push("Aucun numéro connecté : connecte-le plus bas, dans WhatsApp direct.");
     }
 
     return {
       id: "meta",
-      nombre: "Meta Cloud API (WhatsApp directo)",
+      nombre: "Meta Cloud API (WhatsApp direct)",
       configurado: faltan.length === 0,
       faltan,
       cuentas,
@@ -121,13 +121,13 @@ export const metaCloud: Conector = {
 function hintForMetaError(code: number | undefined): string | undefined {
   switch (code) {
     case 131030:
-      return "El numero no esta en la lista de destinatarios permitidos de la app de Meta.";
+      return "Le numéro n’est pas dans la liste des destinataires autorisés de l’app Meta.";
     case 131047:
-      return "Pasaron mas de 24h desde el ultimo mensaje del cliente: hay que usar una plantilla aprobada.";
+      return "Plus de 24 h depuis le dernier message du client : il faut utiliser un modèle approuvé.";
     case 132000:
-      return "La plantilla no coincide con la cantidad de variables esperadas.";
+      return "Le modèle ne correspond pas au nombre de variables attendu.";
     case 190:
-      return "El token de acceso de Meta expiro.";
+      return "Le jeton d’accès Meta a expiré.";
     default:
       return undefined;
   }
