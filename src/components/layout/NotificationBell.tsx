@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import { usePush } from "@/lib/use-push";
 
 interface Item {
@@ -46,7 +46,7 @@ export function NotificationBell() {
       toast(newest.title, {
         description: newest.body ?? undefined,
         action: newest.url
-          ? { label: "Ver", onClick: () => router.push(newest.url!) }
+          ? { label: "Voir", onClick: () => router.push(newest.url!) }
           : undefined,
       });
     }
@@ -89,7 +89,7 @@ export function NotificationBell() {
   const enablePush = async () => {
     const error = await push.subscribe();
     if (error) toast.error(error);
-    else toast.success("Notificaciones activadas en este dispositivo");
+    else toast.success("Notifications activées sur cet appareil");
   };
 
   const showPushPrompt = push.state === "ready" || push.state === "ios-install";
@@ -101,8 +101,8 @@ export function NotificationBell() {
           <Button
             variant="ghost"
             size="icon"
-            className="relative cursor-pointer h-8 w-8"
-            aria-label={unread > 0 ? `${unread} notificaciones sin leer` : "Notificaciones"}
+            className="relative cursor-pointer h-9 w-9"
+            aria-label={unread > 0 ? `${unread} notifications non lues` : "Notifications"}
           />
         }
       >
@@ -116,32 +116,32 @@ export function NotificationBell() {
 
       <PopoverContent align="end" className="w-[min(92vw,380px)] p-0">
         <div className="flex items-center justify-between px-3 py-2 border-b">
-          <p className="text-sm font-semibold">Notificaciones</p>
+          <p className="text-sm font-semibold">Notifications</p>
           {unread > 0 && (
             <button
               type="button"
               onClick={() => markRead()}
-              className="text-xs text-primary hover:underline cursor-pointer inline-flex items-center gap-1"
+              className="text-xs text-primary-ink hover:underline cursor-pointer inline-flex items-center gap-1"
             >
               <Check className="h-3 w-3" />
-              Marcar todas leidas
+              Tout marquer comme lu
             </button>
           )}
         </div>
 
         {showPushPrompt && (
           <div className="px-3 py-2.5 border-b bg-primary/5 flex items-start gap-2.5">
-            <Smartphone className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+            <Smartphone className="h-4 w-4 text-primary-ink shrink-0 mt-0.5" />
             <div className="min-w-0 flex-1">
               <p className="text-xs font-medium">
                 {push.state === "ios-install"
-                  ? "Instala el CRM en tu iPhone para recibir avisos"
-                  : "Recibe estos avisos en este dispositivo"}
+                  ? "Installez le CRM sur votre iPhone pour recevoir les alertes"
+                  : "Recevez ces alertes sur cet appareil"}
               </p>
               <p className="text-[11px] text-muted-foreground">
                 {push.state === "ios-install"
-                  ? "Safari → Compartir → Agregar a pantalla de inicio, y activalo desde ahi."
-                  : "Aunque el CRM este cerrado."}
+                  ? "Safari → Partager → Sur l'écran d'accueil, puis activez-les depuis l'app."
+                  : "Même quand le CRM est fermé."}
               </p>
             </div>
             {push.state === "ready" && (
@@ -151,7 +151,7 @@ export function NotificationBell() {
                 disabled={push.busy}
                 className="cursor-pointer h-7 text-xs shrink-0"
               >
-                Activar
+                Activer
               </Button>
             )}
           </div>
@@ -160,7 +160,7 @@ export function NotificationBell() {
         <div className="max-h-[60vh] overflow-y-auto divide-y">
           {items.length === 0 && (
             <p className="text-xs text-muted-foreground px-3 py-6 text-center">
-              Nada por ahora. Cuando una automatizacion te avise, aparece aca.
+              Rien pour l’instant. Les alertes de vos automatisations apparaîtront ici.
             </p>
           )}
           {items.map((n) => (
@@ -189,7 +189,7 @@ export function NotificationBell() {
                   </span>
                 )}
                 <span className="block text-[11px] text-muted-foreground/80 mt-0.5">
-                  {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: es })}
+                  {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: fr })}
                 </span>
               </span>
             </button>

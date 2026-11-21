@@ -25,7 +25,7 @@ export async function POST(
 
   if (!correoDeAccesoActivo()) {
     return NextResponse.json(
-      { error: "Esta instancia no manda correos de acceso. Ver docs/CORREO.md" },
+      { error: "Cette instance n’envoie pas d’e-mails d’accès. Voir docs/CORREO.md" },
       { status: 400 }
     );
   }
@@ -36,11 +36,11 @@ export async function POST(
     .where(eq(teamMembers.id, id))
     .limit(1);
   if (!miembro) {
-    return NextResponse.json({ error: "Miembro no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Membre introuvable" }, { status: 404 });
   }
   if (!miembro.active) {
     return NextResponse.json(
-      { error: "Esta persona esta desactivada: reactivala primero" },
+      { error: "Cette personne est désactivée : réactivez-la d’abord" },
       { status: 409 }
     );
   }
@@ -52,14 +52,14 @@ export async function POST(
   );
   if (!usuario) {
     return NextResponse.json(
-      { error: "Esta persona no tiene usuario de acceso: quitala del equipo y volve a invitarla" },
+      { error: "Cette personne n’a pas de compte d’accès : retirez-la de l’équipe puis réinvitez-la" },
       { status: 409 }
     );
   }
 
   const { error } = await enviarEnlaceDeAcceso(miembro.email);
   if (error) {
-    return NextResponse.json({ error: `No se pudo enviar: ${error}` }, { status: 502 });
+    return NextResponse.json({ error: `Envoi impossible : ${error}` }, { status: 502 });
   }
   return NextResponse.json({ ok: true, email: miembro.email });
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -35,6 +35,9 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -53,80 +56,77 @@
 }
 
 /*
-  Builder CRM - paleta base (config/cliente.ts la pisa en runtime)
-  Filosofia 60/30/10:
-    60% Blanco #FFFFFF (lienzo limpio, mensajeria estilo GHL/Intercom)
-    30% Navy #0A1628 (texto, sidebar, headings)
-    10% Verde teal base #2E4A47 (CTAs y acciones primarias, color del logo)
-  Light = blanco puro, sidebar negro permanente, teal en CTAs.
+  Builder CRM - paleta base "clair et net" (config/cliente.ts la pisa en runtime)
+    Lienzo blanco, grises neutros, una sola acento: el color primario de la marca.
+    Sidebar clara por defecto; colorSidebar en la config puede volverla oscura y
+    cssVariablesMarca() deriva el resto de sus tonos.
+    --primary-ink es el primario usable como TEXTO sobre blanco (un cian de marca
+    no se lee como texto; el ink lo oscurece hasta 4.5:1).
 */
 
 :root {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-heading: 'DM Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Surfaces */
-  --background: #EEF1F6;
-  --foreground: #0A1628;
+  /* Superficies */
+  --background: #FBFBFC;
+  --foreground: #18181B;
   --card: #FFFFFF;
-  --card-foreground: #0A1628;
+  --card-foreground: #18181B;
   --popover: #FFFFFF;
-  --popover-foreground: #0A1628;
+  --popover-foreground: #18181B;
 
-  /* Primary = verde teal base (CTAs por defecto en shadcn) */
   --primary: #2E4A47;
   --primary-foreground: #FFFFFF;
+  --primary-ink: #2E4A47;
 
-  /* Secondary = zinc claro */
   --secondary: #F4F4F5;
-  --secondary-foreground: #0A1628;
+  --secondary-foreground: #18181B;
 
-  /* Muted = zinc claro (un toque mas fresco para diferenciar columnas) */
-  --muted: #E8EBF1;
-  --muted-foreground: #52525B;
+  --muted: #F4F4F5;
+  --muted-foreground: #63636E;
 
-  /* Accent = teal suave */
-  --accent: #ECF3F2;
-  --accent-foreground: #1A332F;
+  --accent: #EEF3F2;
+  --accent-foreground: #1F3331;
 
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
 
-  --border: #D7DBE3;
-  --input: #D7DBE3;
+  --border: #E7E7EA;
+  --input: #DCDCE0;
   --ring: #2E4A47;
 
-  /* Charts: brand-aligned */
+  /* Graficos: una familia de la marca + neutros, no un arcoiris */
   --chart-1: #2E4A47;
-  --chart-2: #0A1628;
-  --chart-3: #6FA29D;
-  --chart-4: #1F9B73;
-  --chart-5: #1E3A5F;
+  --chart-2: #52525B;
+  --chart-3: #8FB3AE;
+  --chart-4: #A1A1AA;
+  --chart-5: #D4D4D8;
 
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  /* Sidebar = negro neutro permanente (estilo Attio/SHARP) */
-  --sidebar: #0F1419;
-  --sidebar-foreground: #E8EDF5;
-  --sidebar-foreground-muted: rgba(232, 237, 245, 0.55);
-  --sidebar-primary: #6FA29D;
+  /* Sidebar clara (colorSidebar en la config la cambia) */
+  --sidebar: #F7F7F8;
+  --sidebar-foreground: #18181B;
+  --sidebar-foreground-muted: #5B5B66;
+  --sidebar-primary: #2E4A47;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: rgba(111, 162, 157, 0.14);
-  --sidebar-accent-foreground: #ECF3F2;
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-ring: #6FA29D;
+  --sidebar-accent: #EBEBEE;
+  --sidebar-accent-foreground: #18181B;
+  --sidebar-border: #E7E7EA;
+  --sidebar-ring: #2E4A47;
 
-  --success: #1F9B73;
+  --success: #15803D;
   --success-foreground: #FFFFFF;
-  --warning: #D97706;
+  --warning: #B45309;
   --warning-foreground: #FFFFFF;
 
-  /* Elevation scale (navy-tinted) */
-  --shadow-xs: 0 1px 2px rgba(10, 22, 40, 0.04);
-  --shadow-sm: 0 1px 2px rgba(10, 22, 40, 0.05), 0 1px 3px rgba(10, 22, 40, 0.06);
-  --shadow-md: 0 2px 4px rgba(10, 22, 40, 0.04), 0 4px 12px rgba(10, 22, 40, 0.08);
-  --shadow-lg: 0 4px 8px rgba(10, 22, 40, 0.04), 0 12px 28px rgba(10, 22, 40, 0.12);
+  /* Elevacion: sutil, el borde hace casi todo el trabajo */
+  --shadow-xs: 0 1px 2px rgba(24, 24, 27, 0.04);
+  --shadow-sm: 0 1px 2px rgba(24, 24, 27, 0.04);
+  --shadow-md: 0 2px 8px rgba(24, 24, 27, 0.06);
+  --shadow-lg: 0 8px 24px rgba(24, 24, 27, 0.10);
 }
 
 @layer base {
@@ -145,12 +145,12 @@
     letter-spacing: -0.01em;
   }
   *:focus-visible {
-    outline: 2px solid #2E4A47;
+    outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
   ::selection {
-    background: rgba(46, 74, 71, 0.30);
-    color: #0A1628;
+    background: color-mix(in srgb, var(--primary) 25%, transparent);
+    color: var(--foreground);
   }
   /* Scrollbar fina estilo Silicon Valley */
   ::-webkit-scrollbar {
@@ -175,8 +175,8 @@
     transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
   }
   .surface-card {
-    border-radius: 1rem;
-    border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
     background-color: var(--card);
     box-shadow: var(--shadow-sm);
   }

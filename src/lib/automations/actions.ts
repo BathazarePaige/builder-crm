@@ -83,7 +83,7 @@ export function buildRenderer(event: AutomationEvent, contactId: string) {
           .from(contacts)
           .where(eq(contacts.id, contactId))
           .limit(1);
-        return c?.name ?? "el contacto";
+        return c?.name ?? "le contact";
       }
       case "asesor": {
         const ownerId =
@@ -96,14 +96,14 @@ export function buildRenderer(event: AutomationEvent, contactId: string) {
                   .where(eq(contacts.id, contactId))
                   .limit(1)
               )[0]?.ownerId;
-        if (!ownerId) return "sin asesor";
+        if (!ownerId) return "sans conseiller";
         const m = await getMember(ownerId);
-        return m ? displayName(m) : "sin asesor";
+        return m ? displayName(m) : "sans conseiller";
       }
       case "quien": {
         const by = (p as unknown as ContactAssignedPayload).assignedBy;
         if (!by) return "";
-        return by.type === "agent" ? "el agente de IA" : by.name;
+        return by.type === "agent" ? "l’agent IA" : by.name;
       }
       case "etapa":
         return typeof p.stageName === "string" ? p.stageName : "";
@@ -137,8 +137,8 @@ export function buildRenderer(event: AutomationEvent, contactId: string) {
 async function recipientOptions(): Promise<SelectOption[]> {
   const members = await listMembers({ onlyActive: true });
   return [
-    { value: "owner", label: "Asesor asignado al contacto" },
-    { value: "admins", label: "Todos los administradores" },
+    { value: "owner", label: "Conseiller attribué au contact" },
+    { value: "admins", label: "Tous les administrateurs" },
     ...members.map((m) => ({ value: `member:${m.id}`, label: displayName(m) })),
   ];
 }
@@ -150,10 +150,10 @@ async function memberOptions(): Promise<SelectOption[]> {
 
 async function activityTypeOptions(): Promise<SelectOption[]> {
   return [
-    { value: "note", label: "Nota" },
-    { value: "follow_up", label: "Seguimiento" },
-    { value: "call", label: "Llamada" },
-    { value: "meeting", label: "Reunion" },
+    { value: "note", label: "Note" },
+    { value: "follow_up", label: "Relance" },
+    { value: "call", label: "Appel" },
+    { value: "meeting", label: "Rendez-vous" },
     { value: "email", label: "Email" },
   ];
 }
@@ -164,12 +164,12 @@ async function activityTypeOptions(): Promise<SelectOption[]> {
 
 const push: ActionDef = {
   key: "push",
-  label: "Notificacion interna",
-  description: "Push al telefono de un asesor, de los administradores o del asesor asignado.",
+  label: "Notification interne",
+  description: "Notification push au téléphone d’un conseiller, des administrateurs ou du conseiller attribué.",
   params: [
-    { key: "to", label: "Para", type: "select", required: true, options: recipientOptions },
-    { key: "title", label: "Titulo", type: "text", required: true, templated: true, placeholder: "Nuevo lead en {{etapa}}" },
-    { key: "body", label: "Texto", type: "textarea", required: true, templated: true, placeholder: "{{contacto}} entro a {{etapa}}" },
+    { key: "to", label: "Pour", type: "select", required: true, options: recipientOptions },
+    { key: "title", label: "Titre", type: "text", required: true, templated: true, placeholder: "Nouveau lead en {{etapa}}" },
+    { key: "body", label: "Texte", type: "textarea", required: true, templated: true, placeholder: "{{contacto}} est passé en {{etapa}}" },
   ],
   async run(ctx, params) {
     const recipients: string[] = [];
@@ -179,7 +179,7 @@ const push: ActionDef = {
         .from(contacts)
         .where(eq(contacts.id, ctx.contactId))
         .limit(1);
-      if (!c?.ownerId) return { status: "skipped", detail: "El contacto no tiene asesor asignado" };
+      if (!c?.ownerId) return { status: "skipped", detail: "Le contact n’a pas de conseiller attribué" };
       recipients.push(c.ownerId);
     } else if (params.to === "admins") {
       const admins = (await listMembers({ onlyActive: true })).filter((m) => m.role === "admin");
@@ -187,7 +187,7 @@ const push: ActionDef = {
     } else if (params.to?.startsWith("member:")) {
       recipients.push(params.to.slice("member:".length));
     } else {
-      return { status: "skipped", detail: "Destinatario invalido" };
+      return { status: "skipped", detail: "Destinataire invalide" };
     }
 
     const title = await ctx.render(params.title ?? "");
@@ -215,31 +215,31 @@ const push: ActionDef = {
         tag: `auto-${ctx.contactId}`,
       });
       delivered++;
-      if ("error" in out.push) parts.push(`${displayName(m)}: en el CRM (push fallo: ${out.push.error})`);
-      else if (out.push.noDevices) parts.push(`${displayName(m)}: en el CRM (sin push: no activo ningun dispositivo)`);
-      else parts.push(`${displayName(m)}: en el CRM + push a ${out.push.sent} dispositivo${out.push.sent === 1 ? "" : "s"}`);
+      if ("error" in out.push) parts.push(`${displayName(m)} : dans le CRM (échec du push : ${out.push.error})`);
+      else if (out.push.noDevices) parts.push(`${displayName(m)} : dans le CRM (pas de push : aucun appareil activé)`);
+      else parts.push(`${displayName(m)} : dans le CRM + push vers ${out.push.sent} appareil${out.push.sent === 1 ? "" : "s"}`);
     }
     return delivered > 0
       ? { status: "done", detail: parts.join(" · ") }
-      : { status: "skipped", detail: "Ningun destinatario activo" };
+      : { status: "skipped", detail: "Aucun destinataire actif" };
   },
 };
 
 const addTag: ActionDef = {
   key: "add_tag",
-  label: "Agregar etiqueta",
-  description: "Suma una etiqueta al contacto (si no la tiene ya).",
-  params: [{ key: "tag", label: "Etiqueta", type: "text", required: true, placeholder: "urgente" }],
+  label: "Ajouter une étiquette",
+  description: "Ajoute une étiquette au contact (s’il ne l’a pas déjà).",
+  params: [{ key: "tag", label: "Étiquette", type: "text", required: true, placeholder: "urgent" }],
   async run(ctx, params) {
     const tag = (params.tag ?? "").trim();
-    if (!tag) return { status: "skipped", detail: "Etiqueta vacia" };
+    if (!tag) return { status: "skipped", detail: "Étiquette vide" };
     const [c] = await db
       .select({ tags: contacts.tags })
       .from(contacts)
       .where(eq(contacts.id, ctx.contactId))
       .limit(1);
-    if (!c) return { status: "skipped", detail: "Contacto no encontrado" };
-    if (c.tags.includes(tag)) return { status: "skipped", detail: `Ya tenia "${tag}"` };
+    if (!c) return { status: "skipped", detail: "Contact introuvable" };
+    if (c.tags.includes(tag)) return { status: "skipped", detail: `Avait déjà « ${tag} »` };
     await db
       .update(contacts)
       .set({ tags: [...c.tags, tag], updatedAt: new Date() })
@@ -250,18 +250,18 @@ const addTag: ActionDef = {
 
 const removeTag: ActionDef = {
   key: "remove_tag",
-  label: "Quitar etiqueta",
-  description: "Quita una etiqueta del contacto.",
-  params: [{ key: "tag", label: "Etiqueta", type: "text", required: true }],
+  label: "Retirer une étiquette",
+  description: "Retire une étiquette du contact.",
+  params: [{ key: "tag", label: "Étiquette", type: "text", required: true }],
   async run(ctx, params) {
     const tag = (params.tag ?? "").trim();
-    if (!tag) return { status: "skipped", detail: "Etiqueta vacia" };
+    if (!tag) return { status: "skipped", detail: "Étiquette vide" };
     const [c] = await db
       .select({ tags: contacts.tags })
       .from(contacts)
       .where(eq(contacts.id, ctx.contactId))
       .limit(1);
-    if (!c || !c.tags.includes(tag)) return { status: "skipped", detail: `No tenia "${tag}"` };
+    if (!c || !c.tags.includes(tag)) return { status: "skipped", detail: `N’avait pas « ${tag} »` };
     await db
       .update(contacts)
       .set({ tags: c.tags.filter((t) => t !== tag), updatedAt: new Date() })
@@ -272,18 +272,18 @@ const removeTag: ActionDef = {
 
 const assignOwner: ActionDef = {
   key: "assign_owner",
-  label: "Asignar asesor",
-  description: "Pone a un asesor a cargo del contacto. Dispara a su vez \"Contacto asignado\".",
-  params: [{ key: "memberId", label: "Asesor", type: "select", required: true, options: memberOptions }],
+  label: "Attribuer un conseiller",
+  description: "Attribue le contact à un conseiller. Déclenche aussi « Contact attribué ».",
+  params: [{ key: "memberId", label: "Conseiller", type: "select", required: true, options: memberOptions }],
   async run(ctx, params) {
-    if (!params.memberId) return { status: "skipped", detail: "Sin asesor elegido" };
+    if (!params.memberId) return { status: "skipped", detail: "Aucun conseiller choisi" };
     const r = await assignContact({
       contactId: ctx.contactId,
       ownerId: params.memberId,
       by: { type: "automation" },
       depth: (ctx.event.depth ?? 0) + 1,
     });
-    if (!r.ok) return { status: "skipped", detail: r.error ?? "No se pudo asignar" };
+    if (!r.ok) return { status: "skipped", detail: r.error ?? "Attribution impossible" };
     const name = r.owner ? displayName(r.owner) : "?";
     return r.unchanged
       ? { status: "skipped", detail: `Ya estaba asignado a ${name}` }
@@ -293,15 +293,15 @@ const assignOwner: ActionDef = {
 
 const createActivity: ActionDef = {
   key: "create_activity",
-  label: "Crear actividad",
-  description: "Deja una nota o un seguimiento en el historial del contacto.",
+  label: "Créer une activité",
+  description: "Ajoute une note ou une relance dans l’historique du contact.",
   params: [
-    { key: "type", label: "Tipo", type: "select", required: true, options: activityTypeOptions },
-    { key: "description", label: "Descripcion", type: "textarea", required: true, templated: true, placeholder: "Llamar a {{contacto}} por {{etapa}}" },
+    { key: "type", label: "Type", type: "select", required: true, options: activityTypeOptions },
+    { key: "description", label: "Description", type: "textarea", required: true, templated: true, placeholder: "Appeler {{contacto}} au sujet de {{etapa}}" },
   ],
   async run(ctx, params) {
     const description = (await ctx.render(params.description ?? "")).trim();
-    if (!description) return { status: "skipped", detail: "Descripcion vacia" };
+    if (!description) return { status: "skipped", detail: "Description vide" };
     await db.insert(activities).values({
       type: params.type || "note",
       description,
@@ -355,28 +355,28 @@ export async function describeActions(actions: ActionSpec[]): Promise<string> {
     switch (a.type) {
       case "push": {
         const to = a.params.to ?? "";
-        let who = "asesor asignado";
-        if (to === "admins") who = "administradores";
+        let who = "conseiller attribué";
+        if (to === "admins") who = "administrateurs";
         else if (to.startsWith("member:")) {
           const m = await getMember(to.slice(7));
-          who = m ? displayName(m) : "asesor";
+          who = m ? displayName(m) : "conseiller";
         }
         parts.push(`Push a ${who}`);
         break;
       }
       case "add_tag":
-        parts.push(`Etiqueta "${a.params.tag}"`);
+        parts.push(`Étiquette « ${a.params.tag} »`);
         break;
       case "remove_tag":
-        parts.push(`Quitar "${a.params.tag}"`);
+        parts.push(`Retirer « ${a.params.tag} »`);
         break;
       case "assign_owner": {
         const m = a.params.memberId ? await getMember(a.params.memberId) : null;
-        parts.push(`Asignar a ${m ? displayName(m) : "asesor"}`);
+        parts.push(`Attribuer à ${m ? displayName(m) : "conseiller"}`);
         break;
       }
       case "create_activity":
-        parts.push("Crear actividad");
+        parts.push("Créer une activité");
         break;
     }
   }
@@ -390,7 +390,7 @@ export async function stageLabel(stageId: string): Promise<string> {
     .from(pipelineStages)
     .where(eq(pipelineStages.id, stageId))
     .limit(1);
-  if (!s) return "etapa";
+  if (!s) return "étape";
   const [{ n }] = await db.select({ n: sql<number>`count(*)::int` }).from(pipelines);
   if (n <= 1) return s.name;
   const [p] = await db

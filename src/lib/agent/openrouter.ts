@@ -14,7 +14,7 @@ let client: OpenAI | null = null;
 export function getOpenRouterClient(): OpenAI {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY no configurada");
+    throw new Error("OPENROUTER_API_KEY non configurée");
   }
   if (!client) {
     client = new OpenAI({

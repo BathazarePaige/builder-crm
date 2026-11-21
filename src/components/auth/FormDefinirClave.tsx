@@ -94,11 +94,11 @@ export function FormDefinirClave() {
     e.preventDefault();
     setError(null);
     if (clave.length < MINIMO) {
-      setError("La contrasena necesita al menos " + MINIMO + " caracteres.");
+      setError("Le mot de passe doit contenir au moins " + MINIMO + " caractères.");
       return;
     }
     if (clave !== repetida) {
-      setError("Las dos contrasenas no coinciden.");
+      setError("Les deux mots de passe ne correspondent pas.");
       return;
     }
     setGuardando(true);
@@ -118,7 +118,7 @@ export function FormDefinirClave() {
     return (
       <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="h-4 w-4 animate-spin" />
-        Comprobando el enlace...
+        Vérification du lien…
       </p>
     );
   }
@@ -130,11 +130,10 @@ export function FormDefinirClave() {
           {motivo}
         </div>
         <p className="text-sm text-muted-foreground">
-          Los enlaces de acceso valen una sola vez y vencen a las 24 horas. Pedi uno nuevo
-          o que te lo reenvie un administrador.
+          Les liens d’accès ne servent qu’une fois et expirent après 24 heures. Demandez-en un nouveau, ou demandez à un administrateur de vous le renvoyer.
         </p>
         <Button render={<Link href="/auth/recuperar" />} className="w-full h-10">
-          Pedir un enlace nuevo
+          Demander un nouveau lien
         </Button>
       </div>
     );
@@ -144,7 +143,7 @@ export function FormDefinirClave() {
     return (
       <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
         <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-        Listo, entrando...
+        C’est bon, connexion…
       </p>
     );
   }
@@ -153,17 +152,17 @@ export function FormDefinirClave() {
     <form onSubmit={guardar} className="space-y-4">
       {email && (
         <p className="text-sm text-muted-foreground">
-          Vas a entrar como <span className="font-medium text-foreground">{email}</span>.
+          Vous allez vous connecter en tant que <span className="font-medium text-foreground">{email}</span>.
         </p>
       )}
       <div className="space-y-1.5">
-        <Label htmlFor="clave">Tu contrasena</Label>
+        <Label htmlFor="clave">Votre mot de passe</Label>
         <Input
           id="clave"
           type="password"
           value={clave}
           onChange={(e) => setClave(e.target.value)}
-          placeholder={"Minimo " + MINIMO + " caracteres"}
+          placeholder={MINIMO + " caractères minimum"}
           autoComplete="new-password"
           minLength={MINIMO}
           required
@@ -171,13 +170,13 @@ export function FormDefinirClave() {
         />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="repetida">Repetila</Label>
+        <Label htmlFor="repetida">Confirmez-le</Label>
         <Input
           id="repetida"
           type="password"
           value={repetida}
           onChange={(e) => setRepetida(e.target.value)}
-          placeholder="La misma"
+          placeholder="Le même"
           autoComplete="new-password"
           required
           disabled={guardando}
@@ -190,7 +189,7 @@ export function FormDefinirClave() {
       )}
       <Button type="submit" className="w-full h-10 cursor-pointer" disabled={guardando}>
         {guardando && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-        Guardar y entrar
+        Enregistrer et entrer
       </Button>
     </form>
   );
@@ -201,9 +200,9 @@ export function FormDefinirClave() {
  * el resto se deja pasar tal cual, para no esconder informacion a quien va a pedir ayuda.
  */
 function explicar(mensaje: string | null | undefined): string {
-  if (!mensaje) return "Abri el enlace del correo otra vez: esta pagina sola no alcanza.";
+  if (!mensaje) return "Rouvrez le lien de l’e-mail : cette page seule ne suffit pas.";
   const m = mensaje.toLowerCase();
-  if (m.includes("expired")) return "El enlace vencio.";
-  if (m.includes("invalid") || m.includes("already")) return "El enlace ya se uso.";
+  if (m.includes("expired")) return "Le lien a expiré.";
+  if (m.includes("invalid") || m.includes("already")) return "Le lien a déjà servi.";
   return mensaje.replace(/\+/g, " ");
 }

@@ -14,14 +14,14 @@ export async function DELETE(
   const doc = await getDocument(id);
   const contact = doc ? await documentContact(doc) : null;
   if (!doc || !contact || !canAccessContact(auth.member, contact)) {
-    return NextResponse.json({ error: "Documento no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
   }
 
   try {
     await deleteDocument(id);
   } catch (err) {
-    console.error("[documents] delete fallo", id, err);
-    return NextResponse.json({ error: "No se pudo borrar del almacenamiento" }, { status: 502 });
+    console.error("[documents] échec de la suppression", id, err);
+    return NextResponse.json({ error: "Impossible de supprimer du stockage" }, { status: 502 });
   }
   return NextResponse.json({ success: true });
 }

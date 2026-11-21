@@ -93,8 +93,8 @@ export async function backfillFromZernio(
         result.incomplete = true;
         result.errors.push(
           outOfTime
-            ? "Se acabo el tiempo de la funcion: volve a importar para continuar."
-            : `Tope de ${maxConversations} conversaciones alcanzado: volve a importar para continuar.`
+            ? "Le temps de la fonction est écoulé : relancez l’import pour continuer."
+            : `Limite de ${maxConversations} conversations atteinte : relancez l’import pour continuer.`
         );
         return result;
       }

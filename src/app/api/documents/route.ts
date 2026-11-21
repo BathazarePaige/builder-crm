@@ -24,9 +24,9 @@ export async function GET(request: NextRequest) {
   if ("response" in auth) return auth.response;
 
   const contactId = request.nextUrl.searchParams.get("contactId");
-  if (!contactId) return NextResponse.json({ error: "contactId requerido" }, { status: 400 });
+  if (!contactId) return NextResponse.json({ error: "contactId obligatoire" }, { status: 400 });
   if (!(await accessibleContact(auth.member, contactId))) {
-    return NextResponse.json({ error: "Contacto no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Contact introuvable" }, { status: 404 });
   }
 
   const items = await listDocuments(contactId);
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
   if (!storageConfigured()) {
     return NextResponse.json(
-      { error: "El almacenamiento de archivos no esta configurado (variables S3_*)." },
+      { error: "Le stockage de fichiers n’est pas configuré (variables S3_*)." },
       { status: 503 }
     );
   }
@@ -52,13 +52,13 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   if (!body.contactId || !body.name || !body.mime || typeof body.size !== "number") {
-    return NextResponse.json({ error: "Faltan contactId, name, mime o size" }, { status: 400 });
+    return NextResponse.json({ error: "Il manque contactId, name, mime ou size" }, { status: 400 });
   }
   if (!(await accessibleContact(auth.member, body.contactId))) {
-    return NextResponse.json({ error: "Contacto no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Contact introuvable" }, { status: 404 });
   }
 
   const result = await beginUpload({

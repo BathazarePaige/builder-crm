@@ -75,7 +75,7 @@ async function handleAccountConnected(
 
   if (!accountId || !isChannel(platform)) {
     return ignored(
-      `account.connected sin accountId o con plataforma no usada: ${platform}`
+      `account.connected sans accountId ou avec une plateforme non utilisée : ${platform}`
     );
   }
 
@@ -115,7 +115,7 @@ async function handleMessageEvent(
 
   const platform = msg?.platform ?? payload.account?.platform;
   if (!isChannel(platform)) {
-    return ignored(`plataforma no usada por el CRM: ${platform}`);
+    return ignored(`plateforme non utilisée par le CRM : ${platform}`);
   }
 
   const zernioAccountId = payload.account?.accountId ?? payload.account?.id;
@@ -123,7 +123,7 @@ async function handleMessageEvent(
   if (!account) {
     // Igual que el webhook de Meta con phone_number_id: una cuenta que no esta en
     // nuestra tabla no es nuestra, y crear contactos con sus mensajes seria basura.
-    return ignored(`cuenta de Zernio no registrada: ${zernioAccountId}`);
+    return ignored(`compte Zernio non enregistré : ${zernioAccountId}`);
   }
 
   const conversationExternalId = conv?.id ?? msg?.conversationId;
@@ -132,7 +132,7 @@ async function handleMessageEvent(
   const direction = msg?.direction === "outgoing" ? "out" : "in";
   const identity = resolveParticipant(platform, conv, msg, direction);
   if (!identity.externalId) {
-    return ignored("no se pudo resolver el participante");
+    return ignored("impossible d’identifier le participant");
   }
 
   const contactId = await findOrCreateContactByIdentity({
@@ -193,7 +193,7 @@ async function handleStatusEvent(
 ): Promise<ProcessResult> {
   const msg = payload.message;
   const externalId = msg?.platformMessageId ?? msg?.id;
-  if (!externalId) return ignored("evento de estado sin id de mensaje");
+  if (!externalId) return ignored("événement de statut sans id de message");
 
   const at = parseDate(payload.timestamp) ?? new Date();
 
@@ -206,7 +206,7 @@ async function handleStatusEvent(
           ? {
               status: "failed",
               errorMessage: JSON.stringify(
-                msg?.deliveryError ?? { message: "envio fallido" }
+                msg?.deliveryError ?? { message: "échec de l’envoi" }
               ).slice(0, 1000),
             }
           : { status: "deleted" };

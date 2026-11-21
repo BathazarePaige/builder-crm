@@ -112,11 +112,11 @@ export function ContactDetailPanel({
       setNeedsHumanReason(data.needsHumanReason);
       toast.success(
         data.aiEnabled
-          ? "Agente reactivado en esta conversacion"
-          : "Agente pausado en esta conversacion",
+          ? "Agent réactivé dans cette conversation"
+          : "Agent mis en pause dans cette conversation",
       );
     } catch {
-      toast.error("No se pudo actualizar el estado del bot");
+      toast.error("Impossible de changer l’état de l’agent");
     } finally {
       setAiBusy(false);
     }
@@ -134,7 +134,7 @@ export function ContactDetailPanel({
       if (!res.ok) throw new Error("save_failed");
     } catch {
       setTags(previous);
-      toast.error("No se pudo guardar la etiqueta");
+      toast.error("Impossible d’enregistrer l’étiquette");
     }
   };
 
@@ -186,8 +186,8 @@ export function ContactDetailPanel({
   return (
     <aside className="hidden lg:flex w-80 shrink-0 border-l border-border h-full flex-col bg-card">
       <div className="h-14 px-4 flex items-center border-b border-border shrink-0">
-        <h2 className="text-sm font-semibold tracking-tight font-heading">
-          Detalles del contacto
+        <h2 className="text-sm font-semibold tracking-tight">
+          Fiche contact
         </h2>
       </div>
 
@@ -195,7 +195,7 @@ export function ContactDetailPanel({
         <div className="px-4 py-5 flex flex-col items-center text-center border-b border-border">
           <div
             className={cn(
-              "h-14 w-14 rounded-full flex items-center justify-center text-base font-semibold mb-3",
+              "h-12 w-12 rounded-full flex items-center justify-center text-sm font-semibold mb-3",
               avatarBg(contact.name),
             )}
           >
@@ -229,12 +229,12 @@ export function ContactDetailPanel({
                   <Link
                     key={t.conversationId}
                     href={`/conversations/${t.conversationId}`}
-                    title={`Ver el hilo de ${CHANNEL_LABELS[t.channel]}`}
+                    title={`Voir le fil ${CHANNEL_LABELS[t.channel]}`}
                     className={cn(
-                      "inline-flex items-center gap-1 h-6 px-2 rounded-full text-[10px] font-medium transition-colors",
+                      "inline-flex items-center gap-1 h-6 px-2 rounded-md border text-[11px] font-medium transition-colors",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                        ? "bg-foreground text-background border-foreground"
+                        : "bg-card text-muted-foreground border-border hover:bg-muted"
                     )}
                   >
                     <ChannelIcon
@@ -255,10 +255,10 @@ export function ContactDetailPanel({
         {attribution && (
           <div className="px-4 py-3 border-b border-border">
             <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-2">
-              <Megaphone className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
+              <Megaphone className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary-ink" />
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  Vino de un anuncio
+                <p className="text-[11px] font-medium text-muted-foreground">
+                  Venu d’une publicité
                 </p>
                 <p className="text-xs font-medium mt-0.5 break-words">
                   {attribution.title}
@@ -268,9 +268,9 @@ export function ContactDetailPanel({
                     href={attribution.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] text-primary hover:underline break-all"
+                    className="text-[11px] text-primary-ink hover:underline break-all"
                   >
-                    Ver anuncio
+                    Voir la publicité
                   </a>
                 )}
                 {attribution.adId && (
@@ -285,31 +285,35 @@ export function ContactDetailPanel({
 
         <div className="px-4 py-4 border-b border-border space-y-2.5">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <Label className="text-[12px] font-medium text-muted-foreground flex items-center gap-1.5">
               <Bot className="h-3 w-3" />
-              Agente IA
+              Agent IA
             </Label>
             <span
               className={cn(
-                "inline-flex items-center gap-1 h-5 px-1.5 rounded-sm text-[10px] font-semibold uppercase tracking-wide",
+                "inline-flex items-center gap-1.5 h-5 px-2 rounded-full text-[11px] font-medium",
                 aiEnabled && !needsHuman
-                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                  ? "bg-emerald-50 text-emerald-800"
                   : "bg-muted text-muted-foreground",
               )}
             >
-              {aiEnabled && !needsHuman ? "ON" : "OFF"}
+              <span
+                aria-hidden
+                className={cn("h-1.5 w-1.5 rounded-full", aiEnabled && !needsHuman ? "bg-emerald-600" : "bg-muted-foreground")}
+              />
+              {aiEnabled && !needsHuman ? "Actif" : "En pause"}
             </span>
           </div>
 
           {needsHuman && (
-            <div className="rounded-md border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 px-2.5 py-2 text-[11px] flex items-start gap-1.5">
-              <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div className="rounded-md bg-amber-50 px-2.5 py-2 text-[12px] flex items-start gap-1.5">
+              <AlertCircle className="h-3.5 w-3.5 text-amber-700 shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-amber-900 dark:text-amber-200">
-                  Necesita humano
+                <p className="font-medium text-amber-900">
+                  Humain requis
                 </p>
                 {needsHumanReason && (
-                  <p className="text-amber-800 dark:text-amber-300/80 mt-0.5">
+                  <p className="text-amber-900 mt-0.5">
                     {needsHumanReason}
                   </p>
                 )}
@@ -328,7 +332,7 @@ export function ContactDetailPanel({
                 }
                 className="cursor-pointer h-8 text-xs flex-1"
               >
-                Reactivar agente
+                Réactiver l’agent
               </Button>
             ) : aiEnabled ? (
               <Button
@@ -339,7 +343,7 @@ export function ContactDetailPanel({
                 onClick={() => updateAi({ enabled: false })}
                 className="cursor-pointer h-8 text-xs flex-1"
               >
-                Pausar agente
+                Mettre l’agent en pause
               </Button>
             ) : (
               <Button
@@ -349,23 +353,23 @@ export function ContactDetailPanel({
                 onClick={() => updateAi({ enabled: true })}
                 className="cursor-pointer h-8 text-xs flex-1"
               >
-                Activar agente
+                Activer l’agent
               </Button>
             )}
           </div>
         </div>
 
         <div className="px-4 py-5 border-b border-border space-y-2.5">
-          <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Asesor a cargo
+          <Label className="text-[12px] font-medium text-muted-foreground">
+            Conseiller responsable
           </Label>
           <OwnerSelect contactId={contact.id} value={contact.ownerId ?? null} compact />
         </div>
 
         {camposContacto().length > 0 && (
           <div className="px-4 py-5 border-b border-border space-y-2.5">
-            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Datos
+            <Label className="text-[12px] font-medium text-muted-foreground">
+              Informations
             </Label>
             <CamposPersonalizadosLista valores={contact.customFields} compacto mostrarVacios />
           </div>
@@ -373,30 +377,30 @@ export function ContactDetailPanel({
 
         {contact.aiSummary && (
           <div className="px-4 py-5 border-b border-border space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <Label className="text-[12px] font-medium text-muted-foreground flex items-center gap-1.5">
               <Bot className="h-3 w-3" />
-              Resumen del agente
+              Résumé de l’agent
             </Label>
-            <p className="text-xs leading-relaxed whitespace-pre-line">{contact.aiSummary}</p>
+            <p className="text-[13px] leading-relaxed whitespace-pre-line">{contact.aiSummary}</p>
           </div>
         )}
 
         <div className="px-4 py-5 border-b border-border space-y-2.5">
-          <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Etiquetas
+          <Label className="text-[12px] font-medium text-muted-foreground">
+            Étiquettes
           </Label>
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[11px] font-medium"
+                  className="inline-flex items-center gap-1 rounded-md bg-muted text-foreground px-2 py-0.5 text-[12px] font-medium"
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    aria-label={`Quitar ${tag}`}
+                    aria-label={`Retirer ${tag}`}
                     className="hover:text-destructive cursor-pointer"
                   >
                     <X className="h-3 w-3" />
@@ -415,7 +419,8 @@ export function ContactDetailPanel({
                   addTag();
                 }
               }}
-              placeholder="Nueva etiqueta..."
+              placeholder="Nouvelle étiquette…"
+              aria-label="Nouvelle étiquette"
               className="h-8 text-xs"
             />
             <Button
@@ -426,35 +431,36 @@ export function ContactDetailPanel({
               disabled={!tagDraft.trim()}
               className="cursor-pointer h-8 text-xs"
             >
-              Agregar
+              Ajouter
             </Button>
           </div>
         </div>
 
         <div className="px-4 py-5 space-y-2.5">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Notas
+            <Label className="text-[12px] font-medium text-muted-foreground">
+              Notes
             </Label>
-            <span className="text-[10px] text-muted-foreground/70 h-3 flex items-center gap-1">
-              {notesState === "saving" && "Guardando..."}
+            <span className="text-[11px] text-muted-foreground h-3 flex items-center gap-1">
+              {notesState === "saving" && "Enregistrement…"}
               {notesState === "saved" && (
                 <>
                   <Check className="h-3 w-3 text-emerald-600" />
-                  Guardado
+                  Enregistré
                 </>
               )}
               {notesState === "error" && (
-                <span className="text-destructive">Error</span>
+                <span className="text-destructive">Erreur</span>
               )}
             </span>
           </div>
           <Textarea
             value={notes}
             onChange={(e) => onNotesChange(e.target.value)}
-            placeholder="Agregar notas sobre este contacto..."
+            placeholder="Ajouter une note sur ce contact…"
+            aria-label="Notes"
             rows={6}
-            className="text-xs resize-none"
+            className="text-[13px] resize-none"
           />
         </div>
       </div>
@@ -486,5 +492,5 @@ function extractAttribution(metadata: unknown): Attribution | null {
   const url = str("ctwa_source_url");
 
   if (!title && !adId) return null;
-  return { title: title ?? "Anuncio sin titulo", url, adId };
+  return { title: title ?? "Publicité sans titre", url, adId };
 }

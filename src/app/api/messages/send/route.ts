@@ -33,18 +33,18 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   if (!body.conversationId) {
     return NextResponse.json(
-      { error: "Campo 'conversationId' requerido" },
+      { error: "Champ 'conversationId' obligatoire" },
       { status: 400 }
     );
   }
   if (!body.text?.trim() && !body.template) {
     return NextResponse.json(
-      { error: "Tenes que enviar 'text' o 'template'" },
+      { error: "Il faut envoyer 'text' ou 'template'" },
       { status: 400 }
     );
   }

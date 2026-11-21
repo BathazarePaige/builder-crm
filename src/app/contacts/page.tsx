@@ -35,16 +35,16 @@ export default function ContactsPage() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold tracking-tight font-heading">
-            Contactos
+            Contacts
           </h1>
           <p className="text-xs text-muted-foreground">
             {contacts.length}{" "}
-            {contacts.length === 1 ? "contacto" : "contactos"}
+            {contacts.length === 1 ? "contact" : "contacts"}
           </p>
         </div>
         <Button onClick={() => setShowForm(true)} className="cursor-pointer">
           <Plus className="h-4 w-4" />
-          Nuevo contacto
+          Nouveau contact
         </Button>
       </div>
 

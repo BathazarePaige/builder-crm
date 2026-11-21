@@ -51,19 +51,19 @@ export function PipelineToolbar({
                 type="button"
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-medium transition-colors hover:bg-muted/40 cursor-pointer",
-                  filterCount > 0 && "border-primary/40 text-primary"
+                  filterCount > 0 && "border-primary-ink/40 text-primary-ink"
                 )}
               />
             }
           >
             <Filter className="h-3.5 w-3.5" />
-            Filtros{filterCount > 0 && ` (${filterCount})`}
+            Filtres{filterCount > 0 && ` (${filterCount})`}
           </PopoverTrigger>
           <PopoverContent align="end" className="w-72">
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Valor mín. (MXN)</Label>
+                  <Label className="text-xs">Valeur min.</Label>
                   <Input
                     type="number"
                     value={
@@ -80,7 +80,7 @@ export function PipelineToolbar({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Valor máx. (MXN)</Label>
+                  <Label className="text-xs">Valeur max.</Label>
                   <Input
                     type="number"
                     value={
@@ -105,7 +105,7 @@ export function PipelineToolbar({
                   onClick={() => onFiltersChange(DEFAULT_FILTERS)}
                   className="w-full cursor-pointer"
                 >
-                  Limpiar filtros
+                  Effacer les filtres
                 </Button>
               )}
             </div>
@@ -121,17 +121,17 @@ export function PipelineToolbar({
                   "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-medium transition-colors hover:bg-muted/40 cursor-pointer",
                   (sort.field !== DEFAULT_SORT.field ||
                     sort.dir !== DEFAULT_SORT.dir) &&
-                    "border-primary/40 text-primary"
+                    "border-primary-ink/40 text-primary-ink"
                 )}
               />
             }
           >
             <ArrowUpDown className="h-3.5 w-3.5" />
-            Ordenar
+            Trier
           </PopoverTrigger>
           <PopoverContent align="end" className="w-64">
             <div className="space-y-2">
-              <Label className="text-xs">Campo</Label>
+              <Label className="text-xs">Champ</Label>
               <Select
                 value={sort.field}
                 onValueChange={(v) =>
@@ -142,13 +142,13 @@ export function PipelineToolbar({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="createdAt">Fecha de creación</SelectItem>
-                  <SelectItem value="value">Valor</SelectItem>
-                  <SelectItem value="probability">Probabilidad</SelectItem>
+                  <SelectItem value="createdAt">Date de création</SelectItem>
+                  <SelectItem value="value">Valeur</SelectItem>
+                  <SelectItem value="probability">Probabilité</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Label className="text-xs">Dirección</Label>
+              <Label className="text-xs">Ordre</Label>
               <Select
                 value={sort.dir}
                 onValueChange={(v) =>
@@ -159,8 +159,8 @@ export function PipelineToolbar({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="desc">Descendente</SelectItem>
-                  <SelectItem value="asc">Ascendente</SelectItem>
+                  <SelectItem value="desc">Décroissant</SelectItem>
+                  <SelectItem value="asc">Croissant</SelectItem>
                 </SelectContent>
               </Select>
             </div>

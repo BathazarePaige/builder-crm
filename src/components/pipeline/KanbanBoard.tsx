@@ -130,11 +130,11 @@ export function KanbanBoard({ initialColumns, filters, sort }: KanbanBoardProps)
           }),
         });
         if (!res.ok) {
-          throw new Error("API error");
+          throw new Error("Erreur API");
         }
       } catch {
         setColumns(columnsSnapshot.current);
-        toast.error("Error al mover el deal. Se revirtio el cambio.");
+        toast.error("Impossible de déplacer l’affaire. Le changement a été annulé.");
       }
     },
     [columns]
@@ -143,8 +143,8 @@ export function KanbanBoard({ initialColumns, filters, sort }: KanbanBoardProps)
   if (viewColumns.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
-        Este pipeline no tiene etapas. Abri{" "}
-        <span className="font-medium">Editar pipeline</span> para crear la primera.
+        Ce pipeline n’a pas encore d’étape. Ouvrez{" "}
+        <span className="font-medium">Modifier le pipeline</span> pour créer la première.
       </div>
     );
   }

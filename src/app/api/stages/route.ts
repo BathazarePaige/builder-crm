@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const pipelineId = typeof body.pipelineId === "string" ? body.pipelineId : "";
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
   if (!pipelineId || !name) {
     return NextResponse.json(
-      { error: "pipelineId y name son requeridos" },
+      { error: "pipelineId et name sont obligatoires" },
       { status: 400 }
     );
   }
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   if (pipelineExists.length === 0) {
-    return NextResponse.json({ error: "Pipeline no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Pipeline introuvable" }, { status: 404 });
   }
 
   const existing = await db

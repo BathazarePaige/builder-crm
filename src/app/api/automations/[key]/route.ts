@@ -18,7 +18,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
   if ("response" in auth) return auth.response;
   const { key } = await params;
   const rule = await getAutomation(key);
-  if (!rule) return NextResponse.json({ error: "Regla no encontrada" }, { status: 404 });
+  if (!rule) return NextResponse.json({ error: "Règle introuvable" }, { status: 404 });
   return NextResponse.json(rule);
 }
 
@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const valid = validateAutomation(body);
@@ -41,7 +41,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 
   const updated = await updateAutomation(key, valid.data);
-  if (!updated) return NextResponse.json({ error: "Regla no encontrada" }, { status: 404 });
+  if (!updated) return NextResponse.json({ error: "Règle introuvable" }, { status: 404 });
   return NextResponse.json(updated);
 }
 
@@ -55,14 +55,14 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   if (typeof body.enabled !== "boolean") {
-    return NextResponse.json({ error: "Falta enabled" }, { status: 400 });
+    return NextResponse.json({ error: "enabled manquant" }, { status: 400 });
   }
 
   const ok = await setAutomationEnabled(key, body.enabled);
-  if (!ok) return NextResponse.json({ error: "Regla no encontrada" }, { status: 404 });
+  if (!ok) return NextResponse.json({ error: "Règle introuvable" }, { status: 404 });
   return NextResponse.json({ key, enabled: body.enabled });
 }
 
@@ -74,11 +74,11 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   const result = await deleteAutomation(key);
   if (result === "not_found") {
-    return NextResponse.json({ error: "Regla no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: "Règle introuvable" }, { status: 404 });
   }
   if (result === "seed") {
     return NextResponse.json(
-      { error: "Esta regla viene de ejemplo y no se borra. Puedes apagarla." },
+      { error: "Cette règle d’exemple ne peut pas être supprimée. Vous pouvez la désactiver." },
       { status: 400 }
     );
   }

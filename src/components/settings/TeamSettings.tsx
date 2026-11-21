@@ -34,13 +34,13 @@ interface Member {
 }
 
 const ROLE_ITEMS = [
-  { value: "admin", label: "Administrador" },
-  { value: "asesor", label: "Asesor" },
+  { value: "admin", label: "Administrateur" },
+  { value: "asesor", label: "Conseiller" },
 ];
 
 const ACCESO_ITEMS = [
-  { value: "invitacion", label: "Invitacion por correo" },
-  { value: "clave", label: "Contrasena temporal" },
+  { value: "invitacion", label: "Invitation par e-mail" },
+  { value: "clave", label: "Mot de passe temporaire" },
 ];
 
 type ModoAcceso = "invitacion" | "clave";
@@ -92,10 +92,10 @@ export function TeamSettings() {
     const res = await fetch(`/api/team/${m.id}/acceso`, { method: "POST" });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
-      toast.error(body.error ?? "No se pudo reenviar");
+      toast.error(body.error ?? "Impossible de renvoyer");
       return;
     }
-    toast.success(`Enlace enviado a ${m.email}`);
+    toast.success(`Lien envoyé à ${m.email}`);
   };
 
   const update = async (id: string, patch: Partial<Member>) => {
@@ -106,28 +106,28 @@ export function TeamSettings() {
     });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
-      toast.error(body.error ?? "No se pudo actualizar");
+      toast.error(body.error ?? "Impossible de mettre à jour");
       return;
     }
-    toast.success("Equipo actualizado");
+    toast.success("Équipe mise à jour");
     apply(await load());
   };
 
   if (loading) {
-    return <p className="text-sm text-muted-foreground">Cargando equipo...</p>;
+    return <p className="text-sm text-muted-foreground">Chargement de l’équipe…</p>;
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Los <strong>administradores</strong> ven todo y asignan contactos. Los{" "}
-          <strong>asesores</strong> ven solo los contactos que tienen asignados.
+          Les <strong>administrateurs</strong> voient tout et attribuent les contacts. Les{" "}
+          <strong>conseillers</strong> ne voient que les contacts qui leur sont attribués.
         </p>
         {isAdmin && (
           <Button size="sm" onClick={() => setOpen(true)} className="cursor-pointer shrink-0">
             <UserPlus className="h-4 w-4 mr-1" />
-            Agregar
+            Ajouter
           </Button>
         )}
       </div>
@@ -169,8 +169,8 @@ export function TeamSettings() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Administrador</SelectItem>
-                  <SelectItem value="asesor">Asesor</SelectItem>
+                  <SelectItem value="admin">Administrateur</SelectItem>
+                  <SelectItem value="asesor">Conseiller</SelectItem>
                 </SelectContent>
               </Select>
             ) : (
@@ -181,7 +181,7 @@ export function TeamSettings() {
                     Admin
                   </>
                 ) : (
-                  "Asesor"
+                  "Conseiller"
                 )}
               </Badge>
             )}
@@ -192,7 +192,7 @@ export function TeamSettings() {
                 size="sm"
                 onClick={() => reenviarAcceso(m)}
                 className="cursor-pointer h-8 px-2"
-                title="Reenviar el acceso por correo"
+                title="Renvoyer l’accès par e-mail"
               >
                 <Mail className="h-4 w-4 text-muted-foreground" />
               </Button>
@@ -204,12 +204,12 @@ export function TeamSettings() {
                 size="sm"
                 onClick={() => update(m.id, { active: !m.active })}
                 className="cursor-pointer h-8 px-2"
-                title={m.active ? "Desactivar" : "Reactivar"}
+                title={m.active ? "Désactiver" : "Réactiver"}
               >
                 {m.active ? (
                   <UserX className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <UserCheck className="h-4 w-4 text-primary" />
+                  <UserCheck className="h-4 w-4 text-primary-ink" />
                 )}
               </Button>
             )}
@@ -238,17 +238,17 @@ function CampoClaveTemporal({
 }) {
   return (
     <div className="space-y-2">
-      <Label htmlFor="tm-pass">Contrasena temporal</Label>
+      <Label htmlFor="tm-pass">Mot de passe temporaire</Label>
       <Input
         id="tm-pass"
         type="text"
         value={password}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="opcional, min. 8 caracteres"
+        placeholder="facultatif, 8 caractères min."
         autoComplete="off"
       />
       <p className="text-xs text-muted-foreground">
-        Dejala vacia si la persona va a entrar con Google u otro proveedor.
+        Laissez vide si la personne se connecte avec Google ou un autre fournisseur.
       </p>
     </div>
   );
@@ -285,18 +285,18 @@ function AddMemberDialog({
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(body.error ?? "No se pudo agregar");
+        toast.error(body.error ?? "Impossible d’ajouter");
         return;
       }
       if (body.avisoCorreo) {
-        toast.warning(`Agregado, pero el correo no salio: ${body.avisoCorreo}`);
+        toast.warning(`Ajouté, mais l’e-mail n’est pas parti : ${body.avisoCorreo}`);
       } else if (body.correoEnviado) {
-        toast.success(`Invitado. Le llego un correo a ${email} para elegir su contrasena.`);
+        toast.success(`Invité. Un e-mail a été envoyé à ${email} pour choisir son mot de passe.`);
       } else {
         toast.success(
           body.reusedAuthUser
-            ? "Agregado. Ya tenia usuario: entra con su contrasena de siempre."
-            : "Agregado. Pasale el email y la contrasena temporal."
+            ? "Ajouté. La personne avait déjà un compte : elle se connecte avec son mot de passe habituel."
+            : "Ajouté. Transmettez-lui l’e-mail et le mot de passe temporaire."
         );
       }
       setName("");
@@ -315,55 +315,55 @@ function AddMemberDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Agregar al equipo</DialogTitle>
+          <DialogTitle>Ajouter à l’équipe</DialogTitle>
           <DialogDescription>
             {invitar
-              ? "Le llega un correo con un enlace para elegir su contrasena. Entra con eso, no hace falta que le pases nada."
-              : "La cuenta queda lista al instante y no se envia ningun correo: pasale vos la contrasena temporal, o dejala vacia si va a entrar con un proveedor externo."}
+              ? "La personne reçoit un e-mail avec un lien pour choisir son mot de passe. Rien d’autre à lui transmettre."
+              : "Le compte est prêt tout de suite, sans e-mail : transmettez vous-même le mot de passe temporaire, ou laissez-le vide pour une connexion via un fournisseur externe."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="tm-name">Nombre</Label>
+            <Label htmlFor="tm-name">Nom</Label>
             <Input
               id="tm-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Como lo va a nombrar el agente"
+              placeholder="Nom utilisé par l’agent"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="tm-email">Email *</Label>
+            <Label htmlFor="tm-email">E-mail *</Label>
             <Input
               id="tm-email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="asesor@empresa.com"
+              placeholder="conseiller@entreprise.com"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label>Rol</Label>
+              <Label>Rôle</Label>
               <Select value={role} items={ROLE_ITEMS} onValueChange={(v) => v && setRole(v as Member["role"])}>
                 <SelectTrigger className="cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="asesor">Asesor</SelectItem>
-                  <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="asesor">Conseiller</SelectItem>
+                  <SelectItem value="admin">Administrateur</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
                 {role === "asesor"
-                  ? "Ve solo los contactos asignados a el, y sus conversaciones, operaciones y actividades."
-                  : "Ve todo y gestiona equipo, canales, agente y automatizaciones."}
+                  ? "Voit seulement ses contacts attribués, avec leurs conversations, affaires et activités."
+                  : "Voit tout et gère l’équipe, les canaux, l’agent et les automatisations."}
               </p>
             </div>
             {puedeInvitar ? (
               <div className="space-y-2">
-                <Label>Como entra</Label>
+                <Label>Mode de connexion</Label>
                 <Select
                   value={modo}
                   items={ACCESO_ITEMS}
@@ -373,14 +373,14 @@ function AddMemberDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="invitacion">Invitacion por correo</SelectItem>
-                    <SelectItem value="clave">Contrasena temporal</SelectItem>
+                    <SelectItem value="invitacion">Invitation par e-mail</SelectItem>
+                    <SelectItem value="clave">Mot de passe temporaire</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
                   {invitar
-                    ? "Le llega el enlace a ese email y elige su propia contrasena."
-                    : "Se la pasas vos por donde quieras."}
+                    ? "Reçoit le lien à cet e-mail et choisit son mot de passe."
+                    : "Vous le transmettez vous-même."}
                 </p>
               </div>
             ) : (
@@ -394,16 +394,15 @@ function AddMemberDialog({
 
           {!invitar && (
             <p className="text-xs text-muted-foreground">
-              Se crea el usuario con esa contrasena. Si el email ya tenia cuenta, se
-              reutiliza y la contrasena se ignora.
+              Le compte est créé avec ce mot de passe. Si l’e-mail a déjà un compte, il est réutilisé et le mot de passe est ignoré.
             </p>
           )}
           <div className="flex justify-end gap-2 pt-1">
             <Button type="button" variant="outline" onClick={onClose} className="cursor-pointer">
-              Cancelar
+              Annuler
             </Button>
             <Button type="submit" disabled={saving} className="cursor-pointer">
-              {saving ? "Guardando..." : invitar ? "Invitar" : "Agregar"}
+              {saving ? "Enregistrement…" : invitar ? "Inviter" : "Ajouter"}
             </Button>
           </div>
         </form>

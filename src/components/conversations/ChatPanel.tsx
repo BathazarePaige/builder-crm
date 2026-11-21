@@ -7,12 +7,13 @@ import { ChatInput } from "./ChatInput";
 import { cn } from "@/lib/utils";
 import { avatarBg, getInitials } from "@/lib/avatar";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import {
   ArrowLeft,
   Check,
   CheckCheck,
   AlertCircle,
+  Bot,
   Clock,
   PanelRightClose,
   PanelRightOpen,
@@ -114,10 +115,10 @@ export function ChatPanel({
   return (
     <section className="flex-1 flex flex-col h-full min-w-0 bg-background">
       {/* Header */}
-      <header className="h-14 px-3 md:px-5 flex items-center gap-2 md:gap-3 border-b border-border bg-muted/40 shrink-0">
+      <header className="h-14 px-3 md:px-5 flex items-center gap-2 md:gap-3 border-b border-border bg-card shrink-0">
         <Link
           href="/conversations"
-          aria-label="Volver a la lista"
+          aria-label="Retour à la liste"
           className="md:hidden -ml-1 h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted/60"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -145,12 +146,9 @@ export function ChatPanel({
           <span className="text-[14px] font-semibold tracking-tight truncate">
             {contact.name}
           </span>
-          <span className="text-[11px] text-muted-foreground truncate flex items-center gap-1.5">
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 rounded-full bg-emerald-500"
-            />
-            {conversation.handle ?? CHANNEL_LABELS[conversation.channel]}
+          <span className="text-[12px] text-muted-foreground truncate">
+            {CHANNEL_LABELS[conversation.channel]}
+            {conversation.handle ? ` · ${conversation.handle}` : ""}
           </span>
         </div>
         <div className="ml-auto flex items-center gap-0.5 shrink-0">
@@ -159,7 +157,7 @@ export function ChatPanel({
             type="button"
             onClick={onToggleDetails}
             aria-label={
-              detailsOpen ? "Ocultar detalles" : "Mostrar detalles"
+              detailsOpen ? "Masquer la fiche" : "Afficher la fiche"
             }
             className="hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
           >
@@ -185,16 +183,17 @@ export function ChatPanel({
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center">
             <p className="text-sm text-muted-foreground">
-              Sin mensajes todavia.
+              Aucun message pour l’instant.
             </p>
-            <p className="text-xs text-muted-foreground/70 mt-1">
-              Escribi abajo y presiona Enter para enviar el primero.
+            <p className="text-xs text-muted-foreground mt-1">
+              Écrivez en bas et appuyez sur Entrée pour envoyer le premier.
             </p>
           </div>
         ) : (
           <ol className="flex flex-col gap-1.5 max-w-2xl mx-auto">
             {messages.map((m, idx) => {
               const isOut = m.direction === "out";
+              const isAgent = isOut && m.origin === "agent";
               const prev = messages[idx - 1];
               const showTimestamp =
                 !prev ||
@@ -212,16 +211,24 @@ export function ChatPanel({
                   )}
                 >
                   {showTimestamp && m.sentAt && (
-                    <span className="text-[10px] font-mono text-muted-foreground/70 self-center my-2">
-                      {format(m.sentAt, "d 'de' MMM, HH:mm", { locale: es })}
+                    <span className="text-[11px] text-muted-foreground self-center my-2">
+                      {format(m.sentAt, "EEEE d MMMM, HH:mm", { locale: fr })}
+                    </span>
+                  )}
+                  {showTimestamp && isOut && (
+                    <span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground px-1">
+                      {isAgent && <Bot className="h-3 w-3" aria-hidden />}
+                      {isAgent ? "Agent IA" : m.origin === "template" ? "Modèle" : m.origin === "webhook" ? "Automatisation" : "Équipe"}
                     </span>
                   )}
                   <div
                     className={cn(
-                      "max-w-[85%] md:max-w-[70%] rounded-2xl px-3.5 py-2 text-[13px] leading-relaxed break-words border",
-                      isOut
-                        ? "bg-primary text-primary-foreground border-transparent shadow-sm rounded-br-md"
-                        : "bg-card text-foreground border-border shadow-xs rounded-bl-md",
+                      "max-w-[85%] md:max-w-[70%] rounded-xl px-3.5 py-2 text-[13.5px] leading-relaxed break-words border",
+                      !isOut
+                        ? "bg-card text-foreground border-border"
+                        : isAgent
+                          ? "bg-accent text-accent-foreground border-transparent"
+                          : "bg-primary text-primary-foreground border-transparent",
                     )}
                   >
                     {m.body || (
@@ -230,14 +237,14 @@ export function ChatPanel({
                       </span>
                     )}
                     {m.templateName && (
-                      <div className="mt-1 text-[10px] font-mono opacity-70">
-                        plantilla: {m.templateName}
+                      <div className="mt-1 text-[11px] opacity-75">
+                        Modèle : {m.templateName}
                       </div>
                     )}
                   </div>
                   <div
                     className={cn(
-                      "flex items-center gap-1 text-[10px] font-mono text-muted-foreground px-1",
+                      "flex items-center gap-1 text-[11px] text-muted-foreground tabular-nums px-1",
                       isOut ? "flex-row-reverse" : ""
                     )}
                   >

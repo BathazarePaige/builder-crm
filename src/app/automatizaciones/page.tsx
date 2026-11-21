@@ -7,8 +7,8 @@ export default function AutomatizacionesPage() {
   return (
     <div>
       <PageHeader
-        title="Automatizaciones"
-        subtitle="Reglas que se ejecutan solas cuando pasa algo en el CRM"
+        title="Automatisations"
+        subtitle="Des règles qui s’exécutent toutes seules quand il se passe quelque chose dans le CRM"
       />
       <AutomationsList />
     </div>

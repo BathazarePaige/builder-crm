@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const email = (body.email ?? "").trim().toLowerCase();
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   const invitar = Boolean(body.invitar) && correoDeAccesoActivo();
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    return NextResponse.json({ error: "Email invalido" }, { status: 400 });
+    return NextResponse.json({ error: "E-mail invalide" }, { status: 400 });
   }
 
   // Usuario de Auth existente?
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     const r = await invitarPorCorreo(email, name);
     if ("error" in r) {
       return NextResponse.json(
-        { error: `No se pudo enviar la invitacion: ${r.error}` },
+        { error: `Impossible d’envoyer l’invitation : ${r.error}` },
         { status: 502 }
       );
     }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     // contrasena la cuenta existe y entra por el proveedor; con contrasena, por las dos.
     if (password && password.length < 8) {
       return NextResponse.json(
-        { error: "La contrasena temporal debe tener al menos 8 caracteres" },
+        { error: "Le mot de passe temporaire doit contenir au moins 8 caractères" },
         { status: 400 }
       );
     }
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     });
     if (error || !data.user) {
       return NextResponse.json(
-        { error: error?.message ?? "No se pudo crear el usuario" },
+        { error: error?.message ?? "Impossible de créer l’utilisateur" },
         { status: 502 }
       );
     }

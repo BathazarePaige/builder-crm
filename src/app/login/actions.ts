@@ -9,7 +9,7 @@ export async function signIn(formData: FormData) {
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return { error: "Email y contrasena son requeridos." };
+    return { error: "L’e-mail et le mot de passe sont obligatoires." };
   }
 
   const supabase = await createClient();
@@ -37,7 +37,7 @@ export async function signUp(formData: FormData) {
   if (!(await registroAbierto())) {
     return {
       error:
-        "El registro esta cerrado. Pide a un administrador que te agregue al equipo.",
+        "Les inscriptions sont fermées. Demandez à un administrateur de vous ajouter à l’équipe.",
     };
   }
 
@@ -46,10 +46,10 @@ export async function signUp(formData: FormData) {
   const fullName = String(formData.get("fullName") ?? "").trim();
 
   if (!email || !password) {
-    return { error: "Email y contrasena son requeridos." };
+    return { error: "L’e-mail et le mot de passe sont obligatoires." };
   }
   if (password.length < 8) {
-    return { error: "La contrasena debe tener al menos 8 caracteres." };
+    return { error: "Le mot de passe doit contenir au moins 8 caractères." };
   }
 
   const supabase = await createClient();
@@ -68,7 +68,7 @@ export async function signUp(formData: FormData) {
   if (!data.session) {
     return {
       error:
-        "Cuenta creada. Revisa tu email para confirmar antes de iniciar sesion.",
+        "Compte créé. Consultez vos e-mails pour confirmer avant de vous connecter.",
     };
   }
 

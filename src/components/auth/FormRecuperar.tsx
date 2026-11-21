@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { pedirEnlaceDeAcceso } from "@/app/auth/recuperar/actions";
 
-/** Formulario de "olvide mi contrasena". Solo se muestra si la instancia manda correos. */
+/** Formulario de "mot de passe oublié". Solo se muestra si la instancia manda correos. */
 export function FormRecuperar() {
   const [error, setError] = useState<string | null>(null);
   const [enviado, setEnviado] = useState(false);
@@ -29,12 +29,11 @@ export function FormRecuperar() {
         <div className="flex items-start gap-2.5 rounded-md border bg-muted/40 px-3 py-2.5 text-sm">
           <MailCheck className="h-4 w-4 mt-0.5 text-emerald-500 shrink-0" />
           <p className="text-muted-foreground">
-            Si ese correo tiene cuenta, ya salio el enlace. Revisa tambien el correo no
-            deseado: vence en 24 horas.
+            Si cette adresse a un compte, le lien est parti. Pensez à vérifier les indésirables : il expire dans 24 heures.
           </p>
         </div>
         <Button render={<Link href="/login" />} variant="outline" className="w-full h-10">
-          Volver al inicio de sesion
+          Retour à la connexion
         </Button>
       </div>
     );
@@ -43,12 +42,12 @@ export function FormRecuperar() {
   return (
     <form action={onSubmit} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="email">Tu email</Label>
+        <Label htmlFor="email">Votre e-mail</Label>
         <Input
           id="email"
           name="email"
           type="email"
-          placeholder="tu@empresa.com"
+          placeholder="vous@entreprise.com"
           autoComplete="email"
           required
           disabled={pendiente}
@@ -61,11 +60,11 @@ export function FormRecuperar() {
       )}
       <Button type="submit" className="w-full h-10 cursor-pointer" disabled={pendiente}>
         {pendiente && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-        Mandame el enlace
+        Recevoir le lien
       </Button>
       <p className="text-center text-sm text-muted-foreground">
-        <Link href="/login" className="font-medium text-foreground hover:text-primary">
-          Volver
+        <Link href="/login" className="font-medium text-foreground hover:text-primary-ink">
+          Retour
         </Link>
       </p>
     </form>

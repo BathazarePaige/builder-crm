@@ -12,7 +12,7 @@ export async function POST() {
   try {
     const outcome = await sendPushToMember(auth.member.id, {
       title: "Notificaciones activas",
-      body: "Asi vas a recibir los avisos del CRM en este dispositivo.",
+      body: "Vous recevrez ainsi les notifications du CRM sur cet appareil.",
       url: "/settings",
       tag: "push-test",
     });
@@ -20,9 +20,9 @@ export async function POST() {
   } catch (err) {
     // El mensaje del proveedor de push puede traer detalles internos (endpoints,
     // claves parciales): queda en el log del servidor y afuera va algo generico.
-    console.error("[push] fallo la notificacion de prueba:", err);
+    console.error("[push] échec de la notification de test :", err);
     return NextResponse.json(
-      { error: "No se pudo enviar la notificacion de prueba" },
+      { error: "Impossible d’envoyer la notification de test" },
       { status: 500 }
     );
   }

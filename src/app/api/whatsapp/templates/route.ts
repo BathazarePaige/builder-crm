@@ -38,13 +38,13 @@ async function fetchRemoteTemplates(): Promise<{
     const remote = await getTemplates(account);
     return remote.success
       ? { templates: remote.templates as MetaTemplate[] }
-      : { error: remote.error?.message || "No se pudo sincronizar con Meta" };
+      : { error: remote.error?.message || "Impossible de synchroniser avec Meta" };
   }
 
   const tenantId = await resolveDefaultTenantId();
   const account = await getAccountForChannel(tenantId, "whatsapp");
   if (!account?.zernioAccountId) {
-    return { error: "No hay cuenta de WhatsApp conectada en Zernio" };
+    return { error: "Aucun compte WhatsApp connecté dans Zernio" };
   }
   const remote = await listZernioTemplates(account.zernioAccountId);
   return remote.success
@@ -79,7 +79,7 @@ async function createRemoteTemplate(input: {
   if (!account?.zernioAccountId) {
     return {
       success: false,
-      error: { message: "No hay cuenta de WhatsApp conectada en Zernio" },
+      error: { message: "Aucun compte WhatsApp connecté dans Zernio" },
     };
   }
 
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
         });
       }
     } else {
-      syncError = remote.error || "No se pudo sincronizar las plantillas";
+      syncError = remote.error || "Impossible de synchroniser les modèles";
     }
   }
 
@@ -170,11 +170,11 @@ const createSchema = z.object({
     .max(512)
     .regex(
       /^[a-z0-9_]+$/,
-      "El nombre solo admite minusculas, numeros y guion bajo (ej: recordatorio_visita)"
+      "Le nom n’accepte que des minuscules, des chiffres et le tiret bas (ex. : rappel_visite)"
     ),
   category: z.enum(["MARKETING", "UTILITY"]),
   language: z.string().min(2).max(10).default("es"),
-  bodyText: z.string().min(1, "El cuerpo no puede estar vacio").max(1024),
+  bodyText: z.string().min(1, "Le texte ne peut pas être vide").max(1024),
   examples: z.array(z.string()).default([]),
 });
 
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
   try {
     raw = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const parsed = createSchema.safeParse(raw);
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Las variables deben ser secuenciales empezando en {{1}} (sin huecos ni saltos).",
+          "Les variables doivent se suivre à partir de {{1}} (sans trou ni saut).",
       },
       { status: 400 }
     );
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
   const filledExamples = examples.map((e) => e.trim());
   if (vars.length > 0 && filledExamples.filter(Boolean).length < vars.length) {
     return NextResponse.json(
-      { error: `Hay ${vars.length} variable(s): da un ejemplo para cada una.` },
+      { error: `${vars.length} variable(s) : donnez un exemple pour chacune.` },
       { status: 400 }
     );
   }
@@ -249,11 +249,11 @@ export async function POST(request: NextRequest) {
 
 function getTemplateHint(code?: number, message?: string): string | undefined {
   if (message && /already exists/i.test(message)) {
-    return "Ya existe una plantilla con ese nombre e idioma. Usa otro nombre o sincroniza para verla.";
+    return "Un modèle avec ce nom et cette langue existe déjà. Choisissez un autre nom ou synchronisez pour le voir.";
   }
   const hints: Record<number, string> = {
-    100: "Algun parametro es invalido. Revisa el nombre (minusculas/guion bajo) y que cada variable tenga ejemplo.",
-    190: "El token de acceso vencio o no tiene permisos de whatsapp_business_management.",
+    100: "Un paramètre n’est pas valide. Vérifiez le nom (minuscules/tiret bas) et que chaque variable a un exemple.",
+    190: "Le jeton d’accès a expiré ou n’a pas la permission whatsapp_business_management.",
   };
   return code ? hints[code] : undefined;
 }

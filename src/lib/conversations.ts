@@ -37,6 +37,8 @@ export interface ConversationListItem {
 export interface ConversationMessage {
   id: string;
   direction: "in" | "out";
+  /** Salientes: agent | human | template | webhook. Entrantes: null. */
+  origin: string | null;
   type: string;
   body: string | null;
   templateName: string | null;
@@ -184,6 +186,7 @@ export async function getConversation(conversationId: string): Promise<{
     .select({
       id: messages.id,
       direction: messages.direction,
+      origin: messages.origin,
       type: messages.type,
       body: messages.body,
       templateName: messages.templateName,

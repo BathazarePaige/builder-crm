@@ -42,12 +42,12 @@ const typeStyles: Record<string, string> = {
 };
 
 function activityGroupLabel(date: Date): string {
-  if (isToday(date)) return "Hoy";
-  if (isYesterday(date)) return "Ayer";
+  if (isToday(date)) return "Aujourd’hui";
+  if (isYesterday(date)) return "Hier";
   const diff = differenceInDays(new Date(), date);
-  if (diff < 7) return "Esta semana";
-  if (diff < 30) return "Este mes";
-  return "Antes";
+  if (diff < 7) return "Cette semaine";
+  if (diff < 30) return "Ce mois-ci";
+  return "Plus ancien";
 }
 
 interface ActivityItem {
@@ -93,8 +93,8 @@ export default function ActivitiesPage() {
     return (
       <div>
         <PageHeader
-          title="Actividades"
-          subtitle="Historial de interacciones y seguimientos pendientes"
+          title="Activités"
+          subtitle="Historique des échanges et relances à faire"
         />
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
@@ -108,12 +108,12 @@ export default function ActivitiesPage() {
   return (
     <div>
       <PageHeader
-        title="Actividades"
-        subtitle="Historial de interacciones y seguimientos pendientes"
+        title="Activités"
+        subtitle="Historique des échanges et relances à faire"
         actions={
           <Button onClick={() => setShowForm(true)} className="cursor-pointer">
             <Plus className="h-4 w-4" />
-            Registrar
+            Enregistrer
           </Button>
         }
       />
@@ -163,7 +163,7 @@ export default function ActivitiesPage() {
                   <span className="rounded-full p-1.5 bg-amber-100">
                     <Clock className="h-3.5 w-3.5" />
                   </span>
-                  Hoy ({followUps.today.length})
+                  Aujourd’hui ({followUps.today.length})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -188,18 +188,18 @@ export default function ActivitiesPage() {
       <Card className="surface-card">
         <CardHeader className="space-y-1">
           <CardTitle className="text-base font-semibold tracking-tight font-heading">
-            Todas las Actividades
+            Toutes les activités
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            Timeline cronologico
+            Chronologie
           </p>
         </CardHeader>
         <CardContent>
           {allActivities.length === 0 ? (
             <EmptyState
               icon={Activity}
-              title="No hay actividades"
-              description="Las actividades aparecen cuando registras llamadas, emails, reuniones o notas."
+              title="Aucune activité"
+              description="Les activités apparaissent quand vous enregistrez un appel, un e-mail, un rendez-vous ou une note."
             />
           ) : (
             <ActivityTimeline activities={allActivities} />
@@ -221,7 +221,7 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
     {},
   );
 
-  const groupOrder = ["Hoy", "Ayer", "Esta semana", "Este mes", "Antes"].filter(
+  const groupOrder = ["Aujourd’hui", "Hier", "Cette semaine", "Ce mois-ci", "Plus ancien"].filter(
     (k) => groups[k],
   );
 
@@ -268,7 +268,7 @@ function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
                         {config?.label || activity.type}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
-                        {activity.contactName ?? "Sin contacto"}
+                        {activity.contactName ?? "Sans contact"}
                       </span>
                       {activity.completedAt ? (
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />

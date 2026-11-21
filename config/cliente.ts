@@ -17,34 +17,35 @@ export default definirConfig({
   marca: {
     nombre: "Builder CRM",
     nombreCorto: "Builder",
-    descripcion: "El CRM multicanal con agente de IA de la comunidad IA Builder Lab.",
+    descripcion: "Le CRM multicanal avec agent IA de la communauté IA Builder Lab.",
     logo: "/marca/logo.png",
     icono: "/marca/icono.png",
-    // Medidos del logo de IA Builder Lab: el cian del anillo sobre el carbon del fondo.
+    // El cian del anillo del logo de IA Builder Lab. La sidebar va clara (refonte "clair
+    // et net"); un color oscuro aqui la vuelve oscura y el resto se deriva solo.
     colorPrimario: "#3CF5F5",
-    colorSidebar: "#171E21",
+    colorSidebar: "#F7F7F8",
   },
 
-  idioma: "es",
+  idioma: "fr",
   moneda: "USD",
   // La del negocio del cliente, no la tuya: decide el dia que el agente le nombra a
   // quien escribe de noche. America/Mexico_City, America/Bogota, Europe/Madrid...
   zonaHoraria: "America/Santiago",
 
   roles: {
-    etiquetaAsesor: "Asesor",
+    etiquetaAsesor: "Conseiller",
   },
 
   pipeline: {
-    nombre: "Ventas",
+    nombre: "Ventes",
     etapas: [
-      { clave: "nuevo", nombre: "Nuevo lead", color: "#64748b" },
-      { clave: "contactado", nombre: "Contactado", color: "#2563eb" },
-      { clave: "calificado", nombre: "Calificado", color: "#8b5cf6" },
-      { clave: "propuesta", nombre: "Propuesta", color: "#f59e0b" },
-      { clave: "negociacion", nombre: "Negociacion", color: "#ea580c" },
-      { clave: "ganado", nombre: "Cerrado ganado", color: "#16a34a", ganada: true },
-      { clave: "perdido", nombre: "Cerrado perdido", color: "#dc2626", perdida: true },
+      { clave: "nuevo", nombre: "Nouveau lead", color: "#64748b" },
+      { clave: "contactado", nombre: "Contacté", color: "#2563eb" },
+      { clave: "calificado", nombre: "Qualifié", color: "#8b5cf6" },
+      { clave: "propuesta", nombre: "Proposition", color: "#f59e0b" },
+      { clave: "negociacion", nombre: "Négociation", color: "#ea580c" },
+      { clave: "ganado", nombre: "Gagné", color: "#16a34a", ganada: true },
+      { clave: "perdido", nombre: "Perdu", color: "#dc2626", perdida: true },
     ],
   },
 
@@ -56,7 +57,7 @@ export default definirConfig({
   },
 
   agente: {
-    nombre: "Asistente",
+    nombre: "Assistant",
   },
 
   modulos: {

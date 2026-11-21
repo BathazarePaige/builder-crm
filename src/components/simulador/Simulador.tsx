@@ -88,7 +88,7 @@ export function Simulador() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ canal }),
       });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.error ?? "No se pudo crear");
+      if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.error ?? "Impossible de créer");
       const data = (await res.json()) as { conversationId: string; contactId: string };
       setConversationId(data.conversationId);
       setContactId(data.contactId);
@@ -97,7 +97,7 @@ export function Simulador() {
       setEstado(null);
       void cargarEstado(data.contactId);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error");
+      toast.error(err instanceof Error ? err.message : "Erreur");
     } finally {
       setCreando(false);
     }
@@ -116,15 +116,15 @@ export function Simulador() {
         body: JSON.stringify({ conversationId, texto: t }),
       });
       const data = (await res.json()) as { agente?: ResultadoAgente; messages?: Mensaje[]; mensaje?: string; error?: string; estado?: unknown };
-      if (!res.ok) throw new Error(data.mensaje ?? data.error ?? "Error");
+      if (!res.ok) throw new Error(data.mensaje ?? data.error ?? "Erreur");
       setMensajes(data.messages ?? []);
       setUltimo(data.agente ?? null);
       if (data.agente && !data.agente.ok) {
-        toast.message(`El agente no respondio: ${data.agente.reason ?? "sin motivo"}`);
+        toast.message(`L’agent n’a pas répondu : ${data.agente.reason ?? "sans motif"}`);
       }
       if (contactId) void cargarEstado(contactId);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error");
+      toast.error(err instanceof Error ? err.message : "Erreur");
     } finally {
       setOcupado(false);
     }
@@ -139,8 +139,8 @@ export function Simulador() {
   return (
     <div>
       <PageHeader
-        title="Simulador"
-        subtitle="Habla con el agente como si fueras un cliente. Nada sale a un canal real."
+        title="Simulateur"
+        subtitle="Parlez à l’agent comme un client. Rien ne part vers un vrai canal."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -148,7 +148,7 @@ export function Simulador() {
           <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
             <CardTitle className="text-base flex items-center gap-2">
               <FlaskConical className="h-4 w-4" />
-              Conversacion simulada
+              Conversation simulée
             </CardTitle>
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
@@ -161,7 +161,7 @@ export function Simulador() {
                     title={CHANNEL_LABELS[c]}
                     className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-full border transition-colors cursor-pointer",
-                      canal === c ? "border-primary bg-primary/10" : "border-border bg-muted/40",
+                      canal === c ? "border-primary-ink bg-primary/10" : "border-border bg-muted/40",
                       CHANNEL_COLORS[c]
                     )}
                   >
@@ -171,7 +171,7 @@ export function Simulador() {
               </div>
               <Button size="sm" onClick={nuevaConversacion} disabled={creando} className="cursor-pointer">
                 {creando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-                Nueva conversacion
+                Nouvelle conversation
               </Button>
             </div>
           </CardHeader>
@@ -180,11 +180,11 @@ export function Simulador() {
             <div className="flex-1 overflow-y-auto rounded-lg border bg-muted/20 p-3 space-y-2 min-h-[380px] max-h-[60vh]">
               {!conversationId ? (
                 <p className="text-sm text-muted-foreground text-center py-16">
-                  Elegi el canal a simular y crea una conversacion nueva.
+                  Choisissez le canal à simuler et créez une nouvelle conversation.
                 </p>
               ) : mensajes.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-16">
-                  Escribi el primer mensaje como si fueras el cliente.
+                  Écrivez le premier message comme si vous étiez le client.
                 </p>
               ) : (
                 mensajes.map((m) => (
@@ -209,7 +209,7 @@ export function Simulador() {
                 <div className="flex justify-start">
                   <div className="rounded-2xl rounded-bl-sm border bg-card px-3.5 py-2 text-sm text-muted-foreground flex items-center gap-2">
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    El agente esta pensando...
+                    L’agent réfléchit…
                   </div>
                 </div>
               )}
@@ -226,24 +226,24 @@ export function Simulador() {
                     void enviar();
                   }
                 }}
-                placeholder={conversationId ? "Escribi como el cliente..." : "Primero crea una conversacion"}
+                placeholder={conversationId ? "Écrivez comme le client…" : "Créez d’abord une conversation"}
                 disabled={!conversationId || ocupado}
               />
               <Button onClick={enviar} disabled={!conversationId || ocupado || !texto.trim()} className="cursor-pointer">
                 <Send className="h-4 w-4" />
-                Enviar
+                Envoyer
               </Button>
             </div>
 
             {ultimo && (
               <p className="text-[11px] text-muted-foreground">
-                Ultimo turno: {ultimo.ok ? "respondio" : `no respondio (${ultimo.reason ?? "?"})`}
-                {typeof ultimo.toolCalls === "number" && ` · ${ultimo.toolCalls} herramienta${ultimo.toolCalls === 1 ? "" : "s"}`}
+                Ultimo turno: {ultimo.ok ? "respondio" : `pas de réponse (${ultimo.reason ?? "?"})`}
+                {typeof ultimo.toolCalls === "number" && ` · ${ultimo.toolCalls} outil${ultimo.toolCalls === 1 ? "" : "s"}`}
                 {conversationId && (
                   <>
                     {" · "}
-                    <Link href={`/conversations/${conversationId}`} className="text-primary hover:underline inline-flex items-center gap-0.5">
-                      ver en la bandeja <ExternalLink className="h-3 w-3" />
+                    <Link href={`/conversations/${conversationId}`} className="text-primary-ink hover:underline inline-flex items-center gap-0.5">
+                      voir dans la boîte <ExternalLink className="h-3 w-3" />
                     </Link>
                   </>
                 )}
@@ -254,46 +254,46 @@ export function Simulador() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Lo que ve el CRM</CardTitle>
+            <CardTitle className="text-base">Ce que voit le CRM</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
             {!estado ? (
               <p className="text-muted-foreground">
-                Cuando el agente actue sobre la ficha, lo vas a ver aqui: etapa, campos, resumen y actividades.
+                Quand l’agent agit sur la fiche, vous le voyez ici : étape, champs, résumé et activités.
               </p>
             ) : (
               <>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Contacto</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Contact</p>
                   <p className="font-medium">{estado.name}</p>
                   {estado.tags?.length > 0 && (
                     <p className="text-xs text-muted-foreground mt-0.5">{estado.tags.join(" · ")}</p>
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Etapa</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Étape</p>
                   {etapaActual ? (
                     <span className="inline-flex items-center gap-1.5 mt-1 rounded-full border px-2 py-0.5 text-xs font-medium">
                       <span className="h-2 w-2 rounded-full" style={{ backgroundColor: etapaActual.color }} />
                       {etapaActual.name}
                     </span>
                   ) : (
-                    <p className="text-muted-foreground">Sin operacion todavia</p>
+                    <p className="text-muted-foreground">Pas encore d’affaire</p>
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Datos</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Informations</p>
                   <CamposPersonalizadosLista valores={estado.customFields} compacto mostrarVacios />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Resumen del agente</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Résumé de l’agent</p>
                   <p className={cn("mt-0.5 whitespace-pre-line", !estado.aiSummary && "text-muted-foreground")}>
-                    {estado.aiSummary ?? "Todavia no hay resumen."}
+                    {estado.aiSummary ?? "Pas encore de résumé."}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                    Actividades ({estado.activities?.length ?? 0})
+                    Activités ({estado.activities?.length ?? 0})
                   </p>
                   <ul className="mt-1 space-y-1">
                     {(estado.activities ?? []).slice(-5).reverse().map((a) => (
@@ -304,8 +304,8 @@ export function Simulador() {
                   </ul>
                 </div>
                 {contactId && (
-                  <Link href={`/contacts/${contactId}`} className="text-xs text-primary hover:underline inline-flex items-center gap-1">
-                    Abrir la ficha <ExternalLink className="h-3 w-3" />
+                  <Link href={`/contacts/${contactId}`} className="text-xs text-primary-ink hover:underline inline-flex items-center gap-1">
+                    Ouvrir la fiche <ExternalLink className="h-3 w-3" />
                   </Link>
                 )}
               </>

@@ -47,8 +47,8 @@ export function autorizadoPorSecreto(request: NextRequest): boolean {
   const secreto = process.env.AGENT_WORKER_SECRET;
   if (!secreto) {
     console.error(
-      "[seguridad] AGENT_WORKER_SECRET no esta configurada: se rechaza la llamada interna. " +
-        "Generala con `openssl rand -hex 32` y cargala en la instancia."
+      "[securite] AGENT_WORKER_SECRET n’est pas configurée : l’appel interne est refusé. " +
+        "Générez-la avec `openssl rand -hex 32` et ajoutez-la à l’instance."
     );
     return false;
   }

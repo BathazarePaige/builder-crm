@@ -5,7 +5,7 @@ import { Simulador } from "@/components/simulador/Simulador";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Simulador" };
+export const metadata = { title: "Simulateur" };
 
 /**
  * Simulador de conversaciones: solo admin. Un asesor recibe 404 (no se confirma que

@@ -48,31 +48,37 @@ function construirSecciones(esAdmin: boolean): NavSection[] {
       .map((n) => ({ href: n.href, label: n.etiqueta, icon: n.icono }));
   const si = (activo: boolean, item: NavItem): NavItem[] => (activo ? [item] : []);
 
+  // Las claves de seccion ("Operaciones"...) son las del contrato de modulos; lo
+  // visible va en frances.
   return [
-    { items: [{ href: "/", label: "Dashboard", icon: LayoutDashboard }] },
     {
-      title: "Operaciones",
+      items: [
+        { href: "/", label: "Tableau de bord", icon: LayoutDashboard },
+        { href: "/conversations", label: "Boîte de réception", icon: MessageSquare },
+      ],
+    },
+    {
+      title: "Ventes",
       items: [
         { href: "/pipeline", label: "Pipeline", icon: Kanban },
-        { href: "/contacts", label: "Contactos", icon: Users },
-        { href: "/conversations", label: "Conversaciones", icon: MessageSquare },
-        ...si(moduloActivo("plantillas"), { href: "/plantillas", label: "Plantillas", icon: FileText }),
+        { href: "/contacts", label: "Contacts", icon: Users },
+        ...si(moduloActivo("plantillas"), { href: "/plantillas", label: "Modèles", icon: FileText }),
         ...seccion("Operaciones"),
       ],
     },
     {
-      title: "Productividad",
+      title: "Suivi",
       items: [
-        ...si(moduloActivo("actividades"), { href: "/activities", label: "Actividades", icon: Activity }),
+        ...si(moduloActivo("actividades"), { href: "/activities", label: "Activités", icon: Activity }),
         ...seccion("Productividad"),
       ],
     },
     {
-      title: "Inteligencia",
+      title: "Intelligence",
       items: [
-        ...si(moduloActivo("reportes"), { href: "/reportes", label: "Reportes", icon: BarChart3 }),
-        ...si(moduloActivo("automatizaciones"), { href: "/automatizaciones", label: "Automatizaciones", icon: Workflow }),
-        ...si(esAdmin && moduloActivo("simulador"), { href: "/simulador", label: "Simulador", icon: FlaskConical }),
+        ...si(moduloActivo("reportes"), { href: "/reportes", label: "Rapports", icon: BarChart3 }),
+        ...si(moduloActivo("automatizaciones"), { href: "/automatizaciones", label: "Automatisations", icon: Workflow }),
+        ...si(esAdmin && moduloActivo("simulador"), { href: "/simulador", label: "Simulateur", icon: FlaskConical }),
         ...seccion("Inteligencia"),
       ],
     },
@@ -80,12 +86,12 @@ function construirSecciones(esAdmin: boolean): NavSection[] {
 }
 
 const footerItems: NavItem[] = [
-  { href: "/settings", label: "Configuracion", icon: Settings },
+  { href: "/settings", label: "Réglages", icon: Settings },
 ];
 
 export function Sidebar() {
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border min-h-screen sticky top-0 max-h-screen">
+    <aside className="hidden md:flex md:w-60 md:flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border min-h-screen sticky top-0 max-h-screen">
       <SidebarBrand />
       <SidebarNav className="flex-1" />
       <SidebarFooter />
@@ -96,16 +102,16 @@ export function Sidebar() {
 export function SidebarBrand() {
   const m = marca();
   return (
-    <div className="flex h-16 items-center gap-2.5 px-5 border-b border-sidebar-border">
+    <div className="flex h-14 items-center gap-2.5 px-4">
       <Image
         src={m.logo}
-        alt={m.nombre}
-        width={32}
-        height={32}
+        alt=""
+        width={28}
+        height={28}
         unoptimized
-        className="h-8 w-8 rounded-full object-cover shrink-0"
+        className="h-7 w-7 rounded-lg object-cover shrink-0"
       />
-      <span className="text-[15px] font-semibold tracking-tight font-heading truncate">
+      <span className="text-[14px] font-semibold tracking-tight truncate">
         {m.nombre}
       </span>
     </div>
@@ -118,11 +124,11 @@ export function SidebarNav({ className }: { className?: string }) {
   const sections = construirSecciones(esAdmin);
 
   return (
-    <nav className={cn("px-3 py-4 space-y-5 overflow-y-auto", className)}>
+    <nav aria-label="Navigation principale" className={cn("px-3 py-2 space-y-5 overflow-y-auto", className)}>
       {sections.map((section, idx) => (
         <div key={idx} className="space-y-1">
           {section.title && (
-            <p className="px-2.5 mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-sidebar-foreground/55">
+            <p className="px-2.5 mb-1 text-[11px] font-medium text-sidebar-foreground-muted">
               {section.title}
             </p>
           )}
@@ -143,23 +149,18 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
   return (
     <Link
       href={item.href}
+      aria-current={isActive ? "page" : undefined}
       className={cn(
-        "group relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors cursor-pointer",
+        "group relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors cursor-pointer",
         isActive
-          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-          : "text-sidebar-foreground/70 hover:bg-white/5 hover:text-sidebar-foreground",
+          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+          : "text-sidebar-foreground-muted hover:bg-sidebar-accent hover:text-sidebar-foreground",
       )}
     >
-      {isActive && (
-        <span
-          aria-hidden
-          className="absolute left-0 top-1.5 bottom-1.5 w-0.75 rounded-r-full bg-primary"
-        />
-      )}
       <item.icon
         className={cn(
           "h-4 w-4 shrink-0",
-          isActive ? "text-primary" : "text-sidebar-foreground/55",
+          isActive ? "text-sidebar-primary" : "text-sidebar-foreground-muted",
         )}
       />
       <span className="truncate">{item.label}</span>
@@ -179,13 +180,13 @@ export function SidebarFooter() {
       </div>
       {leerConfigPublica().modoLocal && (
         <p
-          className="mx-2.5 mt-2 rounded-md bg-amber-500/15 px-2 py-1.5 text-[10px] leading-tight text-amber-200"
-          title="Esto corre en tu maquina con una base embebida y sin sesion: no es una instancia para un cliente"
+          className="mx-2.5 mt-2 rounded-md border border-sidebar-border bg-sidebar-accent px-2 py-1.5 text-[11px] leading-tight text-sidebar-foreground"
+          title="Tourne sur votre machine avec une base embarquée et sans session : ce n'est pas une instance client"
         >
-          <span className="font-semibold">Modo local</span> · sin login, datos de prueba
+          <span className="font-semibold">Mode local</span> · sans connexion, données de test
         </p>
       )}
-      <p className="px-2.5 pt-1 text-[10px] text-sidebar-foreground/40" title="Version desplegada">
+      <p className="px-2.5 pt-1 text-[11px] text-sidebar-foreground-muted" title="Version déployée">
         {etiquetaVersion()}
       </p>
     </div>

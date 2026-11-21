@@ -4,15 +4,7 @@ import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/constants";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  GripVertical,
-  Phone,
-  MessageCircle,
-  Tag,
-  FileText,
-  CheckSquare,
-  Calendar,
-} from "lucide-react";
+import { GripVertical, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { avatarBg, getInitials } from "@/lib/avatar";
 
@@ -54,18 +46,18 @@ export function DealCard({
       style={style}
       {...attributes}
       {...listeners}
-      className="group relative p-3.5 cursor-grab active:cursor-grabbing border-border/60 hover:border-primary/30 hover:shadow-md transition-all"
+      className="group relative p-3 gap-0 cursor-grab active:cursor-grabbing border-border shadow-none hover:border-foreground/20 hover:shadow-sm transition-all"
     >
       <GripVertical
         aria-hidden
         className="absolute top-2 right-2 h-3.5 w-3.5 text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity"
       />
-      <div className="space-y-2.5">
+      <div className="space-y-2">
         <p className="text-[13px] font-semibold leading-snug line-clamp-2 pr-4">
           {title}
         </p>
 
-        <p className="text-base font-bold tabular-nums text-foreground">
+        <p className="text-[14px] font-semibold tabular-nums text-foreground">
           {formatCurrency(value)}
         </p>
 
@@ -79,7 +71,7 @@ export function DealCard({
             {getInitials(contactName)}
           </div>
           <span className="text-[11.5px] text-muted-foreground truncate flex-1">
-            {contactName || "Sin contacto"}
+            {contactName || "Sans contact"}
           </span>
         </div>
 
@@ -90,29 +82,22 @@ export function DealCard({
               style={{ width: `${probability}%` }}
             />
           </div>
-          <span className="text-[10.5px] font-medium text-muted-foreground tabular-nums">
+          <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
             {probability}%
           </span>
         </div>
 
-        <div className="flex items-center gap-3 pt-1.5 mt-1 border-t border-border/40 text-muted-foreground/70">
-          <Phone className="h-3.5 w-3.5" aria-hidden />
-          <MessageCircle className="h-3.5 w-3.5" aria-hidden />
-          <Tag className="h-3.5 w-3.5" aria-hidden />
-          {docCount > 0 ? (
+        {docCount > 0 && (
+          <div className="flex items-center gap-3 pt-1 text-muted-foreground">
             <span
-              className="inline-flex items-center gap-0.5 text-[10.5px] font-semibold text-primary"
-              title={`${docCount} documento${docCount === 1 ? "" : "s"} en la ficha`}
+              className="inline-flex items-center gap-1 text-[11px] font-medium"
+              title={`${docCount} document${docCount === 1 ? "" : "s"} dans la fiche`}
             >
               <FileText className="h-3.5 w-3.5" aria-hidden />
               {docCount}
             </span>
-          ) : (
-            <FileText className="h-3.5 w-3.5" aria-hidden />
-          )}
-          <CheckSquare className="h-3.5 w-3.5" aria-hidden />
-          <Calendar className="h-3.5 w-3.5" aria-hidden />
-        </div>
+          </div>
+        )}
       </div>
     </Card>
   );

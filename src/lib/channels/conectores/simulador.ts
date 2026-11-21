@@ -11,13 +11,13 @@ import type { Conector, EstadoConector } from "../conector";
  */
 export const simulador: Conector = {
   id: "simulador",
-  nombre: "Simulador",
+  nombre: "Simulateur",
   canales: ["whatsapp", "instagram", "facebook"],
 
   async enviar(_ctx, msg) {
     const text = msg.text?.trim();
     if (!text && !msg.template) {
-      return { success: false, error: { message: "Mensaje vacio" } };
+      return { success: false, error: { message: "Message vide" } };
     }
     return { success: true, externalId: `sim:out:${crypto.randomUUID()}` };
   },
@@ -25,15 +25,15 @@ export const simulador: Conector = {
   async estado(): Promise<EstadoConector> {
     return {
       id: "simulador",
-      nombre: "Simulador",
+      nombre: "Simulateur",
       configurado: true,
       faltan: [],
       cuentas: [],
       notas: [
-        "Para demos y autoverificacion: las conversaciones simuladas no salen a ningun canal real.",
+        "Pour les démos et l’autovérification : les conversations simulées ne partent vers aucun canal réel.",
         process.env.OPENROUTER_API_KEY
-          ? "Agente listo para responder."
-          : "Falta OPENROUTER_API_KEY: el simulador no puede hacer responder al agente.",
+          ? "Agent prêt à répondre."
+          : "OPENROUTER_API_KEY manquante : le simulateur ne peut pas faire répondre l’agent.",
       ],
     };
   },

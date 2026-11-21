@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/constants";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import type { DealWithContact, PipelineStage } from "@/types";
 
 interface DealsListViewProps {
@@ -24,7 +24,7 @@ export function DealsListView({ deals, stages }: DealsListViewProps) {
   if (deals.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
-        No hay deals en este pipeline.
+        Aucune affaire dans ce pipeline.
       </div>
     );
   }
@@ -34,12 +34,12 @@ export function DealsListView({ deals, stages }: DealsListViewProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Título</TableHead>
-            <TableHead>Contacto</TableHead>
-            <TableHead>Etapa</TableHead>
-            <TableHead className="text-right">Valor</TableHead>
-            <TableHead className="text-right">Probabilidad</TableHead>
-            <TableHead>Creado</TableHead>
+            <TableHead>Titre</TableHead>
+            <TableHead>Contact</TableHead>
+            <TableHead>Étape</TableHead>
+            <TableHead className="text-right">Valeur</TableHead>
+            <TableHead className="text-right">Probabilité</TableHead>
+            <TableHead>Créée</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -71,7 +71,7 @@ export function DealsListView({ deals, stages }: DealsListViewProps) {
                 </TableCell>
                 <TableCell className="text-xs text-muted-foreground">
                   {d.createdAt
-                    ? format(new Date(d.createdAt), "d MMM yyyy", { locale: es })
+                    ? format(new Date(d.createdAt), "d MMM yyyy", { locale: fr })
                     : "—"}
                 </TableCell>
               </TableRow>

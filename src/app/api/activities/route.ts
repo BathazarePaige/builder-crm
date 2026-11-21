@@ -46,13 +46,13 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   const { type, description, contactId, dealId, scheduledAt } = body;
 
   if (!type || !description || !contactId) {
     return NextResponse.json(
-      { error: "Tipo, descripcion y contacto son requeridos" },
+      { error: "Le type, la description et le contact sont obligatoires" },
       { status: 400 }
     );
   }
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown";
     return NextResponse.json(
-      { error: `Error al crear actividad: ${msg}` },
+      { error: `Erreur lors de la création de l’activité : ${msg}` },
       { status: 500 }
     );
   }

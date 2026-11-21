@@ -91,13 +91,13 @@ export type BeginUploadResult =
 
 export async function beginUpload(input: BeginUploadInput): Promise<BeginUploadResult> {
   if (!ALLOWED_MIME[input.mime]) {
-    return { ok: false, error: "Solo se aceptan PDF e imagenes (JPG, PNG, WebP)." };
+    return { ok: false, error: "Seuls les PDF et images (JPG, PNG, WebP) sont acceptés." };
   }
   if (!Number.isFinite(input.size) || input.size <= 0) {
-    return { ok: false, error: "Archivo vacio." };
+    return { ok: false, error: "Fichier vide." };
   }
   if (input.size > MAX_FILE_BYTES) {
-    return { ok: false, error: `El archivo supera los ${MAX_FILE_BYTES / 1024 / 1024} MB.` };
+    return { ok: false, error: `Le fichier dépasse ${MAX_FILE_BYTES / 1024 / 1024} Mo.` };
   }
 
   // Foto de operacion + etapa en el momento de la subida.
@@ -137,19 +137,19 @@ export type ConfirmResult = { ok: true } | { ok: false; error: string };
 /** Marca `ready` si el objeto esta en el bucket. Si no, borra la fila: la subida fallo. */
 export async function confirmUpload(id: string): Promise<ConfirmResult> {
   const [doc] = await db.select().from(documents).where(eq(documents.id, id)).limit(1);
-  if (!doc) return { ok: false, error: "Documento no encontrado" };
+  if (!doc) return { ok: false, error: "Document introuvable" };
   if (doc.status === "ready") return { ok: true };
 
   const size = await objectSize(doc.storageKey);
   if (size === null) {
     await db.delete(documents).where(eq(documents.id, id));
-    return { ok: false, error: "El archivo no llego al bucket. Intenta de nuevo." };
+    return { ok: false, error: "Le fichier n’est pas arrivé au stockage. Réessayez." };
   }
   if (size > MAX_FILE_BYTES) {
     // Alguien firmo con un tamano y subio otro: fuera.
     await deleteObject(doc.storageKey).catch(() => {});
     await db.delete(documents).where(eq(documents.id, id));
-    return { ok: false, error: "El archivo supera el tamano permitido." };
+    return { ok: false, error: "Le fichier dépasse la taille autorisée." };
   }
 
   await db.update(documents).set({ status: "ready", size }).where(eq(documents.id, id));
@@ -191,7 +191,7 @@ export async function purgeContactDocuments(contactId: string): Promise<void> {
   try {
     await deleteObjects(rows.map((r) => r.key));
   } catch (err) {
-    console.error("[documents] purge fallo para contacto", contactId, err);
+    console.error("[documents] échec de la purge pour le contact", contactId, err);
   }
 }
 

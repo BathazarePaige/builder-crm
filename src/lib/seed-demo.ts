@@ -35,18 +35,18 @@ import type { ValoresCampos } from "@/lib/config/campos";
  */
 
 const PERSONAS = [
-  { name: "Valentina Rojas", email: "valentina.rojas@ejemplo.com", phone: "+56 9 7000 0001", company: null, source: "whatsapp" },
-  { name: "Matias Fuentes", email: "matias.fuentes@ejemplo.com", phone: "+56 9 7000 0002", company: "Fuentes y Cia", source: "instagram" },
-  { name: "Camila Herrera", email: "camila.herrera@ejemplo.com", phone: "+56 9 7000 0003", company: null, source: "website" },
-  { name: "Joaquin Paredes", email: "joaquin.paredes@ejemplo.com", phone: "+56 9 7000 0004", company: "Paredes Hnos", source: "referido" },
-  { name: "Antonia Vidal", email: "antonia.vidal@ejemplo.com", phone: "+56 9 7000 0005", company: null, source: "facebook" },
-  { name: "Benjamin Soto", email: "benjamin.soto@ejemplo.com", phone: "+56 9 7000 0006", company: "Soto Inversiones", source: "whatsapp" },
-  { name: "Isidora Munoz", email: "isidora.munoz@ejemplo.com", phone: "+56 9 7000 0007", company: null, source: "formulario" },
-  { name: "Tomas Carvajal", email: "tomas.carvajal@ejemplo.com", phone: "+56 9 7000 0008", company: null, source: "whatsapp" },
-  { name: "Florencia Araya", email: "florencia.araya@ejemplo.com", phone: "+56 9 7000 0009", company: "Araya Consultores", source: "instagram" },
-  { name: "Lucas Pizarro", email: "lucas.pizarro@ejemplo.com", phone: "+56 9 7000 0010", company: null, source: "evento" },
-  { name: "Martina Salazar", email: "martina.salazar@ejemplo.com", phone: "+56 9 7000 0011", company: null, source: "website" },
-  { name: "Diego Contreras", email: "diego.contreras@ejemplo.com", phone: "+56 9 7000 0012", company: "Contreras SpA", source: "whatsapp" },
+  { name: "Valentina Rojas", email: "valentina.rojas@exemple.com", phone: "+56 9 7000 0001", company: null, source: "whatsapp" },
+  { name: "Matias Fuentes", email: "matias.fuentes@exemple.com", phone: "+56 9 7000 0002", company: "Fuentes et Cie", source: "instagram" },
+  { name: "Camila Herrera", email: "camila.herrera@exemple.com", phone: "+56 9 7000 0003", company: null, source: "website" },
+  { name: "Joaquin Paredes", email: "joaquin.paredes@exemple.com", phone: "+56 9 7000 0004", company: "Paredes Frères", source: "referido" },
+  { name: "Antonia Vidal", email: "antonia.vidal@exemple.com", phone: "+56 9 7000 0005", company: null, source: "facebook" },
+  { name: "Benjamin Soto", email: "benjamin.soto@exemple.com", phone: "+56 9 7000 0006", company: "Soto Inversiones", source: "whatsapp" },
+  { name: "Isidora Munoz", email: "isidora.munoz@exemple.com", phone: "+56 9 7000 0007", company: null, source: "formulario" },
+  { name: "Tomas Carvajal", email: "tomas.carvajal@exemple.com", phone: "+56 9 7000 0008", company: null, source: "whatsapp" },
+  { name: "Florencia Araya", email: "florencia.araya@exemple.com", phone: "+56 9 7000 0009", company: "Araya Consultores", source: "instagram" },
+  { name: "Lucas Pizarro", email: "lucas.pizarro@exemple.com", phone: "+56 9 7000 0010", company: null, source: "evento" },
+  { name: "Martina Salazar", email: "martina.salazar@exemple.com", phone: "+56 9 7000 0011", company: null, source: "website" },
+  { name: "Diego Contreras", email: "diego.contreras@exemple.com", phone: "+56 9 7000 0012", company: "Contreras SpA", source: "whatsapp" },
 ];
 
 /**
@@ -92,38 +92,38 @@ function valorDemo(campo: CampoConfig, i: number): ValoresCampos[string] {
  */
 const GUIONES_GENERICOS: GuionDemo[] = [
   [
-    { dir: "in", body: "Hola! Vi una publicacion de ustedes y quiero mas informacion." },
-    { dir: "out", origen: "agent", body: "Hola! Con gusto. Para orientarte mejor, que estas necesitando?" },
-    { dir: "in", body: "Queria saber que ofrecen y cuanto sale." },
-    { dir: "out", origen: "agent", body: "Te paso las opciones y los valores. Si alguna te sirve, coordinamos." },
-    { dir: "in", body: "Dale, mandame." },
+    { dir: "in", body: "Bonjour ! J’ai vu votre publication et j’aimerais plus d’informations." },
+    { dir: "out", origen: "agent", body: "Bonjour ! Avec plaisir. Pour bien vous orienter, que recherchez-vous ?" },
+    { dir: "in", body: "Je voulais savoir ce que vous proposez et à quel prix." },
+    { dir: "out", origen: "agent", body: "Je vous envoie les options et les prix. Si l’une vous convient, on s’organise." },
+    { dir: "in", body: "Parfait, envoyez-moi ça." },
   ],
   [
-    { dir: "in", body: "Buenas, cuanto cuesta lo que publicaron?" },
-    { dir: "out", origen: "agent", body: "Hola! Depende de lo que necesites. Me contas un poco mas y te paso el valor exacto?" },
-    { dir: "in", body: "Si, y me gustaria coordinar esta semana." },
-    { dir: "out", origen: "human", body: "Hola, soy del equipo. Te propongo jueves 11:00 o viernes 16:00, cual te acomoda?" },
+    { dir: "in", body: "Bonjour, combien coûte ce que vous avez publié ?" },
+    { dir: "out", origen: "agent", body: "Bonjour ! Ça dépend de votre besoin. Vous m’en dites un peu plus et je vous donne le prix exact ?" },
+    { dir: "in", body: "Oui, et j’aimerais organiser ça cette semaine." },
+    { dir: "out", origen: "human", body: "Bonjour, ici l’équipe. Je vous propose jeudi 11 h ou vendredi 16 h, qu’est-ce qui vous arrange ?" },
   ],
   [
-    { dir: "in", body: "Hola, me recomendaron ustedes y queria consultar." },
-    { dir: "out", origen: "agent", body: "Que bueno! Contame que necesitas y lo vemos." },
-    { dir: "in", body: "Es para la semana que viene, todavia no tengo dia fijo." },
+    { dir: "in", body: "Bonjour, on m’a recommandé votre entreprise et j’ai une question." },
+    { dir: "out", origen: "agent", body: "Super ! Dites-moi ce qu’il vous faut et on regarde." },
+    { dir: "in", body: "C’est pour la semaine prochaine, je n’ai pas encore de jour fixe." },
   ],
   [
-    { dir: "in", body: "Me interesa, pero antes quiero saber como funciona." },
-    { dir: "out", origen: "agent", body: "Te explico en dos lineas y si te hace sentido seguimos. Te sirve?" },
-    { dir: "in", body: "Si por favor." },
-    { dir: "out", origen: "agent", body: "Listo, te dejo el detalle y cualquier duda me escribis." },
+    { dir: "in", body: "Ça m’intéresse, mais je veux d’abord savoir comment ça marche." },
+    { dir: "out", origen: "agent", body: "Je vous explique en deux lignes et si ça vous parle, on continue. Ça vous va ?" },
+    { dir: "in", body: "Oui, s’il vous plaît." },
+    { dir: "out", origen: "agent", body: "C’est fait, je vous laisse le détail. Écrivez-moi si vous avez une question." },
   ],
   [
-    { dir: "in", body: "Hola, necesito hablar con una persona, tengo dudas." },
-    { dir: "out", origen: "agent", body: "Te paso con una persona del equipo que te va a ayudar con esto. En un momento te escribe." },
-    { dir: "out", origen: "human", body: "Hola, soy Ana del equipo. Cuentame que dudas tienes y lo vemos juntos." },
+    { dir: "in", body: "Bonjour, j’ai besoin de parler à quelqu’un, j’ai des questions." },
+    { dir: "out", origen: "agent", body: "Je vous mets en relation avec une personne de l’équipe qui va vous aider. Elle vous écrit dans un instant." },
+    { dir: "out", origen: "human", body: "Bonjour, je suis Ana de l’équipe. Dites-moi vos questions et on regarde ensemble." },
   ],
   [
-    { dir: "in", body: "Quiero avanzar, que necesitan de mi parte?" },
-    { dir: "out", origen: "agent", body: "Perfecto. Con un par de datos lo dejamos coordinado. Que dia te queda comodo?" },
-    { dir: "in", body: "El sabado en la manana puedo." },
+    { dir: "in", body: "Je veux avancer, de quoi avez-vous besoin de ma part ?" },
+    { dir: "out", origen: "agent", body: "Parfait. Avec quelques infos, on cale tout. Quel jour vous arrange ?" },
+    { dir: "in", body: "Samedi matin, je peux." },
   ],
 ];
 
@@ -189,7 +189,7 @@ async function sembrarNucleo(r: ResultadoSeed) {
         company: p.company,
         source: p.source,
         score: 40 + ((i * 17) % 55),
-        tags: ["demo", ...(i % 3 === 0 ? ["prioridad"] : [])],
+        tags: ["demo", ...(i % 3 === 0 ? ["prioritaire"] : [])],
         customFields: valores,
         ownerId: admin?.id ?? null,
         assignedAt: admin ? createdAt : null,
@@ -230,10 +230,10 @@ async function sembrarNucleo(r: ResultadoSeed) {
 
   // Actividades.
   const notas = [
-    "Llamada inicial: le interesa visitar el fin de semana.",
-    "Envie propuesta por correo, espera respuesta del banco.",
-    "Pidio comparativa de dos opciones en la misma zona.",
-    "Reunion presencial coordinada para la proxima semana.",
+    "Premier appel : souhaite visiter ce week-end.",
+    "Proposition envoyée par e-mail, attend la réponse de la banque.",
+    "A demandé un comparatif de deux options dans le même secteur.",
+    "Rendez-vous sur place prévu la semaine prochaine.",
   ];
   for (let i = 0; i < Math.min(8, creados.length); i++) {
     await db.insert(activities).values({

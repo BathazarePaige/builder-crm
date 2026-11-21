@@ -79,25 +79,25 @@ export function ContactDetailClient({
     try {
       await navigator.clipboard.writeText(value);
       setCopiedField(field);
-      toast.success("Copiado");
+      toast.success("Copié");
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast.error("Error al copiar");
+      toast.error("Impossible de copier");
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Estas seguro de eliminar este contacto? Esta accion no se puede deshacer.")) {
+    if (!confirm("Supprimer ce contact ? C’est définitif.")) {
       return;
     }
 
     try {
       const res = await fetch(`/api/contacts/${contact.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Error al eliminar");
-      toast.success("Contacto eliminado");
+      if (!res.ok) throw new Error("Impossible de supprimer");
+      toast.success("Contact supprimé");
       router.push("/contacts");
     } catch {
-      toast.error("Error al eliminar el contacto");
+      toast.error("Impossible de supprimer le contact");
     }
   };
 
@@ -108,11 +108,11 @@ export function ContactDetailClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completedAt: new Date().toISOString() }),
       });
-      if (!res.ok) throw new Error("Error");
-      toast.success("Actividad completada");
+      if (!res.ok) throw new Error("Erreur");
+      toast.success("Activité terminée");
       router.refresh();
     } catch {
-      toast.error("Error al completar la actividad");
+      toast.error("Impossible de terminer l’activité");
     }
   };
 
@@ -124,7 +124,7 @@ export function ContactDetailClient({
           size="icon"
           onClick={() => router.push("/contacts")}
           className="cursor-pointer"
-          aria-label="Volver a contactos"
+          aria-label="Retour aux contacts"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
@@ -145,7 +145,7 @@ export function ContactDetailClient({
             className="cursor-pointer"
           >
             <Pencil className="h-4 w-4 mr-1" />
-            Editar
+            Modifier
           </Button>
           <Button
             variant="outline"
@@ -154,7 +154,7 @@ export function ContactDetailClient({
             className="cursor-pointer text-destructive hover:text-destructive"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            Eliminar
+            Supprimer
           </Button>
         </div>
       </div>
@@ -163,7 +163,7 @@ export function ContactDetailClient({
         {/* Contact info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Informacion</CardTitle>
+            <CardTitle className="text-base">Informations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="text-sm">
@@ -177,13 +177,13 @@ export function ContactDetailClient({
             {contact.email && (
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <a href={`mailto:${contact.email}`} className="text-primary hover:underline flex-1 truncate">
+                <a href={`mailto:${contact.email}`} className="text-primary-ink hover:underline flex-1 truncate">
                   {contact.email}
                 </a>
                 <button
                   onClick={() => handleCopy(contact.email!, "email")}
                   className="p-1 rounded hover:bg-muted cursor-pointer"
-                  title="Copiar email"
+                  title="Copier l’e-mail"
                 >
                   {copiedField === "email" ? (
                     <Check className="h-3.5 w-3.5 text-green-600" />
@@ -203,21 +203,21 @@ export function ContactDetailClient({
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-1 rounded hover:bg-green-50 cursor-pointer"
-                    title="Abrir WhatsApp"
+                    title="Ouvrir WhatsApp"
                   >
                     <MessageCircle className="h-3.5 w-3.5 text-green-600" />
                   </a>
                   <a
                     href={`tel:${contact.phone}`}
                     className="p-1 rounded hover:bg-blue-50 cursor-pointer"
-                    title="Llamar"
+                    title="Appeler"
                   >
                     <Phone className="h-3.5 w-3.5 text-blue-600" />
                   </a>
                   <button
                     onClick={() => handleCopy(contact.phone!, "phone")}
                     className="p-1 rounded hover:bg-muted cursor-pointer"
-                    title="Copiar telefono"
+                    title="Copier le téléphone"
                   >
                     {copiedField === "phone" ? (
                       <Check className="h-3.5 w-3.5 text-green-600" />
@@ -236,14 +236,14 @@ export function ContactDetailClient({
             )}
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>Creado {formatDate(contact.createdAt)}</span>
+              <span>Créé {formatDate(contact.createdAt)}</span>
             </div>
             <CamposPersonalizadosLista valores={contact.customFields} mostrarVacios />
             {contact.aiSummary && (
               <div className="pt-2 border-t">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Bot className="h-3 w-3" />
-                  Resumen del agente
+                  Résumé de l’agent
                   {contact.aiSummaryAt && (
                     <span className="normal-case tracking-normal font-normal">
                       · {formatDate(contact.aiSummaryAt)}
@@ -265,7 +265,7 @@ export function ContactDetailClient({
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
-              Actividades ({activities.length})
+              Activités ({activities.length})
             </CardTitle>
             <Button
               variant="ghost"
@@ -274,13 +274,13 @@ export function ContactDetailClient({
               className="cursor-pointer"
             >
               <Plus className="h-4 w-4 mr-1" />
-              Registrar
+              Enregistrer
             </Button>
           </CardHeader>
           <CardContent>
             {activities.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                Sin actividades. Registra una llamada, email o nota.
+                Aucune activité. Enregistrez un appel, un e-mail ou une note.
               </p>
             ) : (
               <div className="space-y-4">
@@ -301,10 +301,10 @@ export function ContactDetailClient({
                           {isPending && (
                             <Badge
                               variant="outline"
-                              className="text-xs text-primary border-primary cursor-pointer"
+                              className="text-xs text-primary-ink border-primary-ink cursor-pointer"
                               onClick={() => handleCompleteActivity(activity.id)}
                             >
-                              Completar
+                              Terminer
                             </Badge>
                           )}
                         </div>

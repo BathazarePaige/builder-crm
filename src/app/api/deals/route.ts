@@ -45,13 +45,13 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   const { title, value, stageId, contactId, expectedClose, probability, notes } = body;
 
   if (!title || !contactId) {
     return NextResponse.json(
-      { error: "Titulo y contacto son requeridos" },
+      { error: "Le titre et le contact sont obligatoires" },
       { status: 400 }
     );
   }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
   if (!finalStageId) {
     return NextResponse.json(
-      { error: "No hay etapas de pipeline configuradas" },
+      { error: "Aucune étape de pipeline configurée" },
       { status: 400 }
     );
   }
@@ -101,12 +101,12 @@ export async function POST(request: NextRequest) {
     const msg = error instanceof Error ? error.message : "Unknown";
     if (msg.includes("FOREIGN KEY") || msg.includes("foreign key")) {
       return NextResponse.json(
-        { error: "Contacto no encontrado" },
+        { error: "Contact introuvable" },
         { status: 400 }
       );
     }
     return NextResponse.json(
-      { error: `Error al crear deal: ${msg}` },
+      { error: `Erreur lors de la création de l’affaire : ${msg}` },
       { status: 500 }
     );
   }

@@ -110,11 +110,11 @@ export async function processRuns(ids: string[]): Promise<void> {
       .where(eq(automations.key, claimed.automationKey))
       .limit(1);
     if (!rule) {
-      await finish(id, "failed", null, "La regla ya no existe");
+      await finish(id, "failed", null, "La règle n’existe plus");
       continue;
     }
     if (!claimed.contactId) {
-      await finish(id, "skipped", null, "Evento sin contacto");
+      await finish(id, "skipped", null, "Événement sans contact");
       continue;
     }
 
@@ -139,7 +139,7 @@ export async function processRuns(ids: string[]): Promise<void> {
     for (const [i, spec] of actions.entries()) {
       const def = actionFor(spec.type);
       if (!def) {
-        results.push({ type: spec.type, status: "failed", detail: "Accion desconocida" });
+        results.push({ type: spec.type, status: "failed", detail: "Action inconnue" });
         failed = `Accion ${i + 1} desconocida`;
         break;
       }
@@ -147,7 +147,7 @@ export async function processRuns(ids: string[]): Promise<void> {
         const out = await def.run(ctx, spec.params ?? {});
         results.push({ type: spec.type, ...out });
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "error desconocido";
+        const msg = err instanceof Error ? err.message : "erreur inconnue";
         results.push({ type: spec.type, status: "failed", detail: msg });
         failed = `${def.label}: ${msg}`;
         break;
@@ -177,7 +177,7 @@ export async function processRuns(ids: string[]): Promise<void> {
       id,
       anyDone ? "done" : "skipped",
       results,
-      anyDone ? null : results.map((r) => r.detail).join(" · ") || "Sin acciones"
+      anyDone ? null : results.map((r) => r.detail).join(" · ") || "Aucune action"
     );
   }
 }
@@ -308,15 +308,15 @@ export function validateAutomation(
 ): { ok: true; data: AutomationData } | { ok: false; errors: string[] } {
   const errors: string[] = [];
   const name = (input.name ?? "").trim();
-  if (!name) errors.push("Falta el nombre");
+  if (!name) errors.push("Le nom manque");
 
   const trigger = triggerFor(input.trigger);
-  if (!trigger) errors.push("Disparador invalido");
+  if (!trigger) errors.push("Déclencheur invalide");
 
   const filters = trigger ? sanitizeFilters(trigger, input.filters) : [];
   const { actions, errors: actionErrors } = sanitizeActions(input.actions);
   errors.push(...actionErrors);
-  if (actions.length === 0) errors.push("Agrega al menos una accion");
+  if (actions.length === 0) errors.push("Ajoutez au moins une action");
 
   if (errors.length > 0 || !trigger) return { ok: false, errors };
   return {
@@ -396,8 +396,8 @@ async function describeFilters(trigger: TriggerKey, filters: AutomationFilter[])
     const values = Array.isArray(f.value) ? f.value : [f.value];
     const labels = await Promise.all(values.map((v) => labelFor(f.field, v)));
     const field = def?.filterFields.find((x) => x.key === f.field)?.label ?? f.field;
-    const op = f.op === "neq" ? "no es" : "es";
-    parts.push(`${field} ${op} ${labels.join(" o ")}`);
+    const op = f.op === "neq" ? "n’est pas" : "est";
+    parts.push(`${field} ${op} ${labels.join(" ou ")}`);
   }
   return `${base} · ${parts.join(" · ")}`;
 }

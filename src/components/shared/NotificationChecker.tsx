@@ -17,7 +17,7 @@ export function NotificationChecker() {
 
       if (overdueCount > 0) {
         new Notification(marca().nombreCorto, {
-          body: `Tienes ${overdueCount} seguimiento${overdueCount > 1 ? "s" : ""} vencido${overdueCount > 1 ? "s" : ""}`,
+          body: `${overdueCount} relance${overdueCount > 1 ? "s" : ""} en retard`,
           icon: "/favicon.ico",
           tag: "crm-followup", // Prevents duplicate notifications
         });

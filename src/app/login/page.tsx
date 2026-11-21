@@ -2,7 +2,7 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import { proveedoresExternos, NOMBRE_PROVEEDOR } from "@/lib/auth-proveedores";
 
 export const metadata = {
-  title: "Iniciar sesion",
+  title: "Se connecter",
 };
 
 export default async function LoginPage({
@@ -18,10 +18,10 @@ export default async function LoginPage({
     <>
       <div className="space-y-1 text-center">
         <h1 className="text-2xl font-semibold tracking-tight font-heading">
-          Bienvenido de vuelta
+          Bon retour
         </h1>
         <p className="text-sm text-muted-foreground">
-          Inicia sesion para gestionar tu pipeline
+          Connectez-vous pour gérer votre pipeline
         </p>
       </div>
       <AuthForm mode="login" proveedores={proveedores} errorInicial={error ?? null} />

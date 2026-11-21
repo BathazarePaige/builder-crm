@@ -14,11 +14,11 @@ export function ChannelFilter({ value, onChange, counts }: Props) {
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="flex items-center gap-1 px-3 py-2 border-b border-border/60 bg-card overflow-x-auto">
+    <div role="group" aria-label="Filtrer par canal" className="flex items-center gap-1.5 px-3 pb-3 border-b border-border bg-card overflow-x-auto">
       <Pill
         active={value === "all"}
         onClick={() => onChange("all")}
-        label="Todos"
+        label="Toutes"
         count={total}
       />
       {CHANNELS.map((channel) => (
@@ -57,11 +57,12 @@ function Pill({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
-        "inline-flex shrink-0 items-center gap-1.5 h-6 px-2 rounded-full text-[11px] font-medium transition-colors cursor-pointer",
+        "inline-flex shrink-0 items-center gap-1.5 h-7 px-2.5 rounded-md border text-[12px] font-medium transition-colors cursor-pointer",
         active
-          ? "bg-primary text-primary-foreground"
-          : "bg-muted/50 text-muted-foreground hover:bg-muted"
+          ? "bg-foreground text-background border-foreground"
+          : "bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted"
       )}
     >
       {icon}

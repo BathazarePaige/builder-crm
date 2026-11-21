@@ -8,6 +8,7 @@ import { leerConfigPublica } from "@/lib/config-publica";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -58,8 +59,8 @@ export function UserMenu() {
 
   if (!user && !cargando) {
     return (
-      <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-xs text-white/50">
-        Sesion no disponible
+      <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-xs text-sidebar-foreground-muted">
+        Session indisponible
       </div>
     );
   }
@@ -67,58 +68,62 @@ export function UserMenu() {
   if (!user) {
     return (
       <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
-        <div className="h-8 w-8 rounded-full bg-white/10 animate-pulse" />
+        <div className="h-8 w-8 rounded-full bg-sidebar-accent animate-pulse" />
         <div className="flex-1 space-y-1.5">
-          <div className="h-2.5 w-20 rounded bg-white/10 animate-pulse" />
-          <div className="h-2 w-28 rounded bg-white/5 animate-pulse" />
+          <div className="h-2.5 w-20 rounded bg-sidebar-accent animate-pulse" />
+          <div className="h-2 w-28 rounded bg-sidebar-accent animate-pulse" />
         </div>
       </div>
     );
   }
 
-  const displayName = user.fullName || user.email?.split("@")[0] || "Usuario";
+  const displayName = user.fullName || user.email?.split("@")[0] || "Utilisateur";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <button className="w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-white/5 transition-colors cursor-pointer" />
+          <button className="w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-sidebar-accent transition-colors cursor-pointer" />
         }
       >
         <div className="relative shrink-0">
           <Avatar className="h-8 w-8 rounded-full">
-            <AvatarFallback className="rounded-full bg-primary/15 text-primary text-[11px] font-semibold">
+            <AvatarFallback className="rounded-full bg-accent text-accent-foreground text-[11px] font-semibold">
               {initials(user.fullName, user.email)}
             </AvatarFallback>
           </Avatar>
           <span
             aria-hidden
-            className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-sidebar"
+            className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-sidebar"
           />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-medium truncate text-sidebar-foreground">
             {displayName}
           </p>
-          <p className="text-[11px] text-sidebar-foreground/60 truncate">
+          <p className="text-[11px] text-sidebar-foreground-muted truncate">
             {user.email}
           </p>
         </div>
-        <ChevronsUpDown className="h-3.5 w-3.5 text-sidebar-foreground/50 shrink-0" />
+        <ChevronsUpDown className="h-3.5 w-3.5 text-sidebar-foreground-muted shrink-0" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="top" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <p className="text-sm font-medium truncate">{displayName}</p>
-          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-        </DropdownMenuLabel>
+        {/* Base UI exige que la etiqueta viva dentro de un grupo: suelta, el menu
+            revienta al abrirse y se lleva la pagina entera. */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal">
+            <p className="text-sm font-medium truncate">{displayName}</p>
+            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem render={<Link href="/settings" />}>
           <UserIcon className="h-4 w-4" />
-          Mi perfil
+          Mon profil
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/settings" />}>
           <Settings className="h-4 w-4" />
-          Configuracion
+          Réglages
         </DropdownMenuItem>
         {/* En modo local no hay sesion: el boton no tendria a donde ir y dejaria la
             pantalla en blanco. */}
@@ -130,7 +135,7 @@ export function UserMenu() {
               className="text-destructive focus:text-destructive"
             >
               <LogOut className="h-4 w-4" />
-              Cerrar sesion
+              Se déconnecter
             </DropdownMenuItem>
           </>
         )}

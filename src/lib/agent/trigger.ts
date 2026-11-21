@@ -23,7 +23,7 @@ export async function triggerAgentWorker(
   // cuando falta APP_BASE_URL, justamente para no mandar el secreto a un host que vino
   // en una cabecera. Los jobs quedan en la cola y los levanta el barrido.
   if (!baseUrl) {
-    console.error(`[${tag}] sin APP_BASE_URL no se dispara el worker; quedan ${unique.length} en cola`);
+    console.error(`[${tag}] sans APP_BASE_URL le worker n’est pas lancé ; ${unique.length} en attente`);
     return;
   }
 
@@ -74,8 +74,8 @@ export function getWorkerBaseUrl(_headers?: Headers): string {
 
   if (process.env.NODE_ENV === "production") {
     console.error(
-      "[seguridad] falta APP_BASE_URL: no se llama al worker del agente. " +
-        "Derivar la URL del host de la peticion filtraria AGENT_WORKER_SECRET."
+      "[securite] APP_BASE_URL manquante : le worker de l’agent n’est pas appelé. " +
+        "Déduire l’URL de l’hôte de la requête ferait fuiter AGENT_WORKER_SECRET."
     );
     return "";
   }

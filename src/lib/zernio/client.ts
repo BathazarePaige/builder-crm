@@ -65,7 +65,7 @@ export async function zernioFetch<T>(
   const { method = "GET", body, timeoutMs = TIMEOUT_MS } = options;
   const maxAttempts = options.noRetry ? 1 : MAX_RETRIES + 1;
 
-  let last: ZernioError = { status: 0, message: "Sin intentos" };
+  let last: ZernioError = { status: 0, message: "Aucune tentative" };
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const result = await attemptFetch<T>(
@@ -135,7 +135,7 @@ async function attemptFetch<T>(
       error: {
         // 408 marca el timeout como retriable sin inventar un status del servidor.
         status: isTimeout ? 408 : 0,
-        message: err instanceof Error ? err.message : "Network error",
+        message: err instanceof Error ? err.message : "Erreur réseau",
       },
     };
   }

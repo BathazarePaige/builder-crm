@@ -36,14 +36,14 @@ export function PageHeader({
   toolbar,
 }: PageHeaderProps) {
   return (
-    <div className="space-y-5 pb-6 border-b border-border/70 mb-7">
+    <div className="space-y-4 pb-5 border-b border-border mb-6">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1.5 min-w-0">
-          <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.02em] font-heading truncate leading-tight">
+          <h1 className="text-[22px] md:text-2xl font-semibold tracking-[-0.015em] truncate leading-tight">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-[14px] text-muted-foreground leading-relaxed">
+            <p className="text-[13.5px] text-muted-foreground leading-relaxed">
               {subtitle}
             </p>
           )}
@@ -93,7 +93,7 @@ export function PageHeader({
                     className={cn(
                       "rounded-full px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums transition-colors",
                       isActive
-                        ? "bg-primary/15 text-primary"
+                        ? "bg-primary/15 text-primary-ink"
                         : "bg-muted text-muted-foreground",
                     )}
                   >
@@ -103,7 +103,7 @@ export function PageHeader({
                 {isActive && (
                   <span
                     aria-hidden
-                    className="absolute inset-x-0 -bottom-px h-0.5 bg-primary rounded-full"
+                    className="absolute inset-x-0 -bottom-px h-0.5 bg-primary-ink rounded-full"
                   />
                 )}
               </button>

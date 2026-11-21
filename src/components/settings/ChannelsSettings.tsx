@@ -53,7 +53,7 @@ export function ChannelsSettings() {
       const res = await fetch("/api/channels", { cache: "no-store" });
       setData(await res.json());
     } catch {
-      toast.error("No se pudieron cargar los canales");
+      toast.error("Impossible de charger les canaux");
     }
   }, []);
 
@@ -76,11 +76,11 @@ export function ChannelsSettings() {
       if (data.ok) {
         const label = CHANNELS.includes(data.platform as Channel)
           ? CHANNEL_LABELS[data.platform as Channel]
-          : "La cuenta";
-        toast.success(`${label} conectado`);
+          : "Le compte";
+        toast.success(`${label} connecté`);
         load();
       } else {
-        toast.error(data.error ?? "No se pudo conectar la cuenta");
+        toast.error(data.error ?? "Impossible de connecter le compte");
       }
     };
 
@@ -114,7 +114,7 @@ export function ChannelsSettings() {
       );
       await load();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error sincronizando");
+      toast.error(err instanceof Error ? err.message : "Erreur de synchronisation");
     } finally {
       setSyncing(false);
     }
@@ -123,20 +123,20 @@ export function ChannelsSettings() {
   const importHistory = async () => {
     if (
       !confirm(
-        "Importar el historial que Zernio ya tiene replicado (hasta 500 conversaciones por cuenta)?\n\n" +
-          "El agente NO se dispara: no se le va a contestar a ningun cliente viejo."
+        "Importer l’historique déjà répliqué par Zernio (jusqu’à 500 conversations par compte) ?\n\n" +
+          "L’agent ne se déclenche PAS : aucun ancien client ne recevra de réponse."
       )
     ) {
       return;
     }
     setImporting(true);
-    toast.message("Importando historial...", { id: "backfill" });
+    toast.message("Import de l’historique…", { id: "backfill" });
     try {
       const res = await fetch("/api/channels/backfill", { method: "POST" });
       const json = await res.json();
 
       if (!json.ok && json.conversations === 0) {
-        toast.error(json.errors?.[0] ?? "No se pudo importar el historial", {
+        toast.error(json.errors?.[0] ?? "Impossible d’importer l’historique", {
           id: "backfill",
           duration: 8000,
         });
@@ -144,20 +144,20 @@ export function ChannelsSettings() {
       }
 
       toast.success(
-        `${json.conversations} conversaciones y ${json.messages} mensajes importados`,
+        `${json.conversations} conversations et ${json.messages} messages importés`,
         {
           id: "backfill",
           description: json.incomplete
-            ? "Quedaron hilos sin importar: volvé a tocar el botón para continuar."
+            ? "Des fils restent à importer : cliquez à nouveau pour continuer."
             : json.errors?.length
-              ? `Con avisos: ${json.errors[0]}`
+              ? `Avec avertissements : ${json.errors[0]}`
               : undefined,
           duration: 8000,
         }
       );
       await load();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error importando", {
+      toast.error(err instanceof Error ? err.message : "Erreur d’import", {
         id: "backfill",
       });
     } finally {
@@ -175,8 +175,8 @@ export function ChannelsSettings() {
       "width=620,height=780,menubar=no,toolbar=no"
     );
     if (!popup) {
-      toast.error("El navegador bloqueo la ventana", {
-        description: "Permiti las ventanas emergentes para este sitio y reintenta.",
+      toast.error("Le navigateur a bloqué la fenêtre", {
+        description: "Autorisez les fenêtres pop-up pour ce site et réessayez.",
       });
       return;
     }
@@ -198,7 +198,7 @@ export function ChannelsSettings() {
       popup.close();
       popupRef.current = null;
       setConnecting(null);
-      toast.error(err instanceof Error ? err.message : "Error conectando");
+      toast.error(err instanceof Error ? err.message : "Erreur de connexion");
     }
   };
 
@@ -206,7 +206,7 @@ export function ChannelsSettings() {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
         <Loader2 className="h-4 w-4 animate-spin" />
-        Cargando canales...
+        Chargement des canaux…
       </div>
     );
   }
@@ -217,27 +217,20 @@ export function ChannelsSettings() {
     <div className="space-y-4">
       {!config.hasApiKey && (
         <Warning>
-          Falta <code className="bg-muted px-1 rounded">ZERNIO_API_KEY</code> en las
-          variables de la instancia (en Coolify, Environment Variables; en desarrollo,{" "}
-          <code className="bg-muted px-1 rounded">.env.local</code>). Sin eso no se
-          pueden listar ni conectar cuentas. Hay que volver a desplegar para que tome el
-          valor nuevo.
+          Il manque <code className="bg-muted px-1 rounded">ZERNIO_API_KEY</code> dans les variables de l’instance (dans Coolify, Environment Variables ; en développement,{" "}
+          <code className="bg-muted px-1 rounded">.env.local</code>). Sans elle, impossible de lister ou connecter des comptes. Redéployez pour prendre en compte la nouvelle valeur.
         </Warning>
       )}
       {!config.hasWebhookSecret && (
         <Warning>
-          Falta <code className="bg-muted px-1 rounded">ZERNIO_WEBHOOK_SECRET</code> en
-          las variables de la instancia. El webhook rechaza todo hasta que este
-          configurado (fail-closed), asi que no van a entrar mensajes. Tiene que ser
-          identico al de la suscripcion en Zernio:{" "}
-          <code className="bg-muted px-1 rounded">npm run zernio:webhook</code> la deja
-          igual.
+          Il manque <code className="bg-muted px-1 rounded">ZERNIO_WEBHOOK_SECRET</code> dans les variables de l’instance. Le webhook refuse tout tant qu’il n’est pas configuré, donc aucun message n’entrera. Il doit être identique à celui de l’abonnement Zernio :{" "}
+          <code className="bg-muted px-1 rounded">npm run zernio:webhook</code> les aligne.
         </Warning>
       )}
 
       <div className="space-y-1.5">
         <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-          Conectores
+          Connecteurs
         </p>
         {(data.conectores ?? []).map((c) => (
           <div
@@ -255,8 +248,8 @@ export function ChannelsSettings() {
                 <span className="font-medium">{c.nombre}</span>{" "}
                 <span className="text-[11px] text-muted-foreground">
                   {c.configurado
-                    ? `${c.cuentas.length} cuenta${c.cuentas.length === 1 ? "" : "s"}`
-                    : `faltan ${c.faltan.join(", ")}`}
+                    ? `${c.cuentas.length} compte${c.cuentas.length === 1 ? "" : "s"}`
+                    : `il manque ${c.faltan.join(", ")}`}
                 </span>
               </p>
               {c.notas.map((n, i) => (
@@ -293,7 +286,7 @@ export function ChannelsSettings() {
                 <p className="text-sm font-medium">{CHANNEL_LABELS[channel]}</p>
                 {accounts.length === 0 ? (
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    Sin cuentas conectadas.
+                    Aucun compte connecté.
                   </p>
                 ) : (
                   <ul className="mt-1 space-y-0.5">
@@ -315,7 +308,7 @@ export function ChannelsSettings() {
                 )}
                 {isWhatsappOnMeta ? (
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    Modo valvula de escape: WhatsApp sale por Meta Cloud API directo
+                    Mode secours : WhatsApp passe directement par Meta Cloud API
                     (<code className="bg-muted px-1 rounded">WHATSAPP_PROVIDER=meta</code>).
                   </p>
                 ) : (
@@ -326,28 +319,22 @@ export function ChannelsSettings() {
                         <WaModeButton
                           active={waMode === "business_app"}
                           onClick={() => setWaMode("business_app")}
-                          label="Coexistencia"
+                          label="Coexistence"
                         />
                         <WaModeButton
                           active={waMode === "api"}
                           onClick={() => setWaMode("api")}
-                          label="Solo Cloud API"
+                          label="Cloud API seulement"
                         />
                       </div>
                       <p className="text-[11px] text-muted-foreground">
                         {waMode === "business_app" ? (
                           <>
-                            El numero sigue funcionando en la app WhatsApp Business del
-                            celular, y lo que se conteste desde ahi tambien queda
-                            registrado en el CRM. Es lo que corresponde si el negocio ya
-                            atiende por ese numero.
+                            Le numéro continue de fonctionner dans l’app WhatsApp Business du téléphone, et les réponses envoyées depuis l’app sont aussi enregistrées dans le CRM. C’est le bon choix si l’entreprise répond déjà avec ce numéro.
                           </>
                         ) : (
                           <>
-                            El numero pasa a vivir solo en Cloud API y deja de funcionar
-                            en el celular. Solo elegi esto si el numero ya estaba en Cloud
-                            API. Un numero que esta en la app WhatsApp Business aparece
-                            como <em>no cumple los requisitos</em> en este modo.
+                            Le numéro passe uniquement sur Cloud API et ne fonctionne plus sur le téléphone. Choisissez ceci seulement si le numéro était déjà sur Cloud API. Un numéro présent dans l’app WhatsApp Business apparaît comme <em>non conforme</em> dans ce mode.
                           </>
                         )}
                       </p>
@@ -367,7 +354,7 @@ export function ChannelsSettings() {
                 ) : (
                   <Plug className="h-3.5 w-3.5" />
                 )}
-                {accounts.length > 0 ? "Reconectar" : "Conectar"}
+                {accounts.length > 0 ? "Reconnecter" : "Connecter"}
               </Button>
             </div>
           );
@@ -400,13 +387,11 @@ export function ChannelsSettings() {
             ) : (
               <Download className="h-3.5 w-3.5" />
             )}
-            Importar historial
+            Importer l’historique
           </Button>
         </div>
         <p className="text-[11px] text-muted-foreground">
-          Sincronizar trae las cuentas conectadas. Importar historial trae las
-          conversaciones que Zernio ya replicó al conectar cada cuenta — no llegan por
-          webhook, y el agente no se dispara con ellas.
+          Synchroniser récupère les comptes connectés. Importer l’historique récupère les conversations déjà répliquées par Zernio à la connexion de chaque compte : elles n’arrivent pas par webhook et ne déclenchent pas l’agent.
         </p>
       </div>
     </div>
@@ -430,7 +415,7 @@ function WaModeButton({
       className={cn(
         "rounded-full border px-2.5 py-0.5 text-[11px] transition-colors",
         active
-          ? "border-primary bg-primary/10 text-primary font-medium"
+          ? "border-primary-ink bg-primary/10 text-primary-ink font-medium"
           : "border-border text-muted-foreground hover:text-foreground"
       )}
     >

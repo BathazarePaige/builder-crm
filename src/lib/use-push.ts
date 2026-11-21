@@ -83,14 +83,14 @@ export function usePush() {
 
   const subscribe = useCallback(async (): Promise<string | null> => {
     if (!server?.publicKey) {
-      return "El servidor no tiene las claves VAPID configuradas.";
+      return "Le serveur n’a pas de clés VAPID configurées.";
     }
     setBusy(true);
     try {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
         setState("denied");
-        return "Permiso denegado. Se activa desde los ajustes del navegador.";
+        return "Autorisation refusée. Réactivez-la dans les paramètres du navigateur.";
       }
 
       const registration = await navigator.serviceWorker.ready;
@@ -106,13 +106,13 @@ export function usePush() {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        return body.error ?? "No se pudo registrar el dispositivo.";
+        return body.error ?? "Impossible d’enregistrer l’appareil.";
       }
 
       await refresh();
       return null;
     } catch (err) {
-      return err instanceof Error ? err.message : "Error activando notificaciones.";
+      return err instanceof Error ? err.message : "Erreur lors de l’activation des notifications.";
     } finally {
       setBusy(false);
     }
@@ -134,7 +134,7 @@ export function usePush() {
       await refresh();
       return null;
     } catch (err) {
-      return err instanceof Error ? err.message : "Error desactivando.";
+      return err instanceof Error ? err.message : "Erreur lors de la désactivation.";
     } finally {
       setBusy(false);
     }
@@ -143,9 +143,9 @@ export function usePush() {
   const sendTest = useCallback(async (): Promise<string | null> => {
     const res = await fetch("/api/push/test", { method: "POST" });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) return body.error ?? "No se pudo enviar la prueba.";
-    if (body.noDevices) return "Este usuario no tiene dispositivos registrados.";
-    if (body.sent === 0) return "No se entrego a ningun dispositivo.";
+    if (!res.ok) return body.error ?? "Impossible d’envoyer le test.";
+    if (body.noDevices) return "Cet utilisateur n’a aucun appareil enregistré.";
+    if (body.sent === 0) return "Aucun appareil n’a reçu la notification.";
     return null;
   }, []);
 

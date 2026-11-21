@@ -15,14 +15,14 @@ export async function PUT(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const updates: { name?: string; color?: string } = {};
   if (typeof body.name === "string") {
     const trimmed = body.name.trim();
     if (!trimmed) {
-      return NextResponse.json({ error: "Nombre invalido" }, { status: 400 });
+      return NextResponse.json({ error: "Nom invalide" }, { status: 400 });
     }
     updates.name = trimmed;
   }
@@ -31,7 +31,7 @@ export async function PUT(
   }
 
   if (Object.keys(updates).length === 0) {
-    return NextResponse.json({ error: "Nada para actualizar" }, { status: 400 });
+    return NextResponse.json({ error: "Rien à mettre à jour" }, { status: 400 });
   }
 
   const updatedRows = await db
@@ -41,7 +41,7 @@ export async function PUT(
     .returning();
 
   if (updatedRows.length === 0) {
-    return NextResponse.json({ error: "Etapa no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: "Étape introuvable" }, { status: 404 });
   }
 
   return NextResponse.json(updatedRows[0]);
@@ -63,7 +63,7 @@ export async function DELETE(
   if (dealRows.length > 0) {
     return NextResponse.json(
       {
-        error: "La etapa tiene deals",
+        error: "L’étape contient des affaires",
         dealCount: dealRows.length,
       },
       { status: 409 }
@@ -76,7 +76,7 @@ export async function DELETE(
     .returning();
 
   if (deleted.length === 0) {
-    return NextResponse.json({ error: "Etapa no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: "Étape introuvable" }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

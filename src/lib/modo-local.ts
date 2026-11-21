@@ -25,7 +25,7 @@
 /** Id fijo del administrador de mentira del modo local. */
 export const ID_MIEMBRO_LOCAL = "00000000-0000-4000-8000-000000000001";
 export const EMAIL_MIEMBRO_LOCAL = "demo@local";
-export const NOMBRE_MIEMBRO_LOCAL = "Cuenta demo";
+export const NOMBRE_MIEMBRO_LOCAL = "Compte démo";
 
 /** Carpeta (relativa a la raiz del repo) donde vive la base embebida. */
 export const CARPETA_BASE_LOCAL = ".local/db";

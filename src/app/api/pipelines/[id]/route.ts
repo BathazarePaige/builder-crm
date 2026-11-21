@@ -15,12 +15,12 @@ export async function PUT(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
   if (!name) {
-    return NextResponse.json({ error: "Nombre requerido" }, { status: 400 });
+    return NextResponse.json({ error: "Nom obligatoire" }, { status: 400 });
   }
 
   const updatedRows = await db
@@ -30,7 +30,7 @@ export async function PUT(
     .returning();
 
   if (updatedRows.length === 0) {
-    return NextResponse.json({ error: "Pipeline no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Pipeline introuvable" }, { status: 404 });
   }
 
   return NextResponse.json(updatedRows[0]);
@@ -59,7 +59,7 @@ export async function DELETE(
     if (dealRows.length > 0) {
       return NextResponse.json(
         {
-          error: "No se puede borrar un pipeline con deals",
+          error: "Impossible de supprimer un pipeline qui contient des affaires",
           dealCount: dealRows.length,
         },
         { status: 409 }
@@ -74,7 +74,7 @@ export async function DELETE(
     .returning();
 
   if (deleted.length === 0) {
-    return NextResponse.json({ error: "Pipeline no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Pipeline introuvable" }, { status: 404 });
   }
 
   return NextResponse.json({ ok: true });

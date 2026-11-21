@@ -17,10 +17,10 @@ async function despachar(
 ): Promise<Response> {
   const { modulo: nombre, ruta = [] } = await ctx.params;
   const modulo = obtenerModulo(nombre);
-  if (!modulo) return NextResponse.json({ error: "Modulo no encontrado" }, { status: 404 });
+  if (!modulo) return NextResponse.json({ error: "Module introuvable" }, { status: 404 });
 
   const match = resolverApi(modulo, metodo, ruta);
-  if (!match) return NextResponse.json({ error: "Ruta no encontrada" }, { status: 404 });
+  if (!match) return NextResponse.json({ error: "Route introuvable" }, { status: 404 });
   if (!match.handler) {
     return NextResponse.json(
       { error: "Metodo no permitido" },

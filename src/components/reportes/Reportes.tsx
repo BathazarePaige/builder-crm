@@ -43,19 +43,19 @@ const RANGOS: RangoDias[] = [7, 30, 90];
 function compacto(v: number): string {
   if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
   if (Math.abs(v) >= 10_000) return `${(v / 1_000).toFixed(1)}K`;
-  return v.toLocaleString("es");
+  return v.toLocaleString("fr-FR");
 }
 
 function Delta({ kpi, bueno = true }: { kpi: Kpi; bueno?: boolean }) {
-  if (kpi.anterior === 0 && kpi.actual === 0) return <span className="text-[11px] text-muted-foreground">sin datos previos</span>;
-  if (kpi.anterior === 0) return <span className="text-[11px] text-muted-foreground">nuevo en el periodo</span>;
+  if (kpi.anterior === 0 && kpi.actual === 0) return <span className="text-[11px] text-muted-foreground">pas de données antérieures</span>;
+  if (kpi.anterior === 0) return <span className="text-[11px] text-muted-foreground">nouveau sur la période</span>;
   const pct = Math.round(((kpi.actual - kpi.anterior) / kpi.anterior) * 100);
   const sube = pct >= 0;
   const positivo = bueno ? sube : !sube;
   return (
     <span className={cn("text-[11px] font-medium", positivo ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400")}>
       {sube ? "+" : ""}
-      {pct}% <span className="font-normal text-muted-foreground">vs periodo anterior</span>
+      {pct}% <span className="font-normal text-muted-foreground">vs période précédente</span>
     </span>
   );
 }
@@ -82,7 +82,7 @@ function TooltipBox({ active, payload, label }: { active?: boolean; payload?: Ar
       {payload.map((p) => (
         <p key={p.name} className="text-muted-foreground flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-          {p.name}: <span className="font-semibold text-foreground">{p.value.toLocaleString("es")}</span>
+          {p.name}: <span className="font-semibold text-foreground">{p.value.toLocaleString("fr-FR")}</span>
         </p>
       ))}
     </div>
@@ -114,20 +114,20 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
             href={`/reportes?dias=${r}`}
             className={cn(
               "rounded-full border px-3 py-1 text-xs transition-colors",
-              r === dias ? "border-primary bg-primary/10 text-primary font-medium" : "border-border text-muted-foreground hover:text-foreground"
+              r === dias ? "border-primary-ink bg-primary/10 text-primary-ink font-medium" : "border-border text-muted-foreground hover:text-foreground"
             )}
           >
-            Ultimos {r} dias
+            {r} derniers jours
           </Link>
         ))}
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Tile titulo="Contactos nuevos" valor={compacto(kpis.contactosNuevos.actual)} sub={<Delta kpi={kpis.contactosNuevos} />} />
-        <Tile titulo="Conversaciones nuevas" valor={compacto(kpis.conversacionesNuevas.actual)} sub={<Delta kpi={kpis.conversacionesNuevas} />} />
-        <Tile titulo="Mensajes recibidos" valor={compacto(kpis.mensajesEntrantes.actual)} sub={<Delta kpi={kpis.mensajesEntrantes} />} />
+        <Tile titulo="Nouveaux contacts" valor={compacto(kpis.contactosNuevos.actual)} sub={<Delta kpi={kpis.contactosNuevos} />} />
+        <Tile titulo="Nouvelles conversations" valor={compacto(kpis.conversacionesNuevas.actual)} sub={<Delta kpi={kpis.conversacionesNuevas} />} />
+        <Tile titulo="Messages reçus" valor={compacto(kpis.mensajesEntrantes.actual)} sub={<Delta kpi={kpis.mensajesEntrantes} />} />
         <Tile
-          titulo="Operaciones ganadas"
+          titulo="Affaires gagnées"
           valor={compacto(kpis.operacionesGanadas.actual)}
           sub={
             <span className="text-[11px] text-muted-foreground">
@@ -136,36 +136,36 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
           }
         />
         <Tile
-          titulo="Tasa de cierre"
+          titulo="Taux de clôture"
           valor={kpis.tasaCierre === null ? "—" : `${kpis.tasaCierre}%`}
-          sub={<span className="text-[11px] text-muted-foreground">{kpis.tasaCierre === null ? "sin cierres en el periodo" : "ganadas sobre cerradas"}</span>}
+          sub={<span className="text-[11px] text-muted-foreground">{kpis.tasaCierre === null ? "aucune clôture sur la période" : "gagnées sur clôturées"}</span>}
         />
         <Tile
-          titulo="Respondido por el agente"
+          titulo="Réponses de l’agent"
           valor={kpis.porcentajeAgente === null ? "—" : `${kpis.porcentajeAgente}%`}
-          sub={<span className="text-[11px] text-muted-foreground">{agente.toLocaleString("es")} del agente · {humano.toLocaleString("es")} de personas</span>}
+          sub={<span className="text-[11px] text-muted-foreground">{agente.toLocaleString("fr-FR")} par l’agent · {humano.toLocaleString("fr-FR")} par l’équipe</span>}
         />
         <Tile
-          titulo="Primera respuesta"
+          titulo="Première réponse"
           valor={kpis.primeraRespuestaMin === null ? "—" : kpis.primeraRespuestaMin < 60 ? `${kpis.primeraRespuestaMin} min` : `${(kpis.primeraRespuestaMin / 60).toFixed(1)} h`}
-          sub={<span className="text-[11px] text-muted-foreground">promedio en conversaciones nuevas</span>}
+          sub={<span className="text-[11px] text-muted-foreground">en moyenne sur les nouvelles conversations</span>}
         />
         <Tile
-          titulo="Derivadas a humano"
+          titulo="Transmises à un humain"
           valor={compacto(kpis.derivaciones)}
-          sub={<span className="text-[11px] text-muted-foreground">conversaciones que pidieron una persona</span>}
+          sub={<span className="text-[11px] text-muted-foreground">conversations ayant demandé un humain</span>}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card className="surface-card lg:col-span-2">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base font-semibold tracking-tight font-heading">Mensajes por dia</CardTitle>
-            <p className="text-xs text-muted-foreground">Entrantes de clientes y salientes del equipo y el agente</p>
+            <CardTitle className="text-base font-semibold tracking-tight font-heading">Messages par jour</CardTitle>
+            <p className="text-xs text-muted-foreground">Reçus des clients, envoyés par l’équipe et l’agent</p>
           </CardHeader>
           <CardContent>
             {porDia.every((d) => d.entrantes === 0 && d.salientes === 0) ? (
-              <Vacio texto="Sin mensajes en el periodo." />
+              <Vacio texto="Aucun message sur la période." />
             ) : (
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={porDia} margin={{ top: 8, right: 12, bottom: 0, left: -16 }}>
@@ -174,8 +174,8 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
                   <YAxis tick={EJE} tickLine={false} axisLine={false} width={40} allowDecimals={false} />
                   <Tooltip content={<TooltipBox />} cursor={{ stroke: "var(--viz-axis)" }} />
                   <Legend iconType="plainline" wrapperStyle={{ fontSize: 12 }} />
-                  <Line type="monotone" name="Entrantes" dataKey="entrantes" stroke="var(--viz-1)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
-                  <Line type="monotone" name="Salientes" dataKey="salientes" stroke="var(--viz-2)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
+                  <Line type="monotone" name="Reçus" dataKey="entrantes" stroke="var(--viz-1)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
+                  <Line type="monotone" name="Envoyés" dataKey="salientes" stroke="var(--viz-2)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -184,19 +184,19 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
 
         <Card className="surface-card">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base font-semibold tracking-tight font-heading">Contactos por fuente</CardTitle>
-            <p className="text-xs text-muted-foreground">Nuevos en el periodo</p>
+            <CardTitle className="text-base font-semibold tracking-tight font-heading">Contacts par source</CardTitle>
+            <p className="text-xs text-muted-foreground">Nouveaux sur la période</p>
           </CardHeader>
           <CardContent>
             {fuentes.length === 0 ? (
-              <Vacio texto="Sin contactos nuevos en el periodo." />
+              <Vacio texto="Aucun nouveau contact sur la période." />
             ) : (
               <ResponsiveContainer width="100%" height={Math.max(160, fuentes.length * 36)}>
                 <BarChart data={fuentes} layout="vertical" margin={{ top: 0, right: 40, bottom: 0, left: 8 }} barSize={18}>
                   <XAxis type="number" hide />
                   <YAxis type="category" dataKey="nombre" tick={EJE} tickLine={false} axisLine={false} width={110} />
                   <Tooltip content={<TooltipBox />} cursor={{ fill: "var(--muted)", opacity: 0.4 }} />
-                  <Bar name="Contactos" dataKey="cantidad" fill="var(--viz-1)" radius={[0, 4, 4, 0]}>
+                  <Bar name="Contacts" dataKey="cantidad" fill="var(--viz-1)" radius={[0, 4, 4, 0]}>
                     <LabelList dataKey="cantidad" position="right" style={{ fontSize: 11, fill: "var(--foreground)" }} />
                   </Bar>
                 </BarChart>
@@ -207,19 +207,19 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
 
         <Card className="surface-card">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base font-semibold tracking-tight font-heading">Conversaciones por canal</CardTitle>
-            <p className="text-xs text-muted-foreground">Hilos nuevos en el periodo</p>
+            <CardTitle className="text-base font-semibold tracking-tight font-heading">Conversations par canal</CardTitle>
+            <p className="text-xs text-muted-foreground">Nouveaux fils sur la période</p>
           </CardHeader>
           <CardContent>
             {canales.length === 0 ? (
-              <Vacio texto="Sin conversaciones nuevas en el periodo." />
+              <Vacio texto="Aucune nouvelle conversation sur la période." />
             ) : (
               <ResponsiveContainer width="100%" height={Math.max(160, canales.length * 36)}>
                 <BarChart data={canales} layout="vertical" margin={{ top: 0, right: 40, bottom: 0, left: 8 }} barSize={18}>
                   <XAxis type="number" hide />
                   <YAxis type="category" dataKey="nombre" tick={EJE} tickLine={false} axisLine={false} width={110} />
                   <Tooltip content={<TooltipBox />} cursor={{ fill: "var(--muted)", opacity: 0.4 }} />
-                  <Bar name="Conversaciones" dataKey="cantidad" fill="var(--viz-1)" radius={[0, 4, 4, 0]}>
+                  <Bar name="Conversations" dataKey="cantidad" fill="var(--viz-1)" radius={[0, 4, 4, 0]}>
                     <LabelList dataKey="cantidad" position="right" style={{ fontSize: 11, fill: "var(--foreground)" }} />
                   </Bar>
                 </BarChart>
@@ -230,14 +230,14 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
 
         <Card className="surface-card lg:col-span-2">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-base font-semibold tracking-tight font-heading">Embudo del pipeline</CardTitle>
-            <p className="text-xs text-muted-foreground">Operaciones abiertas y cerradas por etapa (total, no solo el periodo)</p>
+            <CardTitle className="text-base font-semibold tracking-tight font-heading">Entonnoir du pipeline</CardTitle>
+            <p className="text-xs text-muted-foreground">Affaires ouvertes et clôturées par étape (total, pas seulement la période)</p>
           </CardHeader>
           <CardContent>
             {reporte.embudo.length === 0 ? (
-              <Vacio texto="No hay pipeline configurado." />
+              <Vacio texto="Aucun pipeline configuré." />
             ) : reporte.embudo.every((e) => e.cantidad === 0) ? (
-              <Vacio texto="Todavia no hay operaciones en el pipeline." />
+              <Vacio texto="Aucune affaire dans le pipeline pour l’instant." />
             ) : (
               <ResponsiveContainer width="100%" height={Math.max(200, reporte.embudo.length * 36)}>
                 <BarChart data={reporte.embudo} layout="vertical" margin={{ top: 0, right: 120, bottom: 0, left: 8 }} barSize={18}>
@@ -259,7 +259,7 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
                     }}
                     cursor={{ fill: "var(--muted)", opacity: 0.4 }}
                   />
-                  <Bar name="Operaciones" dataKey="cantidad" radius={[0, 4, 4, 0]}>
+                  <Bar name="Affaires" dataKey="cantidad" radius={[0, 4, 4, 0]}>
                     {reporte.embudo.map((e) => (
                       <Cell key={e.etapa} fill={e.color} />
                     ))}

@@ -29,8 +29,8 @@ import { CamposPersonalizadosInputs } from "./CamposPersonalizados";
 import type { ValoresCampos } from "@/lib/config/campos";
 
 const contactSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido"),
-  email: z.string().email("Email invalido").or(z.literal("")),
+  name: z.string().min(1, "Le nom est obligatoire"),
+  email: z.string().email("E-mail invalide").or(z.literal("")),
   phone: z.string(),
   company: z.string(),
   source: z.string(),
@@ -113,11 +113,11 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
 
       if (!res.ok) {
         const err = (await res.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(err?.error || "Error al guardar");
+        throw new Error(err?.error || "Impossible d’enregistrer");
       }
 
       toast.success(
-        isEditing ? "Contacto actualizado" : "Contacto creado"
+        isEditing ? "Contact mis à jour" : "Contact créé"
       );
       reset();
       setTags([]);
@@ -126,7 +126,7 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
       onClose();
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error al guardar el contacto");
+      toast.error(err instanceof Error ? err.message : "Impossible d’enregistrer le contact");
     }
   };
 
@@ -135,14 +135,14 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Editar Contacto" : "Nuevo Contacto"}
+            {isEditing ? "Modifier le contact" : "Nouveau contact"}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nombre *</Label>
-            <Input id="name" {...register("name")} placeholder="Nombre completo" />
+            <Label htmlFor="name">Nom *</Label>
+            <Input id="name" {...register("name")} placeholder="Nom complet" />
             {errors.name && (
               <p className="text-xs text-destructive">{errors.name.message}</p>
             )}
@@ -150,22 +150,22 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register("email")} placeholder="correo@ejemplo.com" />
+              <Label htmlFor="email">E-mail</Label>
+              <Input id="email" type="email" {...register("email")} placeholder="nom@exemple.com" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Telefono</Label>
+              <Label htmlFor="phone">Téléphone</Label>
               <Input id="phone" {...register("phone")} placeholder="+52 55 1234 5678" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="company">Empresa</Label>
-            <Input id="company" {...register("company")} placeholder="Nombre de la empresa" />
+            <Label htmlFor="company">Entreprise</Label>
+            <Input id="company" {...register("company")} placeholder="Nom de l’entreprise" />
           </div>
 
           <div className="space-y-2">
-            <Label>Fuente</Label>
+            <Label>Source</Label>
             <Select
               value={watch("source")}
               onValueChange={(v) => v && setValue("source", v)}
@@ -174,34 +174,34 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="website">Sitio web</SelectItem>
+                <SelectItem value="website">Site web</SelectItem>
                 <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                <SelectItem value="referido">Referido</SelectItem>
-                <SelectItem value="redes_sociales">Redes sociales</SelectItem>
-                <SelectItem value="llamada_fria">Llamada fria</SelectItem>
-                <SelectItem value="email">Email</SelectItem>
-                <SelectItem value="formulario">Formulario</SelectItem>
-                <SelectItem value="evento">Evento</SelectItem>
-                <SelectItem value="import">Importado</SelectItem>
+                <SelectItem value="referido">Recommandation</SelectItem>
+                <SelectItem value="redes_sociales">Réseaux sociaux</SelectItem>
+                <SelectItem value="llamada_fria">Prospection à froid</SelectItem>
+                <SelectItem value="email">E-mail</SelectItem>
+                <SelectItem value="formulario">Formulaire</SelectItem>
+                <SelectItem value="evento">Événement</SelectItem>
+                <SelectItem value="import">Importé</SelectItem>
                 <SelectItem value="webhook">Webhook</SelectItem>
-                <SelectItem value="otro">Otro</SelectItem>
+                <SelectItem value="otro">Autre</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Etiquetas</Label>
+            <Label>Étiquettes</Label>
             <div className="flex flex-wrap gap-1.5">
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 text-[11px] font-medium"
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary-ink border border-primary-ink/20 px-2 py-0.5 text-[11px] font-medium"
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    aria-label={`Quitar ${tag}`}
+                    aria-label={`Retirer ${tag}`}
                     className="hover:text-destructive cursor-pointer"
                   >
                     <X className="h-3 w-3" />
@@ -219,7 +219,7 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
                     addTag();
                   }
                 }}
-                placeholder="Agregar etiqueta y presionar Enter"
+                placeholder="Saisir une étiquette puis Entrée"
                 className="h-9"
               />
               <Button
@@ -229,13 +229,13 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
                 disabled={!tagDraft.trim()}
                 className="cursor-pointer h-9"
               >
-                Agregar
+                Ajouter
               </Button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Asesor a cargo</Label>
+            <Label>Conseiller responsable</Label>
             <OwnerSelect
               value={ownerId}
               onChange={(v) => {
@@ -252,16 +252,16 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
           />
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notas</Label>
-            <Textarea id="notes" {...register("notes")} placeholder="Notas sobre el contacto..." rows={3} />
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea id="notes" {...register("notes")} placeholder="Notes sur le contact…" rows={3} />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={onClose} className="cursor-pointer">
-              Cancelar
+              Annuler
             </Button>
             <Button type="submit" disabled={isSubmitting} className="cursor-pointer">
-              {isSubmitting ? "Guardando..." : isEditing ? "Actualizar" : "Crear"}
+              {isSubmitting ? "Enregistrement…" : isEditing ? "Mettre à jour" : "Créer"}
             </Button>
           </div>
         </form>

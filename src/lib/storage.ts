@@ -37,7 +37,7 @@ let client: S3Client | null = null;
 function s3(): S3Client {
   if (!storageConfigured()) {
     throw new Error(
-      "Storage sin configurar: faltan S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID o S3_SECRET_ACCESS_KEY"
+      "Stockage non configuré : il manque S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID ou S3_SECRET_ACCESS_KEY"
     );
   }
   if (!client) {

@@ -13,19 +13,19 @@ function limpiar(campo: CampoConfig, crudo: unknown): { ok: true; valor: ValorCa
   if (crudo === undefined || crudo === null || crudo === "") return { ok: true, valor: null };
   switch (campo.tipo) {
     case "texto": {
-      if (typeof crudo !== "string") return { ok: false, error: `${campo.etiqueta}: debe ser texto` };
+      if (typeof crudo !== "string") return { ok: false, error: `${campo.etiqueta} : doit être un texte` };
       const v = crudo.trim().slice(0, 500);
       return { ok: true, valor: v === "" ? null : v };
     }
     case "numero": {
       const n = typeof crudo === "number" ? crudo : Number(String(crudo).replace(/[^\d.,-]/g, "").replace(",", "."));
-      if (!Number.isFinite(n)) return { ok: false, error: `${campo.etiqueta}: debe ser un numero` };
+      if (!Number.isFinite(n)) return { ok: false, error: `${campo.etiqueta} : doit être un nombre` };
       return { ok: true, valor: n };
     }
     case "seleccion": {
       const v = String(crudo);
       if (!campo.opciones?.includes(v)) {
-        return { ok: false, error: `${campo.etiqueta}: valor fuera de las opciones (${campo.opciones?.join(", ")})` };
+        return { ok: false, error: `${campo.etiqueta} : valeur hors des options (${campo.opciones?.join(", ")})` };
       }
       return { ok: true, valor: v };
     }
@@ -34,12 +34,12 @@ function limpiar(campo: CampoConfig, crudo: unknown): { ok: true; valor: ValorCa
       const s = String(crudo).toLowerCase();
       if (["true", "si", "sí", "1", "yes"].includes(s)) return { ok: true, valor: true };
       if (["false", "no", "0"].includes(s)) return { ok: true, valor: false };
-      return { ok: false, error: `${campo.etiqueta}: debe ser si o no` };
+      return { ok: false, error: `${campo.etiqueta} : doit être oui ou non` };
     }
     case "fecha": {
       const s = String(crudo).slice(0, 10);
       if (!FECHA.test(s) || Number.isNaN(Date.parse(s))) {
-        return { ok: false, error: `${campo.etiqueta}: fecha invalida (AAAA-MM-DD)` };
+        return { ok: false, error: `${campo.etiqueta} : date invalide (AAAA-MM-JJ)` };
       }
       return { ok: true, valor: s };
     }
@@ -60,13 +60,13 @@ export function validarCamposPersonalizados(
     entrada = {};
   }
   if (typeof entrada !== "object" || Array.isArray(entrada)) {
-    return { ok: false, error: "customFields debe ser un objeto" };
+    return { ok: false, error: "customFields doit être un objet" };
   }
   const obj = entrada as Record<string, unknown>;
   const conocidas = new Map(campos.map((c) => [c.clave, c]));
 
   for (const k of Object.keys(obj)) {
-    if (!conocidas.has(k)) return { ok: false, error: `Campo desconocido: ${k}` };
+    if (!conocidas.has(k)) return { ok: false, error: `Champ inconnu : ${k}` };
   }
 
   const valores: ValoresCampos = {};
@@ -74,14 +74,14 @@ export function validarCamposPersonalizados(
     const presente = Object.prototype.hasOwnProperty.call(obj, campo.clave);
     if (!presente) {
       if (!opts.parcial && campo.requerido) {
-        return { ok: false, error: `${campo.etiqueta} es requerido` };
+        return { ok: false, error: `${campo.etiqueta} est obligatoire` };
       }
       continue;
     }
     const r = limpiar(campo, obj[campo.clave]);
     if (!r.ok) return r;
     if (!opts.parcial && campo.requerido && r.valor === null) {
-      return { ok: false, error: `${campo.etiqueta} es requerido` };
+      return { ok: false, error: `${campo.etiqueta} est obligatoire` };
     }
     valores[campo.clave] = r.valor;
   }

@@ -1,38 +1,38 @@
 import type { LeadSource, ActivityType } from "@/types";
-import { getConfig } from "@/lib/config";
+import { getConfig, localeIntl } from "@/lib/config";
 
 export const SOURCE_LABELS: Record<LeadSource, string> = {
-  website: "Sitio web",
+  website: "Site web",
   whatsapp: "WhatsApp",
   instagram: "Instagram",
   facebook: "Facebook",
-  referido: "Referido",
-  redes_sociales: "Redes sociales",
-  llamada_fria: "Llamada fria",
-  email: "Email",
-  formulario: "Formulario",
-  evento: "Evento",
-  import: "Importado",
+  referido: "Recommandation",
+  redes_sociales: "Réseaux sociaux",
+  llamada_fria: "Prospection à froid",
+  email: "E-mail",
+  formulario: "Formulaire",
+  evento: "Événement",
+  import: "Importé",
   webhook: "Webhook",
   gohighlevel: "GoHighLevel",
-  simulador: "Simulador",
-  otro: "Otro",
+  simulador: "Simulateur",
+  otro: "Autre",
 };
 
 export const ACTIVITY_TYPE_CONFIG: Record<
   ActivityType,
   { label: string; icon: string }
 > = {
-  call: { label: "Llamada", icon: "Phone" },
-  email: { label: "Email", icon: "Mail" },
-  meeting: { label: "Reunion", icon: "Users" },
-  note: { label: "Nota", icon: "FileText" },
-  follow_up: { label: "Seguimiento", icon: "Clock" },
+  call: { label: "Appel", icon: "Phone" },
+  email: { label: "E-mail", icon: "Mail" },
+  meeting: { label: "Rendez-vous", icon: "Users" },
+  note: { label: "Note", icon: "FileText" },
+  follow_up: { label: "Relance", icon: "Clock" },
 };
 
 /** Montos en centavos; la moneda sale de config/cliente.ts (`moneda`). */
 export function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat("es", {
+  return new Intl.NumberFormat(localeIntl(), {
     style: "currency",
     currency: getConfig().moneda,
     maximumFractionDigits: 0,
@@ -53,7 +53,7 @@ function toDate(date: Date | number): Date {
 export function formatDate(date: Date | number | null): string {
   if (!date) return "-";
   const d = toDate(date);
-  return new Intl.DateTimeFormat("es-MX", {
+  return new Intl.DateTimeFormat(localeIntl(), {
     timeZone: getConfig().zonaHoraria,
     day: "numeric",
     month: "short",
@@ -75,7 +75,7 @@ function diaLocal(d: Date): string {
 
 export function formatRelativeDate(date: Date | number): string {
   const d = toDate(date);
-  // "Hoy" y "Ayer" son dias del calendario, no ventanas de 24 h: a las 00:30 algo de las
+  // "Aujourd’hui" y "Hier" son dias del calendario, no ventanas de 24 h: a las 00:30 algo de las
   // 23:00 es de ayer aunque hayan pasado 90 minutos. Se comparan los dias en la zona de
   // la instancia para que la misma fila no diga una cosa en el servidor y otra en el
   // navegador.
@@ -84,9 +84,10 @@ export function formatRelativeDate(date: Date | number): string {
       86_400_000
   );
 
-  if (dias <= 0) return "Hoy";
-  if (dias === 1) return "Ayer";
-  if (dias < 7) return `Hace ${dias} dias`;
-  if (dias < 30) return `Hace ${Math.floor(dias / 7)} semanas`;
+  if (dias <= 0) return "Aujourd'hui";
+  if (dias === 1) return "Hier";
+  if (dias < 7) return `Il y a ${dias} jours`;
+  if (dias < 14) return "Il y a 1 semaine";
+  if (dias < 30) return `Il y a ${Math.floor(dias / 7)} semaines`;
   return formatDate(date);
 }

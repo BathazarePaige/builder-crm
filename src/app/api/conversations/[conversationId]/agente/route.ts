@@ -29,12 +29,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const [conv] = await db.select().from(conversations).where(eq(conversations.id, conversationId)).limit(1);
   if (!conv || (conv.contactId && !(await canAccessContactId(auth.member, conv.contactId)))) {
-    return NextResponse.json({ error: "Conversacion no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: "Conversation introuvable" }, { status: 404 });
   }
 
   const now = new Date();
@@ -63,7 +63,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       .set({ aiEnabled: false, updatedAt: now })
       .where(eq(conversations.id, conversationId));
   } else {
-    return NextResponse.json({ error: "Nada para actualizar" }, { status: 400 });
+    return NextResponse.json({ error: "Rien à mettre à jour" }, { status: 400 });
   }
 
   const [c2] = await db.select().from(conversations).where(eq(conversations.id, conversationId)).limit(1);

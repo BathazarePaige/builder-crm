@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 /** Admin con sesion o secreto del worker, y solo si el simulador esta activo. */
 async function guard(request: NextRequest) {
   if (!moduloActivo("simulador")) {
-    return { response: NextResponse.json({ error: "Simulador desactivado" }, { status: 404 }) };
+    return { response: NextResponse.json({ error: "Simulateur désactivé" }, { status: 404 }) };
   }
   return autorizarSimulador(request);
 }

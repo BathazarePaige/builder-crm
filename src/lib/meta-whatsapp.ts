@@ -107,7 +107,7 @@ export async function sendTextMessage(
   } catch (err) {
     return {
       success: false,
-      error: { message: err instanceof Error ? err.message : "Network error" },
+      error: { message: err instanceof Error ? err.message : "Erreur réseau" },
     };
   }
 }
@@ -160,7 +160,7 @@ export async function sendTemplateMessage(
   } catch (err) {
     return {
       success: false,
-      error: { message: err instanceof Error ? err.message : "Network error" },
+      error: { message: err instanceof Error ? err.message : "Erreur réseau" },
     };
   }
 }
@@ -237,7 +237,7 @@ export async function createTemplate(
   } catch (err) {
     return {
       success: false,
-      error: { message: err instanceof Error ? err.message : "Network error" },
+      error: { message: err instanceof Error ? err.message : "Erreur réseau" },
     };
   }
 }
@@ -278,7 +278,7 @@ export async function getTemplates(
   } catch (err) {
     return {
       success: false,
-      error: { message: err instanceof Error ? err.message : "Network error" },
+      error: { message: err instanceof Error ? err.message : "Erreur réseau" },
     };
   }
 }

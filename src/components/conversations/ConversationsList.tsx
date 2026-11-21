@@ -7,7 +7,7 @@ import { ConversationListItem } from "@/lib/conversations";
 import { cn } from "@/lib/utils";
 import { avatarBg, getInitials } from "@/lib/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import type { Channel } from "@/lib/channels/types";
 import { CHANNEL_COLORS, ChannelIcon } from "@/components/icons/channels";
 import { ChannelFilter } from "./ChannelFilter";
@@ -55,33 +55,33 @@ export function ConversationsList({ conversations, selectedId }: Props) {
         selectedId ? "hidden md:flex" : "flex"
       )}
     >
-      <div className="h-14 px-4 flex items-center border-b border-border bg-muted/40">
-        <h2 className="text-sm font-semibold tracking-tight font-heading">
-          Conversaciones
-        </h2>
-        <span className="ml-auto text-[11px] font-mono text-muted-foreground tabular-nums">
-          {filtered.length}
-          {search && filtered.length !== conversations.length && (
-            <span className="text-muted-foreground/60">/{conversations.length}</span>
-          )}
+      <div className="px-4 pt-4 pb-3 flex items-baseline gap-2">
+        <h1 className="text-[15px] font-semibold tracking-tight">
+          Boîte de réception
+        </h1>
+        <span className="ml-auto text-[12px] text-muted-foreground tabular-nums">
+          {search && filtered.length !== conversations.length
+            ? `${filtered.length} sur ${conversations.length}`
+            : `${conversations.length} conversation${conversations.length > 1 ? "s" : ""}`}
         </span>
       </div>
 
-      <div className="px-3 py-2 border-b border-border/60 bg-card">
+      <div className="px-3 pb-3 bg-card">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre, usuario o telefono"
-            className="w-full h-8 pl-8 pr-7 text-[12px] rounded-md border border-border/70 bg-muted/40 placeholder:text-muted-foreground focus:outline-none focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 transition-colors"
+            placeholder="Nom, identifiant ou numéro"
+            aria-label="Rechercher une conversation"
+            className="w-full h-9 pl-8 pr-7 text-[13px] rounded-md border border-input bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition-colors"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              aria-label="Limpiar busqueda"
+              aria-label="Effacer la recherche"
               className="absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex h-5 w-5 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 cursor-pointer"
             >
               <X className="h-3 w-3" />
@@ -96,43 +96,38 @@ export function ConversationsList({ conversations, selectedId }: Props) {
         {conversations.length === 0 ? (
           <div className="px-4 py-12 text-center">
             <p className="text-sm text-muted-foreground">
-              Aun no hay conversaciones.
+              Aucune conversation pour l’instant.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Cuando alguien te escriba por WhatsApp, Instagram o Messenger,
-              va a aparecer aca.
+              Dès qu’un client écrit sur WhatsApp, Instagram ou Messenger,
+              la conversation apparaît ici.
             </p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="px-4 py-12 text-center">
             <p className="text-sm text-muted-foreground">
-              Sin resultados para &quot;{search}&quot;
+              Aucun résultat pour « {search} »
             </p>
-            <p className="text-xs text-muted-foreground/70 mt-1">
-              Probá buscando por nombre, usuario o número.
+            <p className="text-xs text-muted-foreground mt-1">
+              Essayez avec un nom, un identifiant ou un numéro.
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-border/40">
+          <ul>
             {filtered.map((c) => {
               const isActive = selectedId === c.conversationId;
               return (
                 <li key={c.conversationId}>
                   <Link
                     href={`/conversations/${c.conversationId}`}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "relative flex items-start gap-3 px-3 py-3 cursor-pointer transition-all",
+                      "relative flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors border-l-2",
                       isActive
-                        ? "bg-primary/10"
-                        : "hover:bg-muted/60 hover:shadow-xs",
+                        ? "bg-accent border-primary-ink"
+                        : "border-transparent hover:bg-muted/70",
                     )}
                   >
-                    {isActive && (
-                      <span
-                        aria-hidden
-                        className="absolute left-0 top-2 bottom-2 w-0.75 rounded-r-full bg-primary"
-                      />
-                    )}
                     <div className="relative shrink-0">
                       <div
                         className={cn(
@@ -155,58 +150,55 @@ export function ConversationsList({ conversations, selectedId }: Props) {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-[13px] font-medium truncate flex-1 flex items-center gap-1.5">
+                        <span className={cn("text-[13px] truncate flex-1 flex items-center gap-1.5", c.unreadCount > 0 ? "font-semibold" : "font-medium")}>
                           {c.name}
                           {c.provider === "simulador" && (
                             <span
-                              title="Conversacion simulada: nada sale a un canal real"
-                              className="shrink-0 inline-flex items-center h-4 px-1 rounded-sm bg-violet-100 text-violet-800 text-[9px] font-semibold uppercase tracking-wide dark:bg-violet-950/40 dark:text-violet-300"
+                              title="Conversation simulée : rien ne part vers un vrai canal"
+                              className="shrink-0 inline-flex items-center h-4 px-1 rounded bg-muted text-muted-foreground text-[10px] font-medium"
                             >
-                              sim
+                              test
                             </span>
                           )}
                           {c.needsHuman && (
                             <span
                               title={
                                 c.needsHumanReason
-                                  ? `Necesita humano: ${c.needsHumanReason}`
-                                  : "Necesita humano"
+                                  ? `Humain requis : ${c.needsHumanReason}`
+                                  : "Humain requis"
                               }
-                              className="shrink-0 inline-flex items-center gap-0.5 h-4 px-1 rounded-sm bg-amber-100 text-amber-800 text-[9px] font-semibold uppercase tracking-wide dark:bg-amber-950/40 dark:text-amber-300"
+                              className="shrink-0 inline-flex items-center gap-0.5 h-4 px-1 rounded bg-amber-50 text-amber-800 text-[10px] font-medium"
                             >
                               <AlertCircle className="h-2.5 w-2.5" />
-                              humano
+                              humain
                             </span>
                           )}
                           {!c.needsHuman && !c.aiEnabled && (
                             <span
-                              title="IA desactivada para este contacto"
-                              className="shrink-0 inline-flex items-center gap-0.5 h-4 px-1 rounded-sm bg-muted text-muted-foreground text-[9px] font-semibold uppercase tracking-wide"
+                              title="Agent IA en pause pour ce contact"
+                              className="shrink-0 inline-flex items-center gap-0.5 h-4 px-1 rounded bg-muted text-muted-foreground text-[10px] font-medium"
                             >
                               <Bot className="h-2.5 w-2.5" />
-                              off
+                              pause
                             </span>
                           )}
                         </span>
                         {c.lastAt && (
-                          <span className="text-[10px] font-mono text-muted-foreground shrink-0 tabular-nums">
+                          <span className="text-[11px] text-muted-foreground shrink-0 tabular-nums">
                             {formatDistanceToNow(c.lastAt, {
                               addSuffix: false,
-                              locale: es,
+                              locale: fr,
                             })
-                              .replace("alrededor de ", "")
-                              .replace("menos de ", "<")}
+                              .replace("environ ", "")
+                              .replace("moins d’une minute", "< 1 min")
+                              .replace("moins d'une minute", "< 1 min")}
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-xs text-muted-foreground truncate flex-1">
-                          {c.lastDirection === "out" && (
-                            <span className="text-muted-foreground/70">
-                              tu:{" "}
-                            </span>
-                          )}
-                          {c.lastBody ?? "(sin cuerpo)"}
+                        <p className="text-[12.5px] text-muted-foreground truncate flex-1">
+                          {c.lastDirection === "out" && <span>Vous : </span>}
+                          {c.lastBody ?? "(sans texte)"}
                         </p>
                         {c.unreadCount > 0 && (
                           <span className="shrink-0 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold tabular-nums">

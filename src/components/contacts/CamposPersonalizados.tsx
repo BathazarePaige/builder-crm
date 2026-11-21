@@ -73,10 +73,10 @@ function CampoInput({
           disabled={disabled}
         >
           <SelectTrigger id={id} className="cursor-pointer">
-            <SelectValue placeholder="Elegir" />
+            <SelectValue placeholder="Choisir" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NINGUNO}>Sin definir</SelectItem>
+            <SelectItem value={NINGUNO}>Non défini</SelectItem>
             {campo.opciones?.map((o) => (
               <SelectItem key={o} value={o}>
                 {o}
@@ -93,12 +93,12 @@ function CampoInput({
           disabled={disabled}
         >
           <SelectTrigger id={id} className="cursor-pointer">
-            <SelectValue placeholder="Elegir" />
+            <SelectValue placeholder="Choisir" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NINGUNO}>Sin definir</SelectItem>
-            <SelectItem value="si">Si</SelectItem>
-            <SelectItem value="no">No</SelectItem>
+            <SelectItem value={NINGUNO}>Non défini</SelectItem>
+            <SelectItem value="si">Oui</SelectItem>
+            <SelectItem value="no">Non</SelectItem>
           </SelectContent>
         </Select>
       );

@@ -23,7 +23,7 @@ export function PWARegister() {
         return () => clearInterval(timer);
       })
       .catch((err) => {
-        console.warn("[pwa] no se pudo registrar el service worker", err);
+        console.warn("[pwa] impossible d’enregistrer le service worker", err);
       });
 
     return () => {

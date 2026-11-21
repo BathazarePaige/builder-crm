@@ -1,7 +1,7 @@
 import { FormDefinirClave } from "@/components/auth/FormDefinirClave";
 
 export const metadata = {
-  title: "Elegir contrasena",
+  title: "Choisir le mot de passe",
 };
 
 export default function DefinirClavePage() {
@@ -9,10 +9,10 @@ export default function DefinirClavePage() {
     <>
       <div className="space-y-1 text-center">
         <h1 className="text-2xl font-semibold tracking-tight font-heading">
-          Elegi tu contrasena
+          Choisissez votre mot de passe
         </h1>
         <p className="text-sm text-muted-foreground">
-          Con esto ya entras al CRM
+          Avec lui, vous entrez dans le CRM
         </p>
       </div>
       <FormDefinirClave />

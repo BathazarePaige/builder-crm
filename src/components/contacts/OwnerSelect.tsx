@@ -94,12 +94,12 @@ export function OwnerSelect({ contactId, value, onChange, className, compact }: 
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        toast.error(body.error ?? "No se pudo asignar");
+        toast.error(body.error ?? "Impossible d’attribuer le contact");
         setCurrent(value);
         return;
       }
       const m = members.find((x) => x.id === next);
-      toast.success(m ? `Asignado a ${label(m)}` : "Propietario quitado");
+      toast.success(m ? `Attribué à ${label(m)}` : "Responsable retiré");
     } finally {
       setSaving(false);
     }
@@ -110,7 +110,7 @@ export function OwnerSelect({ contactId, value, onChange, className, compact }: 
       <div className={cn("flex items-center gap-2 text-sm", className)}>
         <UserCircle2 className="h-4 w-4 text-muted-foreground shrink-0" />
         <span className={cn(!owner && "text-muted-foreground")}>
-          {owner ? label(owner) : "Sin asesor asignado"}
+          {owner ? label(owner) : "Aucun conseiller"}
         </span>
       </div>
     );
@@ -120,22 +120,22 @@ export function OwnerSelect({ contactId, value, onChange, className, compact }: 
     <Select
       value={current ?? NONE}
       items={[
-        { value: NONE, label: "Sin asesor asignado" },
-        ...selectable.map((m) => ({ value: m.id, label: label(m) + (m.active ? "" : " (inactivo)") })),
+        { value: NONE, label: "Aucun conseiller" },
+        ...selectable.map((m) => ({ value: m.id, label: label(m) + (m.active ? "" : " (inactif)") })),
       ]}
       onValueChange={(v) => v && change(v === NONE ? null : v)}
       disabled={saving}
     >
       <SelectTrigger className={cn("cursor-pointer", compact && "h-8 text-xs", className)}>
         <UserCircle2 className="h-4 w-4 text-muted-foreground shrink-0" />
-        <SelectValue placeholder="Sin asesor asignado" />
+        <SelectValue placeholder="Aucun conseiller" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={NONE}>Sin asesor asignado</SelectItem>
+        <SelectItem value={NONE}>Aucun conseiller</SelectItem>
         {selectable.map((m) => (
           <SelectItem key={m.id} value={m.id}>
             {label(m)}
-            {!m.active ? " (inactivo)" : ""}
+            {!m.active ? " (inactif)" : ""}
           </SelectItem>
         ))}
       </SelectContent>

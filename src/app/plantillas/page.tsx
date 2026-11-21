@@ -33,17 +33,17 @@ const STATUS_META: Record<
   { label: string; badge: string; icon: typeof CheckCircle2 }
 > = {
   APPROVED: {
-    label: "Aprobada",
+    label: "Approuvé",
     badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
     icon: CheckCircle2,
   },
   PENDING: {
-    label: "En revision",
+    label: "En vérification",
     badge: "bg-amber-50 text-amber-700 border-amber-200",
     icon: Clock,
   },
   REJECTED: {
-    label: "Rechazada",
+    label: "Refusé",
     badge: "bg-rose-50 text-rose-700 border-rose-200",
     icon: XCircle,
   },
@@ -52,7 +52,7 @@ const STATUS_META: Record<
 function statusInfo(status: string) {
   return (
     STATUS_META[status?.toUpperCase()] ?? {
-      label: status || "Desconocido",
+      label: status || "Inconnu",
       badge: "bg-muted text-muted-foreground border-border",
       icon: Clock,
     }
@@ -76,15 +76,15 @@ export default function PlantillasPage() {
       const json = await res.json();
       setTemplates(json.templates || []);
       if (json.syncError) {
-        toast.error("No se pudo sincronizar con Meta", {
+        toast.error("Impossible de synchroniser avec Meta", {
           description: json.syncError,
           duration: 8000,
         });
       } else if (sync) {
-        toast.success("Estados sincronizados con Meta");
+        toast.success("Statuts synchronisés avec Meta");
       }
     } catch {
-      toast.error("Error al cargar plantillas");
+      toast.error("Impossible de charger les modèles");
     } finally {
       setLoading(false);
       setSyncing(false);
@@ -98,8 +98,8 @@ export default function PlantillasPage() {
   return (
     <div>
       <PageHeader
-        title="Plantillas de WhatsApp"
-        subtitle="Mensajes preaprobados por Meta para escribir fuera de la ventana de 24h"
+        title="Modèles WhatsApp"
+        subtitle="Messages pré-approuvés par Meta pour écrire hors de la fenêtre de 24 h"
         actions={
           <div className="flex items-center gap-2">
             <Button
@@ -111,14 +111,14 @@ export default function PlantillasPage() {
               <RefreshCw
                 className={cn("h-4 w-4", syncing && "animate-spin")}
               />
-              Sincronizar
+              Synchroniser
             </Button>
             <Button
               onClick={() => setShowForm(true)}
               className="cursor-pointer"
             >
               <Plus className="h-4 w-4" />
-              Nueva plantilla
+              Nouveau modèle
             </Button>
           </div>
         }
@@ -139,8 +139,8 @@ export default function PlantillasPage() {
       ) : templates.length === 0 ? (
         <EmptyState
           icon={FileText}
-          title="Todavia no hay plantillas"
-          description="Crea tu primera plantilla. Meta la revisa y, una vez aprobada, vas a poder enviarla desde cualquier conversacion."
+          title="Aucun modèle pour l’instant"
+          description="Créez votre premier modèle. Une fois approuvé par Meta, vous pourrez l’envoyer depuis n’importe quelle conversation."
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -184,7 +184,7 @@ function TemplateCard({ template }: { template: Template }) {
 
         <p className="text-[13px] text-foreground/90 leading-relaxed whitespace-pre-wrap line-clamp-4">
           {body || (
-            <span className="italic text-muted-foreground">(sin cuerpo)</span>
+            <span className="italic text-muted-foreground">(sans texte)</span>
           )}
         </p>
 

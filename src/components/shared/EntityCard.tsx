@@ -16,7 +16,7 @@ export type IconTone =
 export type BadgeTone = "primary" | "success" | "warning" | "info" | "muted";
 
 const iconToneStyles: Record<IconTone, string> = {
-  primary: "bg-primary/10 text-primary",
+  primary: "bg-primary/10 text-primary-ink",
   navy: "bg-foreground/10 text-foreground",
   beige: "bg-secondary text-foreground",
   success: "bg-emerald-500/10 text-emerald-700",
@@ -26,7 +26,7 @@ const iconToneStyles: Record<IconTone, string> = {
 };
 
 const badgeToneStyles: Record<BadgeTone, string> = {
-  primary: "bg-primary/10 text-primary border-primary/20",
+  primary: "bg-primary/10 text-primary-ink border-primary-ink/20",
   success: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
   warning: "bg-amber-500/10 text-amber-700 border-amber-500/20",
   info: "bg-sky-500/10 text-sky-700 border-sky-500/20",
@@ -70,7 +70,7 @@ export function EntityCard({
       className={cn(
         "group rounded-xl border border-border bg-card p-3.5 shadow-sm transition-all",
         onClick &&
-          "cursor-pointer hover:border-primary/30 hover:shadow-md hover:-translate-y-px",
+          "cursor-pointer hover:border-primary-ink/30 hover:shadow-md hover:-translate-y-px",
         className,
       )}
     >
