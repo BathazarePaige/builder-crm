@@ -51,7 +51,7 @@ export function BotonProveedor({ proveedor, nombre, deshabilitado }: Props) {
         ) : (
           <IconoProveedorGenerico className="h-4 w-4 mr-2" />
         )}
-        Continuar con {nombre}
+        Continuer avec {nombre}
       </Button>
       {error && <p className="text-xs text-destructive text-center">{error}</p>}
     </div>

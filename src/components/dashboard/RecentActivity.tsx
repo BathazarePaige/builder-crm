@@ -36,11 +36,11 @@ interface RecentActivityProps {
 }
 
 function groupLabel(date: Date): string {
-  if (isToday(date)) return "Hoy";
-  if (isYesterday(date)) return "Ayer";
+  if (isToday(date)) return "Aujourd’hui";
+  if (isYesterday(date)) return "Hier";
   const diff = differenceInDays(new Date(), date);
-  if (diff < 7) return "Esta semana";
-  return "Antes";
+  if (diff < 7) return "Cette semaine";
+  return "Plus ancien";
 }
 
 export function RecentActivity({ activities }: RecentActivityProps) {
@@ -55,22 +55,22 @@ export function RecentActivity({ activities }: RecentActivityProps) {
     return acc;
   }, {});
 
-  const groupOrder = ["Hoy", "Ayer", "Esta semana", "Antes"].filter((k) => groups[k]);
+  const groupOrder = ["Aujourd’hui", "Hier", "Cette semaine", "Plus ancien"].filter((k) => groups[k]);
 
   return (
     <Card className="surface-card">
       <CardHeader className="space-y-1">
         <CardTitle className="text-base font-semibold tracking-tight font-heading">
-          Actividad Reciente
+          Activité récente
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Ultimos eventos del equipo
+          Derniers événements de l’équipe
         </p>
       </CardHeader>
       <CardContent>
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-8">
-            No hay actividad reciente
+            Aucune activité récente
           </p>
         ) : (
           <div className="relative">
@@ -106,7 +106,7 @@ export function RecentActivity({ activities }: RecentActivityProps) {
                             {activity.description}
                           </p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
-                            {activity.contactName ?? "Sin contacto"}
+                            {activity.contactName ?? "Sans contact"}
                             <span className="mx-1.5 text-border">·</span>
                             {formatDistanceToNow(activity.createdAtDate, {
                               addSuffix: true,

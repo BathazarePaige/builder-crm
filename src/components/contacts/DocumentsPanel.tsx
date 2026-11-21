@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 
 interface DocItem {
   id: string;
@@ -57,8 +57,8 @@ function putWithProgress(url: string, file: File, onProgress: (pct: number) => v
     xhr.onload = () =>
       xhr.status >= 200 && xhr.status < 300
         ? resolve()
-        : reject(new Error(`El bucket respondio ${xhr.status}`));
-    xhr.onerror = () => reject(new Error("No se pudo conectar con el almacenamiento (CORS o red)"));
+        : reject(new Error(`Le stockage a répondu ${xhr.status}`));
+    xhr.onerror = () => reject(new Error("Connexion au stockage impossible (CORS ou réseau)"));
     xhr.send(file);
   });
 }
@@ -103,20 +103,20 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
     const key = `${file.name}-${Date.now()}-${Math.random()}`;
     setUploads((list) => [...list, { key, name: file.name, progress: 0 }]);
     try {
-      if (file.size > MAX_MB * 1024 * 1024) throw new Error(`Supera los ${MAX_MB} MB`);
+      if (file.size > MAX_MB * 1024 * 1024) throw new Error(`Dépasse ${MAX_MB} Mo`);
       const begin = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contactId, name: file.name, mime: file.type, size: file.size }),
       });
       const started = await begin.json().catch(() => ({}));
-      if (!begin.ok) throw new Error(started.error ?? "No se pudo iniciar la subida");
+      if (!begin.ok) throw new Error(started.error ?? "Impossible de démarrer l’envoi");
 
       await putWithProgress(started.uploadUrl, file, (pct) => setUpload(key, { progress: pct }));
 
       const confirm = await fetch(`/api/documents/${started.id}/confirm`, { method: "POST" });
       const confirmed = await confirm.json().catch(() => ({}));
-      if (!confirm.ok) throw new Error(confirmed.error ?? "No se pudo confirmar la subida");
+      if (!confirm.ok) throw new Error(confirmed.error ?? "Impossible de confirmer l’envoi");
 
       setUploads((list) => list.filter((u) => u.key !== key));
       const data = await load();
@@ -132,15 +132,15 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
   };
 
   const remove = async (doc: DocItem) => {
-    if (!confirm(`Eliminar "${doc.name}"?`)) return;
+    if (!confirm(`Supprimer « ${doc.name} » ?`)) return;
     const res = await fetch(`/api/documents/${doc.id}`, { method: "DELETE" });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      toast.error(body.error ?? "No se pudo eliminar");
+      toast.error(body.error ?? "Impossible de supprimer");
       return;
     }
     setItems((list) => list.filter((d) => d.id !== doc.id));
-    toast.success("Documento eliminado");
+    toast.success("Document supprimé");
   };
 
   return (
@@ -158,7 +158,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
           onClick={() => inputRef.current?.click()}
         >
           <UploadCloud className="h-4 w-4 mr-1" />
-          Subir
+          Envoyer
         </Button>
         <input
           ref={inputRef}
@@ -195,7 +195,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
         )}
 
         {loading ? (
-          <p className="text-sm text-muted-foreground">Cargando…</p>
+          <p className="text-sm text-muted-foreground">Chargement…</p>
         ) : items.length === 0 && uploads.length === 0 ? (
           <button
             type="button"
@@ -204,7 +204,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
             className="w-full rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground hover:border-primary-ink/50 hover:text-foreground cursor-pointer transition-colors disabled:cursor-not-allowed"
           >
             <UploadCloud className="h-5 w-5 mx-auto mb-2" />
-            Arrastra un PDF o una imagen, o toca para elegir.
+            Glissez un PDF ou une image, ou cliquez pour choisir.
             <span className="block text-xs mt-1 text-muted-foreground/80">
               PDF, JPG, PNG o WebP · hasta {MAX_MB} MB
             </span>
@@ -234,7 +234,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
                     onClick={() => setUploads((l) => l.filter((x) => x.key !== u.key))}
                     className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                   >
-                    Quitar
+                    Retirer
                   </button>
                 )}
               </li>
@@ -259,7 +259,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
                       {formatSize(doc.size)}
                       {doc.uploadedBy && ` · ${doc.uploadedBy}`}
                       {" · "}
-                      {formatDistanceToNow(new Date(doc.createdAt), { addSuffix: true, locale: es })}
+                      {formatDistanceToNow(new Date(doc.createdAt), { addSuffix: true, locale: fr })}
                       {doc.stageName && (
                         <span className="ml-1.5 inline-flex items-center rounded-md bg-muted px-1.5 py-0.5 text-[10.5px] font-medium text-foreground/70">
                           {doc.stageName}
@@ -273,14 +273,14 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                      title="Abrir"
+                      title="Ouvrir"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                     <a
                       href={`/api/documents/${doc.id}/download?dl=1`}
                       className="p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-                      title="Descargar"
+                      title="Télécharger"
                     >
                       <Download className="h-3.5 w-3.5" />
                     </a>
@@ -288,7 +288,7 @@ export function DocumentsPanel({ contactId }: { contactId: string }) {
                       type="button"
                       onClick={() => remove(doc)}
                       className="p-1.5 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                      title="Eliminar"
+                      title="Supprimer"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>

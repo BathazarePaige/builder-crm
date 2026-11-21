@@ -64,7 +64,7 @@ export function TriggerCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] uppercase tracking-[0.14em] text-white/55 font-semibold">
-            Disparador
+            Déclencheur
           </p>
           {readOnly ? (
             <p className="text-sm font-semibold font-heading truncate">{def?.label ?? trigger}</p>
@@ -75,7 +75,7 @@ export function TriggerCard({
               onValueChange={(v) => v && onTriggerChange(v)}
             >
               <SelectTrigger className="mt-0.5 h-8 w-full max-w-sm cursor-pointer border-white/20 bg-white/10 text-white hover:bg-white/15 focus-visible:ring-white/30 [&_svg]:text-white/70">
-                <SelectValue placeholder="Elige un disparador" />
+                <SelectValue placeholder="Choisissez un déclencheur" />
               </SelectTrigger>
               <SelectContent>
                 {triggers.map((t) => (
@@ -96,9 +96,9 @@ export function TriggerCard({
           <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3 space-y-2">
             <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
               <Filter className="h-3 w-3" />
-              Filtros
+              Filtres
               <span className="ml-auto font-normal normal-case tracking-normal text-muted-foreground/80">
-                {filters.length === 0 ? "siempre que pase el disparador" : "todos deben cumplirse"}
+                {filters.length === 0 ? "à chaque déclenchement" : "tous doivent être remplis"}
               </span>
             </div>
 
@@ -157,7 +157,7 @@ export function TriggerCard({
                     onValueChange={(v) => v && update(i, { value: v })}
                   >
                     <SelectTrigger className="h-8 w-full text-xs cursor-pointer">
-                      <SelectValue placeholder="Elige…" />
+                      <SelectValue placeholder="Choisir…" />
                     </SelectTrigger>
                     <SelectContent>
                       {options.map((o) => (
@@ -172,7 +172,7 @@ export function TriggerCard({
                     type="button"
                     disabled={readOnly}
                     onClick={() => remove(i)}
-                    aria-label="Quitar filtro"
+                    aria-label="Retirer le filtre"
                     className={cn(
                       "h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer justify-self-end",
                       readOnly && "hidden"
@@ -191,7 +191,7 @@ export function TriggerCard({
                 className="inline-flex items-center gap-1 text-xs font-medium text-primary-ink hover:underline cursor-pointer pt-0.5"
               >
                 <Plus className="h-3.5 w-3.5" />
-                Añadir filtro
+                Ajouter un filtre
               </button>
             )}
           </div>

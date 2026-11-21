@@ -19,7 +19,7 @@ interface ToolbarProps {
 }
 
 export function Toolbar({
-  searchPlaceholder = "Buscar...",
+  searchPlaceholder = "Rechercher…",
   searchValue,
   onSearchChange,
   onSort,
@@ -50,7 +50,7 @@ export function Toolbar({
           className="h-9 gap-1.5 cursor-pointer"
         >
           <ArrowDownUp className="h-3.5 w-3.5" />
-          Ordenar
+          Trier
         </Button>
       )}
 
@@ -63,7 +63,7 @@ export function Toolbar({
           className="h-9 gap-1.5 cursor-pointer"
         >
           <Filter className="h-3.5 w-3.5" />
-          Filtros
+          Filtres
         </Button>
       )}
 
@@ -91,7 +91,7 @@ function ViewToggle({
       </ToggleButton>
       <ToggleButton active={view === "list"} onClick={() => onChange("list")}>
         <List className="h-3.5 w-3.5" />
-        Lista
+        Liste
       </ToggleButton>
     </div>
   );

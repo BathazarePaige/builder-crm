@@ -2,32 +2,32 @@ import type { LeadSource, ActivityType } from "@/types";
 import { getConfig, localeIntl } from "@/lib/config";
 
 export const SOURCE_LABELS: Record<LeadSource, string> = {
-  website: "Sitio web",
+  website: "Site web",
   whatsapp: "WhatsApp",
   instagram: "Instagram",
   facebook: "Facebook",
-  referido: "Referido",
-  redes_sociales: "Redes sociales",
-  llamada_fria: "Llamada fria",
-  email: "Email",
-  formulario: "Formulario",
-  evento: "Evento",
-  import: "Importado",
+  referido: "Recommandation",
+  redes_sociales: "Réseaux sociaux",
+  llamada_fria: "Prospection à froid",
+  email: "E-mail",
+  formulario: "Formulaire",
+  evento: "Événement",
+  import: "Importé",
   webhook: "Webhook",
   gohighlevel: "GoHighLevel",
   simulador: "Simulador",
-  otro: "Otro",
+  otro: "Autre",
 };
 
 export const ACTIVITY_TYPE_CONFIG: Record<
   ActivityType,
   { label: string; icon: string }
 > = {
-  call: { label: "Llamada", icon: "Phone" },
-  email: { label: "Email", icon: "Mail" },
-  meeting: { label: "Reunion", icon: "Users" },
-  note: { label: "Nota", icon: "FileText" },
-  follow_up: { label: "Seguimiento", icon: "Clock" },
+  call: { label: "Appel", icon: "Phone" },
+  email: { label: "E-mail", icon: "Mail" },
+  meeting: { label: "Rendez-vous", icon: "Users" },
+  note: { label: "Note", icon: "FileText" },
+  follow_up: { label: "Relance", icon: "Clock" },
 };
 
 /** Montos en centavos; la moneda sale de config/cliente.ts (`moneda`). */
@@ -75,7 +75,7 @@ function diaLocal(d: Date): string {
 
 export function formatRelativeDate(date: Date | number): string {
   const d = toDate(date);
-  // "Hoy" y "Ayer" son dias del calendario, no ventanas de 24 h: a las 00:30 algo de las
+  // "Aujourd’hui" y "Hier" son dias del calendario, no ventanas de 24 h: a las 00:30 algo de las
   // 23:00 es de ayer aunque hayan pasado 90 minutos. Se comparan los dias en la zona de
   // la instancia para que la misma fila no diga una cosa en el servidor y otra en el
   // navegador.

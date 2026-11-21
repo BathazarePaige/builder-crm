@@ -30,13 +30,13 @@ export function FlowEditorLoader({ ruleKey }: Props) {
       .then(([catalog, rule, me]) => {
         if (!alive) return;
         if (ruleKey && !rule) {
-          setState({ status: "error", message: "La regla no existe." });
+          setState({ status: "error", message: "Cette règle n’existe pas." });
           return;
         }
         setState({ status: "ready", catalog, rule, isAdmin: me.member?.role === "admin" });
       })
       .catch(() => {
-        if (alive) setState({ status: "error", message: "No se pudo cargar el catalogo." });
+        if (alive) setState({ status: "error", message: "Impossible de charger le catalogue." });
       });
     return () => {
       alive = false;
@@ -46,11 +46,11 @@ export function FlowEditorLoader({ ruleKey }: Props) {
   return (
     <div>
       <PageHeader
-        title={ruleKey ? "Editar regla" : "Nueva regla"}
-        subtitle="Elige que la dispara, filtra cuando aplica y encadena lo que hace"
+        title={ruleKey ? "Modifier la règle" : "Nouvelle règle"}
+        subtitle="Choisissez le déclencheur, filtrez quand elle s’applique et enchaînez les actions"
       />
       {state.status === "loading" && (
-        <p className="text-sm text-muted-foreground">Cargando…</p>
+        <p className="text-sm text-muted-foreground">Chargement…</p>
       )}
       {state.status === "error" && (
         <p className="text-sm text-destructive">{state.message}</p>

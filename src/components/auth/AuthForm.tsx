@@ -24,7 +24,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
   const [error, setError] = useState<string | null>(errorInicial);
   const [isPending, startTransition] = useTransition();
   // Sin correo configurado no se ofrece recuperar la contrasena: el enlace llevaria a
-  // una pagina que solo puede decir "pedisela a un administrador".
+  // una pagina que solo puede decir "demandez-le à un administrateur".
   const { authEnviaCorreos } = leerConfigPublica();
 
   function onSubmit(formData: FormData) {
@@ -52,7 +52,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">o con tu email</span>
+              <span className="bg-background px-2 text-muted-foreground">ou avec votre e-mail</span>
             </div>
           </div>
         </>
@@ -61,12 +61,12 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
       <form action={onSubmit} className="space-y-4">
         {isSignup && (
           <div className="space-y-1.5">
-            <Label htmlFor="fullName">Nombre completo</Label>
+            <Label htmlFor="fullName">Nom complet</Label>
             <Input
               id="fullName"
               name="fullName"
               type="text"
-              placeholder="Nombre y apellido"
+              placeholder="Prénom et nom"
               autoComplete="name"
               disabled={isPending}
             />
@@ -74,7 +74,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
         )}
 
         <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-mail</Label>
           <Input
             id="email"
             name="email"
@@ -88,13 +88,13 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
-            <Label htmlFor="password">Contrasena</Label>
+            <Label htmlFor="password">Mot de passe</Label>
             {!isSignup && authEnviaCorreos && (
               <Link
                 href="/auth/recuperar"
                 className="text-xs text-muted-foreground hover:text-primary-ink"
               >
-                La olvidaste?
+                Mot de passe oublié ?
               </Link>
             )}
           </div>
@@ -102,7 +102,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
             id="password"
             name="password"
             type="password"
-            placeholder={isSignup ? "Minimo 6 caracteres" : "Tu contrasena"}
+            placeholder={isSignup ? "6 caractères minimum" : "Votre mot de passe"}
             autoComplete={isSignup ? "new-password" : "current-password"}
             required
             minLength={6}
@@ -122,7 +122,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
           disabled={isPending}
         >
           {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-          {isSignup ? "Crear cuenta" : "Iniciar sesion"}
+          {isSignup ? "Créer le compte" : "Se connecter"}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
@@ -133,7 +133,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
                 href="/login"
                 className="font-medium text-foreground hover:text-primary-ink"
               >
-                Inicia sesion
+                Connectez-vous
               </Link>
             </>
           ) : (
@@ -143,7 +143,7 @@ export function AuthForm({ mode, proveedores = [], errorInicial = null }: AuthFo
                 href="/signup"
                 className="font-medium text-foreground hover:text-primary-ink"
               >
-                Crea una
+                Créez-en un
               </Link>
             </>
           )}

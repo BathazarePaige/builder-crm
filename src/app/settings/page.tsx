@@ -38,8 +38,8 @@ export default function SettingsPage() {
   return (
     <div>
       <PageHeader
-        title="Configuracion"
-        subtitle="Canales, equipo, agente y notificaciones"
+        title="Réglages"
+        subtitle="Canaux, équipe, agent et notifications"
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -48,7 +48,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Kanban className="h-4 w-4" />
-              Etapas del Pipeline
+              Étapes du pipeline
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -84,7 +84,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              Canales
+              Canaux
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -97,7 +97,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Equipo
+              Équipe
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -110,16 +110,16 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Workflow className="h-4 w-4" />
-              Automatizaciones
+              Automatisations
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Las reglas, el encendido/apagado y el historial estan en{" "}
+              Les règles, leur activation et leur historique sont dans{" "}
               <Link href="/automatizaciones" className="text-primary-ink hover:underline">
-                Automatizaciones
+                Automatisations
               </Link>
-              , en el menu lateral.
+              , dans le menu latéral.
             </p>
           </CardContent>
         </Card>
@@ -129,7 +129,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Bot className="h-4 w-4" />
-              Agente IA
+              Agent IA
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -147,7 +147,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Recibe leads automaticamente desde formularios, landing pages, o cualquier herramienta que soporte webhooks.
+              Recevez des leads automatiquement depuis vos formulaires, pages d’atterrissage ou tout outil compatible webhook.
             </p>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
@@ -159,23 +159,23 @@ export default function SettingsPage() {
                     navigator.clipboard.writeText(
                       `${window.location.origin}/api/webhooks/leads`
                     );
-                    toast.success("URL copiada");
+                    toast.success("URL copiée");
                   }}
                   className="p-2 rounded hover:bg-muted cursor-pointer"
-                  title="Copiar URL"
+                  title="Copier l’URL"
                 >
                   <Copy className="h-4 w-4 text-muted-foreground" />
                 </button>
               </div>
               <div className="p-3 rounded-lg bg-muted/50 text-xs font-mono">
-                <p className="text-muted-foreground mb-1">Ejemplo:</p>
+                <p className="text-muted-foreground mb-1">Exemple :</p>
                 <p>curl -X POST {typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/api/webhooks/leads \</p>
                 <p className="pl-4">-H &quot;Content-Type: application/json&quot; \</p>
                 <p className="pl-4">-d &apos;{`{"name":"Juan","email":"j@test.com","phone":"555-1234"}`}&apos;</p>
               </div>
               <p className="text-xs text-muted-foreground">
-                Soporta campos en espanol e ingles: name/nombre, email/correo, phone/telefono, company/empresa, notes/notas.
-                Si <code className="bg-muted px-1 rounded">LEADS_WEBHOOK_SECRET</code> esta definido, hay que mandarlo en el header{" "}
+                Champs acceptés en espagnol et en anglais : name/nombre, email/correo, phone/telefono, company/empresa, notes/notas.
+                Si <code className="bg-muted px-1 rounded">LEADS_WEBHOOK_SECRET</code> est défini, envoyez-le dans l’en-tête{" "}
                 <code className="bg-muted px-1 rounded">x-webhook-secret</code>.
               </p>
             </div>
@@ -187,7 +187,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Bell className="h-4 w-4" />
-              Notificaciones
+              Notifications
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -195,9 +195,7 @@ export default function SettingsPage() {
             <Separator />
             <NotificationToggle />
             <p className="text-xs text-muted-foreground">
-              Lo de arriba son avisos push: llegan al telefono aunque el CRM este cerrado.
-              Lo de abajo son las alertas de seguimientos vencidos, que solo funcionan con
-              el CRM abierto.
+              En haut, les notifications push : elles arrivent sur le téléphone même CRM fermé. En bas, les alertes de relances en retard, qui ne marchent que CRM ouvert.
             </p>
           </CardContent>
         </Card>

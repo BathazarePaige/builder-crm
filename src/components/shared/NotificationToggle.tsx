@@ -10,7 +10,7 @@ const STORAGE_KEY = "crm-notifications";
 
 // El estado vive en localStorage y en la API Notification del navegador; se lee con
 // useSyncExternalStore para no setear estado dentro de un efecto. En el servidor
-// (y durante la hidratacion) todo vale `false`, por eso existe el estado "Cargando".
+// (y durante la hidratacion) todo vale `false`, por eso existe el estado "Chargement".
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
   return () => window.removeEventListener("storage", callback);
@@ -32,7 +32,7 @@ export function NotificationToggle() {
 
   const toggle = async () => {
     if (!supported) {
-      toast.error("Tu navegador no soporta notificaciones");
+      toast.error("Votre navigateur ne gère pas les notifications");
       return;
     }
 
@@ -41,19 +41,19 @@ export function NotificationToggle() {
       if (permission === "granted") {
         localStorage.setItem(STORAGE_KEY, "true");
         notifyChange();
-        toast.success("Notificaciones activadas");
+        toast.success("Notifications activées");
 
         // Show test notification
         new Notification(marca().nombreCorto, {
-          body: "Las notificaciones estan activas. Te avisaremos de seguimientos pendientes.",
+          body: "Les notifications sont actives. Vous serez alerté des relances à faire.",
         });
       } else {
-        toast.error("Permiso de notificaciones denegado");
+        toast.error("Autorisation de notification refusée");
       }
     } else {
       localStorage.setItem(STORAGE_KEY, "false");
       notifyChange();
-      toast.success("Notificaciones desactivadas");
+      toast.success("Notifications désactivées");
     }
   };
 
@@ -63,8 +63,8 @@ export function NotificationToggle() {
         <div className="flex items-center gap-3">
           <BellOff className="h-5 w-5 text-muted-foreground" />
           <div>
-            <p className="text-sm font-medium">Notificaciones del navegador</p>
-            <p className="text-xs text-muted-foreground">Cargando...</p>
+            <p className="text-sm font-medium">Notifications du navigateur</p>
+            <p className="text-xs text-muted-foreground">Chargement…</p>
           </div>
         </div>
       </div>
@@ -83,12 +83,12 @@ export function NotificationToggle() {
         )}
         <div>
           <p className="text-sm font-medium">
-            Notificaciones del navegador
+            Notifications du navigateur
           </p>
           <p className="text-xs text-muted-foreground">
             {enabled
-              ? "Recibiras alertas de seguimientos vencidos"
-              : "Activa para recibir alertas de seguimientos"}
+              ? "Vous recevrez une alerte pour les relances en retard"
+              : "Activez-les pour être alerté des relances"}
           </p>
         </div>
       </div>
@@ -98,7 +98,7 @@ export function NotificationToggle() {
         onClick={toggle}
         className="cursor-pointer"
       >
-        {enabled ? "Desactivar" : "Activar"}
+        {enabled ? "Désactiver" : "Activer"}
       </Button>
     </div>
   );

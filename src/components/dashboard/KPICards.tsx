@@ -32,32 +32,32 @@ export function KPICards({ stats, contactos }: KPICardsProps) {
 
   const cards: KPI[] = [
     {
-      title: "Total contactos",
-      value: stats.totalContacts.toLocaleString("es"),
+      title: "Contacts",
+      value: stats.totalContacts.toLocaleString("fr-FR"),
       icon: Users,
       iconClass: "bg-sky-50 text-sky-600",
       watermarkClass: "text-sky-500/8",
       delta: contactos
-        ? { pct: deltaContactos, label: `${contactos.actual} nuevos en 7 dias` }
+        ? { pct: deltaContactos, label: `${contactos.actual} nouveaux en 7 jours` }
         : undefined,
       sparkline: contactos?.serie,
     },
     {
-      title: "Operaciones activas",
-      value: stats.activeDeals.toLocaleString("es"),
+      title: "Affaires en cours",
+      value: stats.activeDeals.toLocaleString("fr-FR"),
       icon: Briefcase,
       iconClass: "bg-violet-50 text-violet-600",
       watermarkClass: "text-violet-500/8",
     },
     {
-      title: "Valor en pipeline",
+      title: "Valeur du pipeline",
       value: formatCurrency(stats.totalPipelineValue),
       icon: DollarSign,
       iconClass: "bg-emerald-50 text-emerald-600",
       watermarkClass: "text-emerald-500/8",
     },
     {
-      title: "Tasa de conversion",
+      title: "Taux de conversion",
       value: `${stats.conversionRate}%`,
       icon: TrendingUp,
       iconClass: "bg-amber-50 text-amber-600",

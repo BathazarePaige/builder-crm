@@ -20,7 +20,7 @@ import {
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Search, Users, Download, Plus, X } from "lucide-react";
 import { formatDistanceToNow, differenceInDays, format } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import { avatarBg, getInitials } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -37,9 +37,9 @@ function smartDate(input: number | Date): string {
   const date = new Date(input);
   const days = differenceInDays(new Date(), date);
   if (days < 7) {
-    return formatDistanceToNow(date, { addSuffix: true, locale: es });
+    return formatDistanceToNow(date, { addSuffix: true, locale: fr });
   }
-  return format(date, "d MMM yyyy", { locale: es });
+  return format(date, "d MMM yyyy", { locale: fr });
 }
 
 export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
@@ -65,9 +65,9 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
     return (
       <EmptyState
         icon={Users}
-        title="No hay contactos"
-        description="Agrega tu primer contacto para comenzar a gestionar tu pipeline de ventas."
-        actionLabel="Agregar contacto"
+        title="Aucun contact"
+        description="Ajoutez votre premier contact pour commencer à suivre votre pipeline."
+        actionLabel="Ajouter un contact"
         onAction={() => router.push("/contacts?new=true")}
       />
     );
@@ -79,7 +79,7 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
-            placeholder="Buscar por nombre, email, teléfono, etiqueta..."
+            placeholder="Nom, e-mail, téléphone, étiquette…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 h-9"
@@ -92,7 +92,7 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
           className="cursor-pointer h-9"
         >
           <Download className="h-4 w-4 mr-1" />
-          Exportar
+          Exporter
         </Button>
       </div>
 
@@ -101,13 +101,13 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
           <TableHeader>
             <TableRow className="hover:bg-transparent border-border/60">
               <TableHead className="bg-muted/30 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Nombre
+                Nom
               </TableHead>
               <TableHead className="hidden sm:table-cell bg-muted/30 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Teléfono
+                Téléphone
               </TableHead>
               <TableHead className="hidden md:table-cell bg-muted/30 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Empresa
+                Entreprise
               </TableHead>
               {columnasExtra.map((c) => (
                 <TableHead
@@ -118,13 +118,13 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
                 </TableHead>
               ))}
               <TableHead className="hidden md:table-cell bg-muted/30 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Asesor
+                Conseiller
               </TableHead>
               <TableHead className="bg-muted/30 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Etiquetas
+                Étiquettes
               </TableHead>
               <TableHead className="hidden lg:table-cell bg-muted/30 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
-                Creado
+                Créé
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -150,7 +150,7 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
                         {contact.name}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
-                        {contact.email || "Sin email"}
+                        {contact.email || "Sans e-mail"}
                       </p>
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export function ContactsTable({ contacts, onChange }: ContactsTableProps) {
                       </span>
                     </span>
                   ) : (
-                    <span className="text-muted-foreground/60">Sin asignar</span>
+                    <span className="text-muted-foreground/60">Non attribué</span>
                   )}
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
@@ -227,7 +227,7 @@ function TagsCell({ contact, onChange }: TagsCellProps) {
       onChange?.();
       router.refresh();
     } catch {
-      toast.error("No se pudo guardar las etiquetas");
+      toast.error("Impossible d’enregistrer les étiquettes");
       setTags(contact.tags ?? []);
     } finally {
       setSaving(false);
@@ -273,7 +273,7 @@ function TagsCell({ contact, onChange }: TagsCellProps) {
           render={
             <button
               type="button"
-              aria-label="Editar etiquetas"
+              aria-label="Modifier les étiquettes"
               className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-dashed border-border/60 text-muted-foreground hover:border-foreground hover:text-foreground transition-colors cursor-pointer"
             />
           }
@@ -282,11 +282,11 @@ function TagsCell({ contact, onChange }: TagsCellProps) {
         </PopoverTrigger>
         <PopoverContent align="start" className="w-64">
           <div className="space-y-2">
-            <p className="text-xs font-medium">Etiquetas</p>
+            <p className="text-xs font-medium">Étiquettes</p>
             <div className="flex flex-wrap gap-1.5">
               {tags.length === 0 && (
                 <span className="text-xs text-muted-foreground">
-                  Sin etiquetas
+                  Aucune étiquette
                 </span>
               )}
               {tags.map((tag) => (
@@ -298,7 +298,7 @@ function TagsCell({ contact, onChange }: TagsCellProps) {
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    aria-label={`Quitar ${tag}`}
+                    aria-label={`Retirer ${tag}`}
                     className="hover:text-destructive cursor-pointer"
                   >
                     <X className="h-3 w-3" />
@@ -316,7 +316,7 @@ function TagsCell({ contact, onChange }: TagsCellProps) {
                     addTag();
                   }
                 }}
-                placeholder="Nueva etiqueta"
+                placeholder="Nouvelle étiquette"
                 className="h-8 text-xs"
                 disabled={saving}
               />

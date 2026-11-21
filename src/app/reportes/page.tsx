@@ -7,7 +7,7 @@ import { generarReporte, RANGOS, type RangoDias } from "@/lib/reportes";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Reportes",
+  title: "Rapports",
 };
 
 export default async function ReportesPage({
@@ -26,11 +26,11 @@ export default async function ReportesPage({
   return (
     <div>
       <PageHeader
-        title="Reportes"
+        title="Rapports"
         subtitle={
           member.role === "admin"
-            ? "Numeros reales de toda la instancia"
-            : "Numeros reales de tus contactos"
+            ? "Chiffres réels de toute l’instance"
+            : "Chiffres réels de vos contacts"
         }
       />
       <Reportes reporte={reporte} />

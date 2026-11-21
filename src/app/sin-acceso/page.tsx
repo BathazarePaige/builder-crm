@@ -12,21 +12,20 @@ export default function SinAccesoPage() {
       <div className="flex h-12 w-12 items-center justify-center rounded-xl border bg-card shadow-sm">
         <ShieldOff className="h-5 w-5 text-muted-foreground" />
       </div>
-      <h1 className="text-lg font-medium">Tu usuario no forma parte del equipo</h1>
+      <h1 className="text-lg font-medium">Votre compte ne fait pas partie de l’équipe</h1>
       <p className="text-sm text-muted-foreground max-w-sm">
-        Pide a un administrador que te agregue desde Ajustes → Equipo. Si ya te
-        agregaron, cierra sesion y vuelve a entrar.
+        Demandez à un administrateur de vous ajouter dans Réglages → Équipe. Si c’est déjà fait, déconnectez-vous puis reconnectez-vous.
       </p>
       <form action={signOut}>
         <button
           type="submit"
           className="text-sm text-primary-ink hover:underline cursor-pointer"
         >
-          Cerrar sesion
+          Se déconnecter
         </button>
       </form>
       <Link href="/login" className="text-xs text-muted-foreground hover:underline">
-        Ir al inicio de sesion
+        Aller à la connexion
       </Link>
     </div>
   );

@@ -60,7 +60,7 @@ export function AgentSettings() {
       })
       .catch(() => {
         if (!cancelled) {
-          toast.error("No se pudo cargar la configuracion del agente");
+          toast.error("Impossible de charger la configuration de l’agent");
         }
       });
     return () => {
@@ -82,11 +82,11 @@ export function AgentSettings() {
       setConfig((prev) => (prev ? { ...prev, enabled: next } : prev));
       toast.success(
         next
-          ? `Agente activado en ${CHANNEL_LABELS[scope]}`
-          : `Agente desactivado en ${CHANNEL_LABELS[scope]}`
+          ? `Agent activé sur ${CHANNEL_LABELS[scope]}`
+          : `Agent désactivé sur ${CHANNEL_LABELS[scope]}`
       );
     } catch {
-      toast.error("No se pudo cambiar el estado del agente");
+      toast.error("Impossible de changer l’état de l’agent");
     } finally {
       setTogglingEnabled(false);
     }
@@ -117,10 +117,10 @@ export function AgentSettings() {
         prev ? { ...prev, systemPrompt: updated.systemPrompt } : prev
       );
       setSystemPrompt(updated.systemPrompt);
-      toast.success("System prompt guardado");
+      toast.success("Prompt système enregistré");
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Error guardando el prompt"
+        err instanceof Error ? err.message : "Impossible d’enregistrer le prompt"
       );
     } finally {
       setSavingPrompt(false);
@@ -131,14 +131,14 @@ export function AgentSettings() {
     if (!config) return;
     if (
       !confirm(
-        "Restaurar el system prompt al default? Vas a perder los cambios guardados."
+        "Rétablir le prompt système par défaut ? Vos modifications seront perdues."
       )
     ) {
       return;
     }
     setSystemPrompt(config.defaults.systemPrompt);
     toast.message(
-      "Prompt restaurado al default. Pulsa Guardar para confirmar el cambio."
+      "Prompt rétabli par défaut. Cliquez sur Enregistrer pour confirmer."
     );
   };
 
@@ -151,7 +151,7 @@ export function AgentSettings() {
     if (next.length === 0) {
       if (
         !confirm(
-          "Vas a dejar al agente sin ninguna herramienta. Solo va a responder con texto. Continuar?"
+          "L’agent n’aura plus aucun outil et répondra seulement par texte. Continuer ?"
         )
       ) {
         return;
@@ -173,13 +173,13 @@ export function AgentSettings() {
       }
       toast.success(
         next.includes(toolName)
-          ? `Herramienta "${toolName}" activada`
-          : `Herramienta "${toolName}" desactivada`
+          ? `Outil « ${toolName} » activé`
+          : `Outil « ${toolName} » désactivé`
       );
     } catch (err) {
       setEnabledTools(previous);
       toast.error(
-        err instanceof Error ? err.message : "No se pudo actualizar la tool"
+        err instanceof Error ? err.message : "Impossible de mettre à jour l’outil"
       );
     } finally {
       setSavingTools(false);
@@ -189,7 +189,7 @@ export function AgentSettings() {
   const resetAll = async () => {
     if (
       !confirm(
-        "Borrar TODA la configuracion personalizada del agente y volver a defaults? (Prompt + tools)"
+        "Effacer TOUTE la configuration personnalisée de l’agent et revenir aux valeurs par défaut ? (prompt + outils)"
       )
     ) {
       return;
@@ -210,9 +210,9 @@ export function AgentSettings() {
             }
           : prev
       );
-      toast.success("Configuracion del agente restaurada a defaults");
+      toast.success("Configuration de l’agent rétablie par défaut");
     } catch {
-      toast.error("Error restaurando defaults");
+      toast.error("Impossible de rétablir les valeurs par défaut");
     } finally {
       setResetting(false);
     }
@@ -222,7 +222,7 @@ export function AgentSettings() {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
         <Loader2 className="h-4 w-4 animate-spin" />
-        Cargando configuracion del agente...
+        Chargement de la configuration de l’agent…
       </div>
     );
   }
@@ -274,8 +274,8 @@ export function AgentSettings() {
             </p>
             <p className="text-[11px] text-muted-foreground mt-0.5">
               {config.inherited?.systemPrompt
-                ? "Este canal hereda el prompt global. Editalo y guarda para darle uno propio."
-                : "Este canal tiene prompt propio."}
+                ? "Ce canal utilise le prompt global. Modifiez-le et enregistrez pour lui en donner un propre."
+                : "Ce canal a son propre prompt."}
             </p>
           </div>
           <Button
@@ -287,7 +287,7 @@ export function AgentSettings() {
             {togglingEnabled && (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             )}
-            {config.enabled ? "Desactivar" : "Activar"}
+            {config.enabled ? "Désactiver" : "Activer"}
           </Button>
         </div>
       )}
@@ -301,9 +301,8 @@ export function AgentSettings() {
               System prompt
             </Label>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Define rol, reglas y estilo del agente. Usa{" "}
-              <code className="bg-muted px-1 rounded">{"{{fecha}}"}</code> para
-              insertar la fecha de hoy en formato es-AR.
+              Définit le rôle, les règles et le style de l’agent. Utilisez{" "}
+              <code className="bg-muted px-1 rounded">{"{{fecha}}"}</code> pour insérer la date du jour.
             </p>
           </div>
           <span
@@ -314,7 +313,7 @@ export function AgentSettings() {
                 : "bg-primary/10 text-primary-ink border border-primary-ink/20"
             )}
           >
-            {isUsingDefaultPrompt ? "Default" : "Personalizado"}
+            {isUsingDefaultPrompt ? "Par défaut" : "Personnalisé"}
           </span>
         </div>
 
@@ -347,7 +346,7 @@ export function AgentSettings() {
               className="cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-              Restaurar default
+              Rétablir par défaut
             </Button>
             <Button
               type="button"
@@ -361,7 +360,7 @@ export function AgentSettings() {
               ) : (
                 <Save className="h-3.5 w-3.5 mr-1.5" />
               )}
-              Guardar prompt
+              Enregistrer le prompt
             </Button>
           </div>
         </div>
@@ -374,11 +373,10 @@ export function AgentSettings() {
         <div>
           <Label className="text-sm font-semibold flex items-center gap-2">
             <Wrench className="h-4 w-4" />
-            Herramientas
+            Outils
           </Label>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Activa o desactiva las herramientas que el agente puede llamar. Las
-            desactivadas no se le exponen al modelo.
+            Activez ou désactivez les outils que l’agent peut utiliser. Les outils désactivés ne sont pas proposés au modèle.
           </p>
         </div>
 
@@ -433,9 +431,7 @@ export function AgentSettings() {
 
         {enabledTools.length === 0 && (
           <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md px-3 py-2">
-            ⚠ No hay herramientas activas. El agente solo va a poder responder
-            con texto: no va a poder mover etapas, actualizar la ficha ni
-            derivar a una persona.
+            ⚠ Aucun outil actif. L’agent pourra seulement répondre par texte : ni changer d’étape, ni mettre la fiche à jour, ni transmettre à un humain.
           </p>
         )}
       </div>
@@ -444,7 +440,7 @@ export function AgentSettings() {
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          Para volver a la configuracion de fabrica del agente.
+          Pour revenir à la configuration d’origine de l’agent.
         </p>
         <Button
           type="button"

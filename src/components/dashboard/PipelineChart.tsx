@@ -65,16 +65,16 @@ export function PipelineChart({ data }: PipelineChartProps) {
     <Card className="surface-card">
       <CardHeader className="space-y-1">
         <CardTitle className="text-base font-semibold tracking-tight font-heading">
-          Pipeline de Ventas
+          Pipeline des ventes
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Distribucion de deals por etapa
+          Affaires par étape
         </p>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-12">
-            No hay deals en el pipeline
+            Aucune affaire dans le pipeline
           </p>
         ) : (
           <ResponsiveContainer width="100%" height={320}>

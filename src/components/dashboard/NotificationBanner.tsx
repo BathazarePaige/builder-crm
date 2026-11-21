@@ -40,7 +40,7 @@ export function NotificationBanner() {
                 {overdueCount} seguimiento{overdueCount > 1 ? "s" : ""} vencido{overdueCount > 1 ? "s" : ""}
               </p>
               <p className="text-xs text-red-600">
-                Requieren atencion inmediata
+                À traiter en priorité
               </p>
             </div>
             <ArrowRight className="h-4 w-4 text-red-400" />

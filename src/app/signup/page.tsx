@@ -7,7 +7,7 @@ import { proveedoresExternos, NOMBRE_PROVEEDOR } from "@/lib/auth-proveedores";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Crear cuenta",
+  title: "Créer le compte",
 };
 
 export default async function SignupPage() {
@@ -20,13 +20,13 @@ export default async function SignupPage() {
     return (
       <div className="space-y-3 text-center">
         <h1 className="text-2xl font-semibold tracking-tight font-heading">
-          El registro esta cerrado
+          Les inscriptions sont fermées
         </h1>
         <p className="text-sm text-muted-foreground">
-          Las cuentas las crea un administrador desde Configuracion → Equipo.
+          Les comptes sont créés par un administrateur dans Réglages → Équipe.
         </p>
         <Link href="/login" className="text-sm text-primary-ink hover:underline">
-          Volver a iniciar sesion
+          Retour à la connexion
         </Link>
       </div>
     );
@@ -36,12 +36,12 @@ export default async function SignupPage() {
     <>
       <div className="space-y-1 text-center">
         <h1 className="text-2xl font-semibold tracking-tight font-heading">
-          {primera ? "Crea la cuenta de administrador" : "Crea tu cuenta"}
+          {primera ? "Créez le compte administrateur" : "Créez votre compte"}
         </h1>
         <p className="text-sm text-muted-foreground">
           {primera
-            ? "Es la primera cuenta de esta instancia: queda como administrador y despues el registro se cierra solo."
-            : "Empieza a gestionar tus leads en minutos"}
+            ? "C’est le premier compte de cette instance : il devient administrateur, puis les inscriptions se ferment."
+            : "Gérez vos leads en quelques minutes"}
         </p>
       </div>
       <AuthForm mode="signup" proveedores={proveedores} />

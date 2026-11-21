@@ -34,10 +34,10 @@ interface Props {
 }
 
 const LANGUAGES = [
-  { code: "es", label: "Espanol" },
-  { code: "es_AR", label: "Espanol (Argentina)" },
-  { code: "es_MX", label: "Espanol (Mexico)" },
-  { code: "en_US", label: "Ingles (EE.UU.)" },
+  { code: "es", label: "Espagnol" },
+  { code: "es_AR", label: "Espagnol (Argentine)" },
+  { code: "es_MX", label: "Espagnol (Mexique)" },
+  { code: "en_US", label: "Anglais (États-Unis)" },
 ];
 
 export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
@@ -80,21 +80,21 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
 
   const preview = renderTemplateBody(
     bodyText,
-    vars.map((v) => examples[v - 1] || `ejemplo ${v}`)
+    vars.map((v) => examples[v - 1] || `exemple ${v}`)
   );
 
   async function submit() {
     if (submitting) return;
     if (!name.trim() || !bodyText.trim()) {
-      toast.error("Nombre y cuerpo son obligatorios");
+      toast.error("Le nom et le texte sont obligatoires");
       return;
     }
     if (!sequential) {
-      toast.error("Las variables deben ser {{1}}, {{2}}... en orden y sin saltos");
+      toast.error("Les variables doivent être {{1}}, {{2}}… dans l’ordre, sans trou");
       return;
     }
     if (vars.some((v) => !(examples[v - 1] || "").trim())) {
-      toast.error("Da un ejemplo para cada variable");
+      toast.error("Donnez un exemple pour chaque variable");
       return;
     }
 
@@ -113,20 +113,20 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        toast.error(json.error?.message || json.error || "No se pudo crear", {
+        toast.error(json.error?.message || json.error || "Impossible de créer", {
           description: json.hint,
           duration: 9000,
         });
         return;
       }
-      toast.success("Plantilla enviada a revision de Meta", {
-        description: "Cuando Meta la apruebe vas a poder enviarla.",
+      toast.success("Modèle envoyé à Meta pour vérification", {
+        description: "Vous pourrez l’envoyer une fois approuvé par Meta.",
       });
       reset();
       onCreated();
       onClose();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Error de red");
+      toast.error(e instanceof Error ? e.message : "Erreur réseau");
     } finally {
       setSubmitting(false);
     }
@@ -136,16 +136,15 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
     <Dialog open={open} onOpenChange={(v) => !v && close()}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Nueva plantilla</DialogTitle>
+          <DialogTitle>Nouveau modèle</DialogTitle>
           <DialogDescription>
-            Meta la revisa antes de aprobarla. Solo se pueden enviar las
-            plantillas APROBADAS.
+            Meta le vérifie avant approbation. Seuls les modèles APPROUVÉS peuvent être envoyés.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="tpl-name">Nombre interno *</Label>
+            <Label htmlFor="tpl-name">Nom interne *</Label>
             <Input
               id="tpl-name"
               value={name}
@@ -155,29 +154,29 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
               placeholder="recordatorio_visita"
             />
             <p className="text-[11px] text-muted-foreground">
-              Solo minusculas, numeros y guion bajo. No lo ve el cliente.
+              Minuscules, chiffres et tiret bas uniquement. Le client ne le voit pas.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label>Categoria *</Label>
+              <Label>Catégorie *</Label>
               <Select value={category} onValueChange={(v) => v && setCategory(v)}>
                 <SelectTrigger className="cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="UTILITY">
-                    Utilidad (seguimiento, recordatorio)
+                    Utilitaire (suivi, rappel)
                   </SelectItem>
                   <SelectItem value="MARKETING">
-                    Marketing (promocion, novedad)
+                    Marketing (promotion, nouveauté)
                   </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Idioma *</Label>
+              <Label>Langue *</Label>
               <Select value={language} onValueChange={(v) => v && setLanguage(v)}>
                 <SelectTrigger className="cursor-pointer">
                   <SelectValue />
@@ -195,7 +194,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="tpl-body">Cuerpo del mensaje *</Label>
+              <Label htmlFor="tpl-body">Texte du message *</Label>
               <Button
                 type="button"
                 variant="ghost"
@@ -227,9 +226,9 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
 
           {vars.length > 0 && (
             <div className="space-y-2 rounded-lg border border-border/60 bg-muted/30 p-3">
-              <Label className="text-xs">Ejemplo de cada variable *</Label>
+              <Label className="text-xs">Exemple pour chaque variable *</Label>
               <p className="text-[11px] text-muted-foreground">
-                Meta exige un valor de muestra para revisar la plantilla.
+                Meta exige un exemple pour vérifier le modèle.
               </p>
               <div className="space-y-2">
                 {vars.map((v) => (
@@ -240,7 +239,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
                     <Input
                       value={examples[v - 1] || ""}
                       onChange={(e) => setExample(v - 1, e.target.value)}
-                      placeholder={v === 1 ? "Juan" : `valor ${v}`}
+                      placeholder={v === 1 ? "Juan" : `valeur ${v}`}
                       className="h-8"
                     />
                   </div>
@@ -252,7 +251,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
           {bodyText.trim() && (
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">
-                Vista previa
+                Aperçu
               </Label>
               <div className="rounded-2xl rounded-bl-md border border-border bg-card px-3.5 py-2 text-[13px] leading-relaxed whitespace-pre-wrap">
                 {preview}
@@ -268,7 +267,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
               disabled={submitting}
               className="cursor-pointer"
             >
-              Cancelar
+              Annuler
             </Button>
             <Button
               type="button"
@@ -276,7 +275,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
               disabled={submitting}
               className="cursor-pointer"
             >
-              {submitting ? "Enviando..." : "Crear y enviar a revision"}
+              {submitting ? "Envoi…" : "Créer et envoyer pour vérification"}
             </Button>
           </div>
         </div>

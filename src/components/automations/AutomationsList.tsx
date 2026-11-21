@@ -81,23 +81,22 @@ export function AutomationsList() {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      toast.error(body.error ?? "No se pudo cambiar");
+      toast.error(body.error ?? "Impossible de modifier");
       return;
     }
-    toast.success(a.enabled ? "Regla apagada" : "Regla publicada");
+    toast.success(a.enabled ? "Règle désactivée" : "Règle publiée");
     apply(await load());
   };
 
   if (loading) {
-    return <p className="text-sm text-muted-foreground">Cargando reglas...</p>;
+    return <p className="text-sm text-muted-foreground">Chargement des règles…</p>;
   }
 
   return (
     <div className="space-y-5">
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm text-muted-foreground max-w-xl">
-          Cada regla es <strong className="text-foreground">cuando pasa algo → hacer una o varias cosas</strong>.
-          Se arman aca y corren solas.
+          Chaque règle suit le schéma <strong className="text-foreground">quand il se passe quelque chose → faire une ou plusieurs actions</strong>. Elles se créent ici et tournent toutes seules.
         </p>
         {isAdmin && (
           <Button
@@ -106,7 +105,7 @@ export function AutomationsList() {
             render={<Link href="/automatizaciones/nueva" />}
           >
             <Plus className="h-4 w-4 mr-1" />
-            Nueva regla
+            Nouvelle règle
           </Button>
         )}
       </div>
@@ -116,10 +115,10 @@ export function AutomationsList() {
           <div className="mx-auto h-11 w-11 rounded-xl bg-muted flex items-center justify-center mb-3">
             <Workflow className="h-5 w-5 text-muted-foreground" />
           </div>
-          <p className="text-sm font-medium">Todavia no hay reglas</p>
+          <p className="text-sm font-medium">Aucune règle pour l’instant</p>
           {isAdmin && (
             <p className="text-xs text-muted-foreground mt-1">
-              Crea la primera con el boton de arriba.
+              Créez la première avec le bouton ci-dessus.
             </p>
           )}
         </div>
@@ -170,12 +169,12 @@ export function AutomationsList() {
 
                 <div className="flex items-center gap-2 flex-wrap text-xs">
                   <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/60 px-2 py-1 text-foreground/80">
-                    <span className="text-muted-foreground">Cuando</span>
+                    <span className="text-muted-foreground">Quand</span>
                     <span className="font-medium">{a.summary.when}</span>
                   </span>
                   <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                   {a.actions.length === 0 ? (
-                    <span className="text-muted-foreground">sin acciones</span>
+                    <span className="text-muted-foreground">aucune action</span>
                   ) : (
                     a.actions.map((act, i) => {
                       const style = ACTION_STYLE[act.type] ?? ACTION_STYLE.push;
@@ -197,15 +196,15 @@ export function AutomationsList() {
                 <p className="text-[11px] text-muted-foreground">
                   Ultimas 24 h:{" "}
                   {total === 0 ? (
-                    "sin ejecuciones"
+                    "aucune exécution"
                   ) : (
                     <>
                       <span className="text-emerald-700 font-medium">{a.stats.done} ejecutada{a.stats.done === 1 ? "" : "s"}</span>
-                      {a.stats.skipped > 0 && ` · ${a.stats.skipped} omitida${a.stats.skipped === 1 ? "" : "s"}`}
+                      {a.stats.skipped > 0 && ` · ${a.stats.skipped} ignorée${a.stats.skipped === 1 ? "" : "s"}`}
                       {a.stats.failed > 0 && (
                         <span className="text-destructive font-medium"> · {a.stats.failed} con error</span>
                       )}
-                      {a.stats.pending > 0 && ` · ${a.stats.pending} pendiente${a.stats.pending === 1 ? "" : "s"}`}
+                      {a.stats.pending > 0 && ` · ${a.stats.pending} en attente`}
                     </>
                   )}
                 </p>
@@ -218,7 +217,7 @@ export function AutomationsList() {
                   aria-checked={a.enabled}
                   disabled={!isAdmin}
                   onClick={() => toggle(a)}
-                  title={isAdmin ? (a.enabled ? "Apagar" : "Publicar") : "Solo un administrador puede cambiarlo"}
+                  title={isAdmin ? (a.enabled ? "Désactiver" : "Publier") : "Seul un administrateur peut le modifier"}
                   className={cn(
                     "relative h-6 w-11 rounded-full transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60",
                     a.enabled ? "bg-emerald-500" : "bg-muted-foreground/30"
@@ -235,7 +234,7 @@ export function AutomationsList() {
                   href={`/automatizaciones/${a.key}`}
                   className="inline-flex items-center gap-0.5 text-xs text-muted-foreground hover:text-primary-ink"
                 >
-                  {isAdmin ? "Editar" : "Ver"}
+                  {isAdmin ? "Modifier" : "Voir"}
                   <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -252,20 +251,20 @@ export function AutomationsList() {
           className="cursor-pointer text-xs"
         >
           <History className="h-3.5 w-3.5 mr-1" />
-          {showHistory ? "Ocultar historial" : "Ver historial"}
+          {showHistory ? "Masquer l’historique" : "Voir l’historique"}
         </Button>
 
         {showHistory && (
           <div className="mt-2 rounded-2xl border divide-y max-h-96 overflow-y-auto bg-card">
             {runs.length === 0 && (
-              <p className="text-xs text-muted-foreground px-4 py-6 text-center">Todavia no hay ejecuciones.</p>
+              <p className="text-xs text-muted-foreground px-4 py-6 text-center">Aucune exécution pour l’instant.</p>
             )}
             {runs.map((r) => (
               <div key={r.id} className="flex items-start gap-3 px-4 py-3 text-xs">
                 <RunIcon status={r.status} />
                 <div className="min-w-0 flex-1 space-y-1">
                   <p className="truncate">
-                    <span className="font-medium">{r.contactName ?? "Contacto"}</span>
+                    <span className="font-medium">{r.contactName ?? "Contact"}</span>
                     <span className="text-muted-foreground"> · {r.automationName}</span>
                   </p>
                   {r.result && r.result.length > 0 ? (

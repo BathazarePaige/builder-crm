@@ -89,36 +89,36 @@ export default async function DashboardPage() {
   return (
     <div>
       <PageHeader
-        title="Dashboard"
-        subtitle="Resumen de tu pipeline de ventas"
+        title="Tableau de bord"
+        subtitle="Vue d’ensemble de votre activité"
       />
 
       <div className="space-y-5">
       {isFirstRun && (
         <div className="rounded-2xl border border-primary-ink/15 bg-primary/5 p-6">
           <h2 className="text-lg font-semibold tracking-tight font-heading mb-2">
-            Todo listo para empezar
+            Tout est prêt
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Todavia no hay contactos. Tres caminos para arrancar:
+            Pas encore de contact. Trois façons de démarrer :
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
             <div className="p-3.5 rounded-xl bg-card border border-border/60">
-              <p className="font-medium">1. Conecta un canal</p>
+              <p className="font-medium">1. Connectez un canal</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Configuracion → Canales: WhatsApp, Instagram o Messenger
+                Réglages → Canaux : WhatsApp, Instagram ou Messenger
               </p>
             </div>
             <div className="p-3.5 rounded-xl bg-card border border-border/60">
-              <p className="font-medium">2. Agrega contactos</p>
+              <p className="font-medium">2. Ajoutez des contacts</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Desde Contactos, a mano o importando un CSV
+                Depuis Contacts, à la main ou par import CSV
               </p>
             </div>
             <div className="p-3.5 rounded-xl bg-card border border-border/60">
-              <p className="font-medium">3. Carga datos de demostracion</p>
+              <p className="font-medium">3. Chargez la démo</p>
               <p className="text-xs text-muted-foreground mt-1 mb-2">
-                Contactos, conversaciones y operaciones inventados para ver el CRM lleno.
+                Des contacts, conversations et affaires inventés pour voir le CRM rempli.
               </p>
               {member.role === "admin" && <CargarDemo />}
             </div>

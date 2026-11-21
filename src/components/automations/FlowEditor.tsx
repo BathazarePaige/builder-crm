@@ -80,11 +80,11 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
 
   const save = async () => {
     if (!draft.name.trim()) {
-      toast.error("Ponle un nombre a la regla");
+      toast.error("Donnez un nom à la règle");
       return;
     }
     if (draft.actions.length === 0) {
-      toast.error("Agrega al menos una accion");
+      toast.error("Ajoutez au moins une action");
       return;
     }
     setSaving(true);
@@ -96,10 +96,10 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(body.error ?? "No se pudo guardar");
+        toast.error(body.error ?? "Impossible d’enregistrer");
         return;
       }
-      toast.success(draft.enabled ? "Regla publicada" : "Regla guardada como borrador");
+      toast.success(draft.enabled ? "Règle publiée" : "Règle enregistrée en brouillon");
       router.push("/automatizaciones");
       router.refresh();
     } finally {
@@ -109,14 +109,14 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
 
   const remove = async () => {
     if (!initial) return;
-    if (!confirm(`Eliminar "${initial.name}"? Esto no se puede deshacer.`)) return;
+    if (!confirm(`Supprimer « ${initial.name} » ? C’est définitif.`)) return;
     const res = await fetch(`/api/automations/${initial.key}`, { method: "DELETE" });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
-      toast.error(body.error ?? "No se pudo eliminar");
+      toast.error(body.error ?? "Impossible de supprimer");
       return;
     }
-    toast.success("Regla eliminada");
+    toast.success("Règle supprimée");
     router.push("/automatizaciones");
     router.refresh();
   };
@@ -129,7 +129,7 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
           type="button"
           onClick={() => router.push("/automatizaciones")}
           className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
-          aria-label="Volver a las reglas"
+          aria-label="Retour aux règles"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
@@ -138,7 +138,7 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
           value={draft.name}
           disabled={readOnly}
           onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
-          placeholder="Nombre de la regla"
+          placeholder="Nom de la règle"
           className="flex-1 min-w-50 h-10 bg-transparent text-lg md:text-xl font-heading font-semibold tracking-tight outline-none placeholder:text-muted-foreground/60 border-b border-transparent focus:border-primary-ink/40 transition-colors disabled:opacity-100"
         />
 
@@ -150,7 +150,7 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
 
         {!readOnly && (
           <Button onClick={save} disabled={saving} className="cursor-pointer h-9 px-4">
-            {saving ? "Guardando…" : "Guardar"}
+            {saving ? "Enregistrement…" : "Enregistrer"}
           </Button>
         )}
       </div>
@@ -218,7 +218,7 @@ export function FlowEditor({ catalog, initial, isAdmin }: Props) {
             className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            Eliminar regla
+            Supprimer la règle
           </Button>
         </div>
       )}
@@ -262,7 +262,7 @@ function StatusToggle({
           )}
         />
       </span>
-      {enabled ? "Publicada" : "Borrador"}
+      {enabled ? "Publiée" : "Brouillon"}
     </button>
   );
 }
@@ -287,7 +287,7 @@ function AddButton({ catalog, onPick }: { catalog: Catalog; onPick: (type: strin
           <button
             type="button"
             className="h-8 w-8 rounded-full border border-border bg-card shadow-sm flex items-center justify-center text-muted-foreground hover:text-primary-ink hover:border-primary-ink hover:shadow-md cursor-pointer transition-all"
-            aria-label="Agregar accion"
+            aria-label="Ajouter une action"
           />
         }
       >
@@ -295,7 +295,7 @@ function AddButton({ catalog, onPick }: { catalog: Catalog; onPick: (type: strin
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-72 p-1.5">
         <p className="px-2 py-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-semibold">
-          Agregar accion
+          Ajouter une action
         </p>
         {catalog.actions.map((a) => {
           const style = ACTION_STYLE[a.key] ?? ACTION_STYLE.push;

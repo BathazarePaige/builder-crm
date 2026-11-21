@@ -88,26 +88,26 @@ export function ActionCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-semibold">
-            Accion
+            Action
           </p>
           <p className="text-sm font-semibold font-heading truncate">{def?.label ?? action.type}</p>
         </div>
         {!readOnly && (
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={<Button variant="ghost" size="sm" className="h-8 w-8 p-0 cursor-pointer" aria-label="Opciones" />}
+              render={<Button variant="ghost" size="sm" className="h-8 w-8 p-0 cursor-pointer" aria-label="Options" />}
             >
               <MoreHorizontal className="h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem disabled={index === 0} onClick={() => onMove(-1)}>
-                <ArrowUp className="h-4 w-4 mr-2" /> Subir
+                <ArrowUp className="h-4 w-4 mr-2" /> Monter
               </DropdownMenuItem>
               <DropdownMenuItem disabled={index === total - 1} onClick={() => onMove(1)}>
-                <ArrowDown className="h-4 w-4 mr-2" /> Bajar
+                <ArrowDown className="h-4 w-4 mr-2" /> Descendre
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onRemove} className="text-destructive">
-                <Trash2 className="h-4 w-4 mr-2" /> Eliminar
+                <Trash2 className="h-4 w-4 mr-2" /> Supprimer
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -135,7 +135,7 @@ export function ActionCard({
                     onValueChange={(v) => v && setParam(p.key, v)}
                   >
                     <SelectTrigger className="h-9 w-full cursor-pointer bg-muted/30">
-                      <SelectValue placeholder="Elige…" />
+                      <SelectValue placeholder="Choisir…" />
                     </SelectTrigger>
                     <SelectContent>
                       {(p.options ?? []).map((o) => (
@@ -176,7 +176,7 @@ export function ActionCard({
               )}
               {p.templated && !readOnly && placeholders.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1 pt-0.5">
-                  <span className="text-[10px] text-muted-foreground mr-1">Insertar:</span>
+                  <span className="text-[10px] text-muted-foreground mr-1">Insérer :</span>
                   {placeholders.map((ph) => (
                     <button
                       key={ph}
