@@ -19,7 +19,8 @@
 //   3. Aplica LAS MISMAS migraciones que una instancia desplegada, con su RLS.
 //   4. Da de alta el administrador de la demo insertandolo en auth.users, para que lo
 //      cree el mismo disparador del primer admin que corre en produccion.
-//   5. Arranca `next dev` con MODO_LOCAL=true y carga los datos demo.
+//   5. Arranca `next dev` con MODO_LOCAL=true, carga los datos demo y precompila las
+//      paginas del menu para que el primer clic no espere al compilador.
 //
 // Lo que NO es: no hay servidor de autenticacion, asi que no hay login ni equipo ni
 // invitaciones por correo. Quien abre la URL entra como administrador. Para probar eso
@@ -31,6 +32,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
+import { createServer } from "node:net";
 import { listarMigraciones, modulosActivos } from "./lib/migraciones.mjs";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -59,6 +61,36 @@ if (existsSync(join(raiz, ".env.local"))) {
   } catch {
     /* sin dotenv: no pasa nada, el modo local no necesita variables */
   }
+}
+
+// --- 0. el puerto ----------------------------------------------------------
+// Si la ventana de un arranque anterior se cerro sin Ctrl+C, su servidor puede seguir
+// vivo: tiene el puerto y la base embebida (un archivo con un solo dueno). Arrancar
+// encima falla tarde y confuso, asi que se mira antes.
+const libre = await new Promise((resolver) => {
+  const prueba = createServer()
+    .once("error", () => resolver(false))
+    .once("listening", () => prueba.close(() => resolver(true)))
+    .listen(puerto);
+});
+if (!libre) {
+  let esElCrm = false;
+  try {
+    const res = await fetch(`http://localhost:${puerto}/api/health`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    esElCrm = res.ok;
+  } catch {
+    /* otro programa, o nada que responda */
+  }
+  if (esElCrm) {
+    paso(`ya hay un Builder CRM corriendo en http://localhost:${puerto}: abrilo ahi.`);
+    paso("si queres reiniciarlo, cerralo primero (Ctrl+C en su ventana).");
+  } else {
+    console.error(`[local] el puerto ${puerto} esta ocupado por otro programa.`);
+    console.error(`[local] usa otro: npm run local -- --puerto ${puerto + 1}`);
+  }
+  process.exit(1);
 }
 
 // --- 1. el paquete del Postgres embebido -----------------------------------
@@ -203,20 +235,37 @@ const activos = modulosActivos(raiz);
 paso(`modulos activos: ${activos.length ? activos.join(", ") : "(ninguno)"}`);
 
 // --- 5. el servidor ---------------------------------------------------------
-const servidor = spawn(
-  process.platform === "win32" ? "npx.cmd" : "npx",
-  ["next", "dev", "-p", String(puerto)],
-  {
-    cwd: raiz,
-    stdio: "inherit",
-    env: { ...process.env, MODO_LOCAL: "true" },
-    shell: process.platform === "win32",
-  }
-);
+// Se lanza el binario de Next directo con el mismo node, sin `npx` ni shell: en Windows
+// `npx.cmd` por cmd.exe agrega uno o dos segundos (resuelve el paquete, abre una
+// consola) antes de que Next empiece siquiera.
+let binNext;
+try {
+  binNext = requerir.resolve("next/dist/bin/next");
+} catch {
+  console.error("[local] falta next. Corre `npm install` y volve a intentar.");
+  process.exit(1);
+}
+const servidor = spawn(process.execPath, [binNext, "dev", "-p", String(puerto)], {
+  cwd: raiz,
+  stdio: "inherit",
+  env: { ...process.env, MODO_LOCAL: "true" },
+});
 
 servidor.on("exit", (codigo) => process.exit(codigo ?? 0));
-for (const senal of ["SIGINT", "SIGTERM"]) {
-  process.on(senal, () => servidor.kill(senal));
+
+// Cerrar bien importa: Turbopack guarda su cache en .next/dev/cache cuando el servidor se
+// detiene (y de a ratos mientras esta ocioso). Si se lo mata en seco, el arranque
+// siguiente recompila todo desde cero: de ~4 s a ~10 s aca, bastante mas en Windows.
+// En Windows `servidor.kill()` es un TerminateProcess, siempre en seco, y el Ctrl+C ya
+// le llega a Next por la consola: ahi solo se espera. El plazo es por si no cierra.
+let cerrando = false;
+for (const senal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+  process.on(senal, () => {
+    if (cerrando) return;
+    cerrando = true;
+    if (process.platform !== "win32") servidor.kill(senal);
+    setTimeout(() => servidor.kill("SIGKILL"), 10_000).unref();
+  });
 }
 
 const base = `http://localhost:${puerto}`;
@@ -230,34 +279,70 @@ async function esperarServidor() {
     } catch {
       /* todavia compilando */
     }
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 300));
   }
   return false;
 }
 
+// Precalentado. `next dev` compila cada pagina la primera vez que alguien la pide, y el
+// navegador ademas pide sus chunks de JS y CSS, que tambien se compilan en ese momento.
+// En Windows eso son varios segundos por pagina, y los paga el usuario en cada clic.
+// Aca se piden antes: la pagina y los recursos de /_next/ que su HTML referencia.
+async function precalentar(ruta) {
+  try {
+    const res = await fetch(`${base}${ruta}`, { signal: AbortSignal.timeout(120_000) });
+    const html = await res.text();
+    const recursos = new Set(
+      [...html.matchAll(/(?:src|href)="(\/_next\/[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, "&"))
+    );
+    await Promise.all(
+      [...recursos].map((r) =>
+        fetch(`${base}${r}`, { signal: AbortSignal.timeout(120_000) })
+          .then((x) => x.arrayBuffer())
+          .catch(() => {})
+      )
+    );
+  } catch {
+    /* precalentar es una ayuda: si falla, la pagina se compila al abrirla, como antes */
+  }
+}
+
+// Las paginas del menu, en el orden en que se suelen abrir. La primera se precalienta
+// antes de anunciar "listo"; el resto en segundo plano.
+const PAGINAS = ["/conversations", "/pipeline", "/contacts", "/settings", "/simulador"];
+
+const inicio = Date.now();
 if (await esperarServidor()) {
+  const tareas = [precalentar("/")];
   if (sembrar) {
     paso("cargando datos de demostracion...");
-    try {
-      const res = await fetch(`${base}/api/seed/demo`, {
-        method: "POST",
-        signal: AbortSignal.timeout(120_000),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (res.ok && json.ok) {
-        paso(`datos demo: ${json.contactos} contactos, ${json.conversaciones} conversaciones`);
-      } else {
-        paso(`los datos demo no cargaron (${res.status}). Podes cargarlos desde el inicio.`);
-      }
-    } catch {
-      paso("los datos demo no cargaron. Podes cargarlos con el boton del inicio.");
-    }
+    tareas.push(
+      (async () => {
+        try {
+          const res = await fetch(`${base}/api/seed/demo`, {
+            method: "POST",
+            signal: AbortSignal.timeout(120_000),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.ok) {
+            paso(`datos demo: ${json.contactos} contactos, ${json.conversaciones} conversaciones`);
+          } else {
+            paso(`los datos demo no cargaron (${res.status}). Podes cargarlos desde el inicio.`);
+          }
+        } catch {
+          paso("los datos demo no cargaron. Podes cargarlos con el boton del inicio.");
+        }
+      })()
+    );
   }
+  await Promise.all(tareas);
   console.log("");
-  paso(`listo: ${base}`);
+  paso(`listo: ${base}  (${((Date.now() - inicio) / 1000).toFixed(1)} s desde que arranco Next)`);
   paso("entras directo, sin login: en modo local no hay sesion.");
   if (!process.env.OPENROUTER_API_KEY) {
     paso("el agente de IA esta apagado (falta OPENROUTER_API_KEY en .env.local).");
   }
   console.log("");
+  // Una por una para no competir con lo que el usuario abra mientras tanto.
+  for (const ruta of PAGINAS) await precalentar(ruta);
 }
