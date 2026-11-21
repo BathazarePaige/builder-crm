@@ -107,6 +107,6 @@ a paso al lado de la ventana de Meta).
 
 ## Fuera de alcance
 
-- Una sola instancia multi-cliente (decision pendiente del dueno). Sincronizar contactos e historial de la app
+- Una sola instancia multi-cliente: descartado por el dueno (2026-11-21), se queda una instancia por cliente. Sincronizar contactos e historial de la app
   (`smb_app_data`).
 - Medios (descargar imagenes/audios de Graph): se guardan como `[imagen]`, `[audio]`.
