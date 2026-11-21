@@ -22,8 +22,8 @@ export default definirConfig({
     icono: "/marca/icono.png",
     // El cian del anillo del logo de IA Builder Lab. La sidebar va clara (refonte "clair
     // et net"); un color oscuro aqui la vuelve oscura y el resto se deriva solo.
-    colorPrimario: "#3CF5F5",
-    colorSidebar: "#F7F7F8",
+    colorPrimario: "#3B6BF6",
+    colorSidebar: "#FFFFFF",
   },
 
   idioma: "fr",

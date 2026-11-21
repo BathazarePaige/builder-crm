@@ -80,7 +80,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Canales conectados */}
-        <Card className="lg:col-span-2">
+        <Card id="canaux" className="lg:col-span-2 scroll-mt-24">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />

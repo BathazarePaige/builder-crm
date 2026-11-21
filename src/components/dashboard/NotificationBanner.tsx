@@ -37,7 +37,7 @@ export function NotificationBanner() {
             <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-red-800">
-                {overdueCount} seguimiento{overdueCount > 1 ? "s" : ""} vencido{overdueCount > 1 ? "s" : ""}
+                {overdueCount} relance{overdueCount > 1 ? "s" : ""} en retard
               </p>
               <p className="text-xs text-red-600">
                 À traiter en priorité
@@ -54,7 +54,7 @@ export function NotificationBanner() {
             <Clock className="h-5 w-5 text-amber-600 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-800">
-                {todayCount} seguimiento{todayCount > 1 ? "s" : ""} para hoy
+                {todayCount} relance{todayCount > 1 ? "s" : ""} prévue{todayCount > 1 ? "s" : ""} aujourd’hui
               </p>
             </div>
             <ArrowRight className="h-4 w-4 text-amber-400" />

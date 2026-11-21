@@ -223,7 +223,41 @@ async function sembrarNucleo(r: ResultadoSeed) {
           })
           .returning({ id: deals.id });
         await setDealStage({ dealId: deal.id, stageId: stage.id, justCreated: true });
+        // setDealStage pone updated_at en "ahora"; el tablero lo usa como fecha de
+        // cierre, asi que se devuelve a la fecha de la demo.
+        await db.update(deals).set({ updatedAt: new Date(ahora - i * dia) }).where(eq(deals.id, deal.id));
         r.operaciones++;
+      }
+
+      // Historial: una operacion ganada por mes en los ultimos nueve meses (y dos
+      // perdidas), para que la evolucion del chiffre d'affaires y la conversion
+      // tengan curva desde la primera demo.
+      const ganada = stages.find((s) => s.isWon);
+      const perdida = stages.find((s) => s.isLost);
+      const historial = [42000, 55000, 48000, 63000, 70000, 66000, 81000, 88000, 97000];
+      if (ganada) {
+        for (let m = 0; m < historial.length; m++) {
+          const mesesAtras = historial.length - m;
+          const fecha = new Date(ahora - mesesAtras * 30 * dia);
+          const c = creados[(m + 3) % creados.length];
+          const esPerdida = perdida && (m === 2 || m === 6);
+          const etapa = esPerdida ? perdida : ganada;
+          const [deal] = await db
+            .insert(deals)
+            .values({
+              title: `${c.name} (mandat ${m + 1})`,
+              value: historial[m] * 100,
+              stageId: etapa.id,
+              contactId: c.id,
+              probability: esPerdida ? 0 : 100,
+              createdAt: new Date(fecha.getTime() - 20 * dia),
+              updatedAt: fecha,
+            })
+            .returning({ id: deals.id });
+          await setDealStage({ dealId: deal.id, stageId: etapa.id, justCreated: true });
+          await db.update(deals).set({ updatedAt: fecha }).where(eq(deals.id, deal.id));
+          r.operaciones++;
+        }
       }
     }
   }
@@ -243,6 +277,25 @@ async function sembrarNucleo(r: ResultadoSeed) {
       scheduledAt: i % 4 === 3 ? new Date(ahora + (i + 2) * dia) : null,
       completedAt: i % 4 === 3 ? null : new Date(ahora - i * dia),
       createdAt: new Date(ahora - (i + 1) * dia),
+    });
+  }
+
+  // Tareas para hoy: una atrasada, dos del dia y una ya hecha, para "Taches du jour".
+  const tareas = [
+    { texto: "Relancer pour la proposition signée", desfase: -dia, hecha: false },
+    { texto: "Envoyer le comparatif demandé", desfase: -30 * 60_000, hecha: false },
+    { texto: "Appeler pour confirmer la visite", desfase: -60 * 60_000, hecha: false },
+    { texto: "Préparer le dossier de financement", desfase: -2 * 3_600_000, hecha: true },
+  ];
+  for (let i = 0; i < tareas.length && i < creados.length; i++) {
+    const t = tareas[i];
+    await db.insert(activities).values({
+      type: "follow_up",
+      description: t.texto,
+      contactId: creados[(i + 2) % creados.length].id,
+      scheduledAt: new Date(ahora + t.desfase),
+      completedAt: t.hecha ? new Date(ahora - 3_600_000) : null,
+      createdAt: new Date(ahora - 2 * dia),
     });
   }
 

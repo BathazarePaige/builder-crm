@@ -23,6 +23,7 @@ import { etiquetaVersion } from "@/lib/version";
 import { useEsAdmin } from "@/lib/use-es-admin";
 import { leerConfigPublica } from "@/lib/config-publica";
 import { UserMenu } from "./UserMenu";
+import { CartePromo } from "./CartePromo";
 
 interface NavItem {
   href: string;
@@ -91,9 +92,10 @@ const footerItems: NavItem[] = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden md:flex md:w-60 md:flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border min-h-screen sticky top-0 max-h-screen">
+    <aside className="hidden md:flex md:w-64 md:flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border min-h-screen sticky top-0 max-h-screen">
       <SidebarBrand />
       <SidebarNav className="flex-1" />
+      <CartePromo />
       <SidebarFooter />
     </aside>
   );
@@ -102,16 +104,16 @@ export function Sidebar() {
 export function SidebarBrand() {
   const m = marca();
   return (
-    <div className="flex h-14 items-center gap-2.5 px-4">
+    <div className="flex h-[72px] items-center gap-2.5 px-6">
       <Image
         src={m.logo}
         alt=""
-        width={28}
-        height={28}
+        width={32}
+        height={32}
         unoptimized
-        className="h-7 w-7 rounded-lg object-cover shrink-0"
+        className="h-8 w-8 rounded-xl object-cover shrink-0"
       />
-      <span className="text-[14px] font-semibold tracking-tight truncate">
+      <span className="text-[17px] font-semibold tracking-tight truncate">
         {m.nombre}
       </span>
     </div>
@@ -124,11 +126,11 @@ export function SidebarNav({ className }: { className?: string }) {
   const sections = construirSecciones(esAdmin);
 
   return (
-    <nav aria-label="Navigation principale" className={cn("px-3 py-2 space-y-5 overflow-y-auto", className)}>
+    <nav aria-label="Navigation principale" className={cn("px-4 py-3 space-y-5 overflow-y-auto", className)}>
       {sections.map((section, idx) => (
         <div key={idx} className="space-y-1">
           {section.title && (
-            <p className="px-2.5 mb-1 text-[11px] font-medium text-sidebar-foreground-muted">
+            <p className="px-3 mb-1.5 text-[11px] font-medium uppercase tracking-wider text-sidebar-foreground-muted/80">
               {section.title}
             </p>
           )}
@@ -151,16 +153,16 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
       href={item.href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "group relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors cursor-pointer",
+        "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-colors cursor-pointer",
         isActive
-          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+          ? "bg-gradient-to-r from-primary to-[#7C6CF5] text-white font-medium shadow-[0_6px_16px_-6px_rgba(59,107,246,0.6)]"
           : "text-sidebar-foreground-muted hover:bg-sidebar-accent hover:text-sidebar-foreground",
       )}
     >
       <item.icon
         className={cn(
-          "h-4 w-4 shrink-0",
-          isActive ? "text-sidebar-primary" : "text-sidebar-foreground-muted",
+          "h-[18px] w-[18px] shrink-0",
+          isActive ? "text-white" : "text-sidebar-foreground-muted",
         )}
       />
       <span className="truncate">{item.label}</span>
@@ -171,7 +173,7 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
 export function SidebarFooter() {
   const pathname = usePathname();
   return (
-    <div className="border-t border-sidebar-border px-3 py-3 space-y-1">
+    <div className="border-t border-sidebar-border px-4 py-3 space-y-1">
       {footerItems.map((item) => (
         <NavLink key={item.href} item={item} pathname={pathname} />
       ))}

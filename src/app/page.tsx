@@ -1,153 +1,113 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { db } from "@/db";
-import { contacts, deals, activities, pipelineStages } from "@/db/schema";
-import { eq, asc, desc } from "drizzle-orm";
-import { getCurrentMember, ownerFilter } from "@/lib/team";
-import { serieContactos } from "@/lib/reportes";
-import { KPICards } from "@/components/dashboard/KPICards";
-import { PipelineChart } from "@/components/dashboard/PipelineChart";
-import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { Download, Plus } from "lucide-react";
+import { getCurrentMember } from "@/lib/team";
+import { getConfig } from "@/lib/config";
+import { datosTablero } from "@/lib/tableau-de-bord/donnees";
+import { leerPeriodo } from "@/lib/tableau-de-bord/calculs";
 import { NotificationBanner } from "@/components/dashboard/NotificationBanner";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { CargarDemo } from "@/components/dashboard/CargarDemo";
-import type { DashboardStats } from "@/types";
+import { CartesIndicateurs } from "@/components/dashboard/CartesIndicateurs";
+import { ApercuRevenus } from "@/components/dashboard/ApercuRevenus";
+import { Entonnoir } from "@/components/dashboard/Entonnoir";
+import { SourcesContacts } from "@/components/dashboard/SourcesContacts";
+import { AnalysesIA } from "@/components/dashboard/AnalysesIA";
+import { MeilleuresAffaires } from "@/components/dashboard/MeilleuresAffaires";
+import { PerformanceEquipe } from "@/components/dashboard/PerformanceEquipe";
+import { AffairesParEtape } from "@/components/dashboard/AffairesParEtape";
+import { EvenementsAVenir } from "@/components/dashboard/EvenementsAVenir";
+import { TachesDuJour } from "@/components/dashboard/TachesDuJour";
+import { ActiviteRecente } from "@/components/dashboard/ActiviteRecente";
+import { NoteRapide } from "@/components/dashboard/NoteRapide";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+const LIBELLES = { 7: "vs 7 j préc.", 30: "vs 30 j préc.", 90: "vs 90 j préc." } as const;
+
+function salutation(ahora: Date): string {
+  const h = Number(new Intl.DateTimeFormat("en-US", { timeZone: getConfig().zonaHoraria, hour: "numeric", hour12: false }).format(ahora)) % 24;
+  return h >= 18 || h < 5 ? "Bonsoir" : "Bonjour";
+}
+
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ periode?: string }> }) {
   const member = await getCurrentMember();
   if (!member) redirect("/sin-acceso");
 
-  // Un asesor ve solo sus contactos y lo que cuelga de ellos; el admin ve todo.
-  const soloMios = ownerFilter(member);
-
-  const allContacts = await db.select().from(contacts).where(soloMios);
-  const allDeals = await db
-    .select({
-      id: deals.id,
-      value: deals.value,
-      stageId: deals.stageId,
-    })
-    .from(deals)
-    .innerJoin(contacts, eq(deals.contactId, contacts.id))
-    .where(soloMios);
-  const stages = await db
-    .select()
-    .from(pipelineStages)
-    .orderBy(asc(pipelineStages.order));
-
-  const activeDeals = allDeals.filter((d) => {
-    const stage = stages.find((s) => s.id === d.stageId);
-    return stage && !stage.isWon && !stage.isLost;
-  });
-
-  const wonDeals = allDeals.filter((d) => {
-    const stage = stages.find((s) => s.id === d.stageId);
-    return stage?.isWon;
-  });
-
-  const stats: DashboardStats = {
-    totalContacts: allContacts.length,
-    activeDeals: activeDeals.length,
-    totalPipelineValue: activeDeals.reduce((sum, d) => sum + d.value, 0),
-    wonDealsValue: wonDeals.reduce((sum, d) => sum + d.value, 0),
-    conversionRate:
-      allDeals.length > 0
-        ? Math.round((wonDeals.length / allDeals.length) * 100)
-        : 0,
-  };
-
-  const pipelineData = stages
-    .filter((s) => !s.isLost)
-    .map((stage) => ({
-      name: stage.name,
-      count: allDeals.filter((d) => d.stageId === stage.id).length,
-      value: allDeals
-        .filter((d) => d.stageId === stage.id)
-        .reduce((sum, d) => sum + d.value, 0),
-      color: stage.color,
-    }));
-
-  const contactos7d = await serieContactos(member, 7);
-
-  const recentActivities = await db
-    .select({
-      id: activities.id,
-      type: activities.type,
-      description: activities.description,
-      contactName: contacts.name,
-      createdAt: activities.createdAt,
-    })
-    .from(activities)
-    .innerJoin(contacts, eq(activities.contactId, contacts.id))
-    .where(soloMios)
-    .orderBy(desc(activities.createdAt))
-    .limit(5);
-
-  const isFirstRun = allContacts.length === 0 && allDeals.length === 0;
+  const periode = leerPeriodo((await searchParams).periode);
+  const ahora = new Date();
+  const d = await datosTablero(member, periode, ahora);
+  const anneeEnCours = Number(new Intl.DateTimeFormat("en-US", { timeZone: getConfig().zonaHoraria, year: "numeric" }).format(ahora));
 
   return (
-    <div>
-      <PageHeader
-        title="Tableau de bord"
-        subtitle="Vue d’ensemble de votre activité"
-      />
+    <div className="space-y-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-[26px] font-semibold tracking-tight leading-tight">
+            {salutation(ahora)}, {d.nombre} <span aria-hidden>👋</span>
+          </h1>
+          <p className="mt-1 text-[14px] text-muted-foreground">Voici où en est votre activité aujourd’hui.</p>
+        </div>
+        <div className="flex gap-2.5">
+          <a
+            href="/api/export?type=deals"
+            className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-card px-4 text-[13px] font-medium shadow-sm hover:bg-muted"
+          >
+            <Download className="h-4 w-4" /> Exporter
+          </a>
+          <Link
+            href="/contacts"
+            className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-[13px] font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" /> Nouveau contact
+          </Link>
+        </div>
+      </div>
 
-      <div className="space-y-5">
-      {isFirstRun && (
-        <div className="rounded-2xl border border-primary-ink/15 bg-primary/5 p-6">
-          <h2 className="text-lg font-semibold tracking-tight font-heading mb-2">
-            Tout est prêt
-          </h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Pas encore de contact. Trois façons de démarrer :
+      {!d.hayDatos && (
+        <div className="rounded-2xl border border-primary-ink/15 bg-primary/5 p-5">
+          <h2 className="text-[15px] font-semibold">Tout est prêt</h2>
+          <p className="mt-1 text-[13px] text-muted-foreground">
+            Pas encore de contact. Connectez un canal dans Réglages, ajoutez des contacts, ou chargez la démo pour voir le tableau de bord rempli.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-            <div className="p-3.5 rounded-xl bg-card border border-border/60">
-              <p className="font-medium">1. Connectez un canal</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Réglages → Canaux : WhatsApp, Instagram ou Messenger
-              </p>
+          {member.role === "admin" && (
+            <div className="mt-3">
+              <CargarDemo />
             </div>
-            <div className="p-3.5 rounded-xl bg-card border border-border/60">
-              <p className="font-medium">2. Ajoutez des contacts</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Depuis Contacts, à la main ou par import CSV
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-card border border-border/60">
-              <p className="font-medium">3. Chargez la démo</p>
-              <p className="text-xs text-muted-foreground mt-1 mb-2">
-                Des contacts, conversations et affaires inventés pour voir le CRM rempli.
-              </p>
-              {member.role === "admin" && <CargarDemo />}
-            </div>
-          </div>
+          )}
         </div>
       )}
 
       <NotificationBanner />
 
-      <KPICards stats={stats} contactos={contactos7d} />
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="min-w-0 space-y-5">
+          <CartesIndicateurs indicadores={d.indicadores} libellePeriode={LIBELLES[periode]} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2">
-          <PipelineChart data={pipelineData} />
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
+            <ApercuRevenus annee={d.ingresosAnio} douze={d.ingresos12m} anneeEnCours={anneeEnCours} />
+            <Entonnoir niveaux={d.embudo} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3">
+            <SourcesContacts fuentes={d.fuentes} />
+            <AnalysesIA donnees={d} />
+            <div className="md:col-span-2 2xl:col-span-1">
+              <MeilleuresAffaires operations={d.mejoresOperaciones} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
+            <PerformanceEquipe equipe={d.equipo} />
+            <AffairesParEtape colonnes={d.porEtapa} />
+          </div>
         </div>
-        <div>
-          <RecentActivity
-            activities={
-              recentActivities as Array<{
-                id: string;
-                type: string;
-                description: string;
-                contactName: string | null;
-                createdAt: number | Date;
-              }>
-            }
-          />
-        </div>
-      </div>
+
+        <aside className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-1 xl:content-start">
+          <EvenementsAVenir evenements={d.eventos} />
+          <TachesDuJour taches={d.tareas} />
+          <ActiviteRecente elements={d.recientes} />
+          <NoteRapide />
+        </aside>
       </div>
     </div>
   );
