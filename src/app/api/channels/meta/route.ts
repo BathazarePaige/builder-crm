@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { conexionMetaSchema, urlWebhookMeta } from "@/lib/channels/meta-cloud-conexion";
 import { whatsappProvider } from "@/lib/channels/provider";
+import { faltanParaSignup } from "@/lib/channels/meta-embedded-signup";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,8 @@ export const dynamic = "force-dynamic";
  * Conexion de un numero de WhatsApp por Meta Cloud API directo (sin Zernio).
  *
  *   GET    -> cuentas cargadas (sin token), URL del webhook y que falta del entorno.
- *   POST   -> valida el token contra Graph, suscribe la app al WABA y guarda la cuenta.
+ *   POST   -> carga manual: valida el token contra Graph, suscribe la app al WABA y guarda.
+ *             La ventana de Meta (Embedded Signup) va por ./embedded.
  *   DELETE -> ?id=<uuid> desconecta (borra el token, deja la fila).
  *
  * Solo admin: el token da control total del numero.
@@ -27,6 +29,13 @@ export async function GET() {
     webhookUrl: base ? urlWebhookMeta(base) : null,
     tieneAppSecret: Boolean(process.env.WHATSAPP_APP_SECRET),
     tieneVerifyToken: Boolean(process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN),
+    // Ventana de Meta (Embedded Signup). El app id y el config id son publicos: viajan
+    // igual en la URL del popup de Meta. El secreto de la app nunca sale de aca.
+    signup: {
+      appId: process.env.META_APP_ID || null,
+      configId: process.env.META_ES_CONFIG_ID || null,
+      faltan: faltanParaSignup(process.env),
+    },
   });
 }
 
@@ -41,54 +50,14 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  const { phoneNumberId, accessToken } = parsed.data;
-  const wabaId = parsed.data.wabaId || null;
-
-  const [{ obtenerNumeroMeta, suscribirAppAWaba }, { conectarCuentaWhatsapp }, { resolveDefaultTenantId }] =
-    await Promise.all([
-      import("@/lib/meta-whatsapp"),
-      import("@/lib/whatsapp-accounts"),
-      import("@/lib/tenants"),
-    ]);
-
-  const numero = await obtenerNumeroMeta(phoneNumberId, accessToken);
-  if (!numero.success) {
-    return NextResponse.json(
-      { error: `Meta rechazo el token o el id: ${numero.error.message ?? "sin detalle"}` },
-      { status: 422 }
-    );
-  }
-
-  const avisos: string[] = [];
-  if (wabaId) {
-    const sub = await suscribirAppAWaba(wabaId, accessToken);
-    if (!sub.success) {
-      avisos.push(
-        `No se pudo suscribir la app al WABA (${sub.error?.message ?? "sin detalle"}): el numero va a enviar pero no a recibir hasta que se suscriba.`
-      );
-    }
-  } else {
-    avisos.push("Sin WABA id no se suscribe la app: hacelo desde el panel de Meta o pegalo y reconecta.");
-  }
-
-  const tenantId = await resolveDefaultTenantId();
-  if (!tenantId) {
-    return NextResponse.json({ error: "No existe el tenant default: faltan migraciones" }, { status: 500 });
-  }
-
-  const cuenta = await conectarCuentaWhatsapp({
-    tenantId,
-    phoneNumberId,
-    accessToken,
-    wabaId,
-    displayPhone: numero.numero.displayPhone,
+  const { darDeAltaNumero } = await import("@/lib/channels/meta-cloud-alta");
+  const r = await darDeAltaNumero({
+    phoneNumberId: parsed.data.phoneNumberId,
+    accessToken: parsed.data.accessToken,
+    wabaId: parsed.data.wabaId || null,
   });
-
-  if (whatsappProvider() !== "meta") {
-    avisos.push("La cuenta quedo guardada, pero WhatsApp sigue saliendo por Zernio hasta que la instancia tenga WHATSAPP_PROVIDER=meta.");
-  }
-
-  return NextResponse.json({ ok: true, cuenta, nombre: numero.numero.verifiedName, avisos });
+  if (!r.ok) return NextResponse.json({ error: r.error }, { status: r.status });
+  return NextResponse.json(r);
 }
 
 export async function DELETE(request: NextRequest) {

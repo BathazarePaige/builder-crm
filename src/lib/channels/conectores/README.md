@@ -34,15 +34,27 @@ Spec: `specs/nucleo/12-whatsapp-directo.md`.
   (`../meta-cloud-eventos.ts`) y la persistencia (`../meta-cloud-ingesta.ts`) usa
   `ingest.ts`, igual que Zernio. Solo ingesta numeros activos de `whatsapp_accounts`
   y solo con `WHATSAPP_PROVIDER=meta` (si no, el agente contestaria dos veces).
-- **Conectar**: Ajustes -> Canales -> WhatsApp directo (solo admin, visible con
-  `WHATSAPP_PROVIDER=meta`). Se pega phone number id, WABA id y token; el servidor
-  (`/api/channels/meta`) valida contra Graph, suscribe la app al WABA y guarda la
-  cuenta. El token nunca vuelve al navegador. `scripts/connect-whatsapp-account.ts`
-  sigue sirviendo para hacerlo por linea de comandos.
-- **Pendiente**: Embedded Signup (login de Meta en un popup) y Tech Provider (la
-  instancia recibe su token desde la plataforma de la agencia y el webhook se enruta con
-  `override_callback_uri` por WABA hacia la misma URL). Los dos son otra forma de
-  obtener credenciales: escriben en `whatsapp_accounts` y el resto no cambia.
+- **Conectar**: Ajustes -> Canales -> WhatsApp direct (solo admin). El boton abre un
+  asistente (`src/components/settings/whatsapp/`): elegir el caso (app WhatsApp Business
+  en coexistencia, numero nuevo, o credenciales a mano), una explicacion de lo que va a
+  pedir Meta y un guia paso a paso al lado de la ventana de Meta (Embedded Signup,
+  `FB.login` con `config_id`). El navegador manda el `code` y los ids que Meta anuncia
+  por `postMessage` a `/api/channels/meta/embedded`, que cambia el code por el token con
+  `WHATSAPP_APP_SECRET`, registra el numero si es nuevo (PIN de 6 digitos), suscribe la
+  app al WABA y guarda (`meta-cloud-alta.ts`). La carga manual va por `/api/channels/meta`.
+  El token nunca vuelve al navegador. Variables: `META_APP_ID`, `META_ES_CONFIG_ID`.
+- **Coexistencia**: lo que el negocio contesta desde el celular llega en
+  `smb_message_echoes` y entra como saliente (sin disparar al agente).
+- **Lado Meta** (una vez por app): app de tipo Business con WhatsApp y Facebook Login
+  for Business; una configuracion de Embedded Signup (da el config id); el dominio de la
+  instancia en "Allowed domains" del login; el webhook de la app apuntando a
+  `/api/webhooks/whatsapp` con los campos `messages` y `smb_message_echoes`. Para conectar
+  numeros de OTRAS empresas la app tiene que ser Tech Provider (verificacion del negocio
+  y acceso avanzado a `whatsapp_business_management` y `whatsapp_business_messaging`);
+  sin eso solo funciona con cuentas que administran la app.
+- **Pendiente**: Tech Provider multi-instancia (la instancia recibe su token desde la
+  plataforma de la agencia y el webhook se enruta con `override_callback_uri` por WABA),
+  sincronizar contactos e historial de la app (`smb_app_data`) y descargar medios.
 - **Probar**: mandar un mensaje real al numero de prueba de Meta y ver que entra en la
   bandeja; `probar-instancia` sigue cubriendo bandeja, agente y pipeline.
 

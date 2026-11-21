@@ -57,6 +57,8 @@ export interface MetaChangeValue {
   contacts?: MetaContactProfile[];
   messages?: MetaInboundMessage[];
   statuses?: MetaStatus[];
+  /** Coexistencia: lo que el negocio contesto desde la app WhatsApp Business del celular. */
+  message_echoes?: Array<MetaInboundMessage & { to: string }>;
 }
 
 export interface MetaWebhookPayload {
@@ -89,13 +91,32 @@ export interface EstadoMeta {
   error: string | null;
 }
 
+/** Mensaje que el negocio mando desde la app del celular (coexistencia). */
+export interface EcoMeta {
+  wamid: string;
+  /** Telefono del cliente (destinatario), E.164 con "+". */
+  telefono: string;
+  tipo: string;
+  cuerpo: string;
+  enviadoEn: Date;
+  crudo: MetaInboundMessage;
+}
+
 /** Todo lo que trae un `change` de un numero (phone_number_id). */
 export interface CambioMeta {
   phoneNumberId: string | null;
   telefonoNegocio: string | null;
   mensajes: EntranteMeta[];
   estados: EstadoMeta[];
+  ecos: EcoMeta[];
 }
+
+/**
+ * `messages` trae lo entrante y los estados; `smb_message_echoes` (solo coexistencia)
+ * trae lo que se contesto desde el celular. Sin leerlo, la bandeja muestra preguntas del
+ * cliente sin respuesta y el agente contesta algo que una persona ya contesto.
+ */
+const CAMPOS = new Set(["messages", "smb_message_echoes"]);
 
 export function esPayloadWhatsapp(payload: unknown): payload is MetaWebhookPayload {
   return (
@@ -111,7 +132,7 @@ export function leerCambiosMeta(payload: MetaWebhookPayload): CambioMeta[] {
 
   for (const entry of payload.entry ?? []) {
     for (const change of entry.changes ?? []) {
-      if (change.field !== "messages" || !change.value) continue;
+      if (!change.field || !CAMPOS.has(change.field) || !change.value) continue;
       const value = change.value;
 
       const mensajes: EntranteMeta[] = [];
@@ -135,6 +156,19 @@ export function leerCambiosMeta(payload: MetaWebhookPayload): CambioMeta[] {
         });
       }
 
+      const ecos: EcoMeta[] = [];
+      for (const eco of value.message_echoes ?? []) {
+        if (!eco?.id || !eco.to) continue;
+        ecos.push({
+          wamid: eco.id,
+          telefono: `+${normalizePhone(eco.to)}`,
+          tipo: eco.type,
+          cuerpo: cuerpoDeMensaje(eco),
+          enviadoEn: desdeEpoch(eco.timestamp),
+          crudo: eco,
+        });
+      }
+
       cambios.push({
         phoneNumberId: value.metadata?.phone_number_id ?? null,
         telefonoNegocio: value.metadata?.display_phone_number
@@ -142,6 +176,7 @@ export function leerCambiosMeta(payload: MetaWebhookPayload): CambioMeta[] {
           : null,
         mensajes,
         estados,
+        ecos,
       });
     }
   }
@@ -215,7 +250,7 @@ export function cuerpoDeMensaje(msg: MetaInboundMessage): string {
 export function idEventoMeta(payload: unknown): string | null {
   if (!esPayloadWhatsapp(payload)) return null;
   for (const cambio of leerCambiosMeta(payload)) {
-    const msg = cambio.mensajes[0];
+    const msg = cambio.mensajes[0] ?? cambio.ecos[0];
     if (msg) return `meta:${msg.wamid}`;
     const st = cambio.estados[0];
     if (st) return `meta:${st.wamid}:${st.status}`;

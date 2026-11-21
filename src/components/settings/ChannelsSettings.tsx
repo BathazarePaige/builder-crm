@@ -270,7 +270,7 @@ export function ChannelsSettings() {
         ))}
       </div>
 
-      {config.whatsappProvider === "meta" && <WhatsappDirectoSettings onCambio={load} />}
+      <WhatsappDirectoSettings onCambio={load} />
 
       <div className="space-y-2">
         {CHANNELS.map((channel) => {

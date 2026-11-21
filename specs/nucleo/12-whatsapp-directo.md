@@ -86,7 +86,24 @@ CA-001..004 se verificaron con `npm run local` y payloads firmados a mano.
 - IV. Cero secretos: el token vive en la base, como antes con el script; nunca en codigo
   ni en respuestas de la API.
 
+## Ampliacion 2026-11-21: asistente con la ventana de Meta (Embedded Signup)
+
+Pedido del dueno: conectar WhatsApp desde el CRM con un flujo guiado (elegir numero
+propio o nuevo, coexistencia con la app WhatsApp Business, una explicacion y un guia paso
+a paso al lado de la ventana de Meta).
+
+- FR-007 Asistente en frances en Ajustes -> Canales: elegir caso, explicacion con casilla
+  "compris", guia de 7 pasos con la ventana de Meta, pantalla final (PIN si es nuevo).
+- FR-008 `FB.login` con `config_id` y `featureType: whatsapp_business_app_onboarding` en
+  coexistencia; los `postMessage` solo se aceptan de https://*.facebook.com.
+- FR-009 `POST /api/channels/meta/embedded` (admin): cambia el code por el token con el
+  secreto de la app, registra el numero si es nuevo, suscribe la app al WABA, guarda.
+- FR-010 `smb_message_echoes` entra como mensaje saliente.
+- FR-011 Sin `META_APP_ID`, `META_ES_CONFIG_ID` o `WHATSAPP_APP_SECRET`, el asistente lo
+  dice y ofrece solo la carga manual.
+
 ## Fuera de alcance
 
-- Embedded Signup de Meta y el modo Tech Provider (otra forma de obtener credenciales).
+- Tech Provider multi-instancia, sincronizar contactos e historial de la app
+  (`smb_app_data`).
 - Medios (descargar imagenes/audios de Graph): se guardan como `[imagen]`, `[audio]`.

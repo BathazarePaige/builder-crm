@@ -66,6 +66,9 @@ export const esquemaEnv = z.object({
   WHATSAPP_APP_SECRET: opcional,
   WHATSAPP_WEBHOOK_VERIFY_TOKEN: opcional,
   WHATSAPP_API_VERSION: opcional,
+  META_APP_ID: opcional,
+  META_ES_CONFIG_ID: opcional,
+  WHATSAPP_TWO_STEP_PIN: opcional,
 
   // --- Push (Web Push / VAPID) ---
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: opcional,

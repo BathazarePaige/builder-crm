@@ -238,9 +238,11 @@ export async function upsertConversation(
       set: {
         contactId: input.contactId,
         accountId: input.accountId,
-        participantName: input.participantName ?? null,
-        participantHandle: input.participantHandle ?? null,
-        participantPicture: input.participantPicture ?? null,
+        // `undefined` = el evento no trae el dato (un eco saliente de Meta no trae el
+        // nombre del cliente): no se pisa. `null` explicito si lo borra, como antes.
+        ...(input.participantName !== undefined ? { participantName: input.participantName } : {}),
+        ...(input.participantHandle !== undefined ? { participantHandle: input.participantHandle } : {}),
+        ...(input.participantPicture !== undefined ? { participantPicture: input.participantPicture } : {}),
         // metadata solo se pisa si viene con algo: los eventos de mensaje no la traen
         // y no queremos perder la atribucion capturada en conversation.started.
         ...(input.metadata ? { metadata: input.metadata } : {}),

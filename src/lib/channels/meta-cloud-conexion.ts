@@ -12,7 +12,7 @@ import { z } from "zod";
 const idMeta = z
   .string()
   .trim()
-  .regex(/^\d{5,25}$/, "Tiene que ser el id numerico que muestra Meta");
+  .regex(/^\d{5,25}$/, "Doit etre l'identifiant numerique affiche par Meta");
 
 export const conexionMetaSchema = z.object({
   phoneNumberId: idMeta,
@@ -24,8 +24,8 @@ export const conexionMetaSchema = z.object({
     .pipe(
       z
         .string()
-        .min(20, "El token parece incompleto")
-        .regex(/^\S+$/, "El token no puede tener espacios")
+        .min(20, "Le jeton semble incomplet")
+        .regex(/^\S+$/, "Le jeton ne peut pas contenir d'espaces")
     ),
 });
 

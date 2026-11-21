@@ -383,6 +383,54 @@ export async function suscribirAppAWaba(
   }
 }
 
+/**
+ * Embedded Signup: cambia el `code` que devuelve FB.login por el token del negocio.
+ * El code vale 30 segundos y solo se puede cambiar una vez; el secreto de la app no sale
+ * del servidor. Sin `redirect_uri`: con el SDK de JavaScript Meta no lo pide.
+ */
+export async function intercambiarCodigoMeta(
+  code: string,
+  appId: string,
+  appSecret: string
+): Promise<{ success: true; accessToken: string } | { success: false; error: MetaError }> {
+  const params = new URLSearchParams({ client_id: appId, client_secret: appSecret, code });
+  try {
+    const res = await fetch(`${GRAPH_BASE}/oauth/access_token?${params}`);
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error || !json.access_token) {
+      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+    }
+    return { success: true, accessToken: String(json.access_token) };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
+  }
+}
+
+/**
+ * Registra un numero NUEVO en Cloud API (sin esto envia error 133010 "not registered").
+ * No se llama en coexistencia: ese numero ya esta registrado en la app del celular.
+ */
+export async function registrarNumeroMeta(
+  phoneNumberId: string,
+  accessToken: string,
+  pin: string
+): Promise<{ success: boolean; error?: MetaError }> {
+  try {
+    const res = await fetch(`${GRAPH_BASE}/${encodeURIComponent(phoneNumberId)}/register`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ messaging_product: "whatsapp", pin }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error || json.success === false) {
+      return { success: false, error: json.error ?? { message: `Graph respondio ${res.status}` } };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
+  }
+}
+
 export const metaConfig = {
   apiVersion: API_VERSION,
   phoneNumberId: PHONE_NUMBER_ID,

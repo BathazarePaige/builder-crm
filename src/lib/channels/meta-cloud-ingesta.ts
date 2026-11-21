@@ -80,6 +80,35 @@ export async function procesarEventoMeta(payload: unknown): Promise<ResultadoWeb
       procesados++;
     }
 
+    // Coexistencia: lo que el negocio contesto desde el celular entra como saliente. No
+    // encola al agente (ingestMessage solo encola lo entrante).
+    for (const eco of cambio.ecos) {
+      const contactId = await findOrCreateContactByIdentity({
+        tenantId: cuenta.tenantId,
+        channel: "whatsapp",
+        externalId: eco.telefono,
+      });
+      const conversation = await upsertConversation({
+        tenantId: cuenta.tenantId,
+        contactId,
+        accountId: null,
+        channel: "whatsapp",
+        provider: "meta",
+        externalId: `legacy:${contactId}`,
+        participantId: eco.telefono,
+      });
+      await ingestMessage({
+        conversation,
+        direction: "out",
+        externalId: eco.wamid,
+        body: eco.cuerpo,
+        type: eco.tipo,
+        sentAt: eco.enviadoEn,
+        rawPayload: eco.crudo,
+      });
+      procesados++;
+    }
+
     for (const st of cambio.estados) {
       const ok = await updateMessageStatus({
         externalId: st.wamid,
