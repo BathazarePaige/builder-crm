@@ -67,7 +67,11 @@ RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 USER app
 EXPOSE 3000
-HEALTHCHECK --interval=15s --timeout=5s --start-period=60s --retries=5 \
+# --start-interval: durante el arranque se pregunta cada 2 s. El servidor (migraciones
+# incluidas) responde en ~1 s, pero el contenedor recien queda "healthy" en el primer
+# chequeo, y Coolify no le manda trafico hasta entonces: ese chequeo llegaba a los 5 s
+# (Docker 25+) o a los 15 s (anteriores, que ignoran la opcion). Medido: 5,6 s -> 2,6 s.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=60s --start-interval=2s --retries=5 \
   CMD wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -4,6 +4,20 @@ Que trae cada version de Builder CRM y que hacer para actualizar. SemVer segun l
 le importa a quien opera una instancia (ver "Versiones" en el [README](README.md)):
 mayor = pasos manuales, menor = funciones nuevas, parche = arreglos.
 
+## Sin publicar
+
+### Cambiado
+
+- **`npm run local` arranca mas rapido.** Cierra Next con calma para que Turbopack
+  guarde su cache (en Windows el cierre era en seco y cada arranque recompilaba todo),
+  precompila la pagina de inicio y las del menu, lanza Next sin `npx` ni `cmd.exe` y
+  avisa si un servidor anterior quedo abierto en el puerto. Medido en Linux: de ~10 s
+  hasta el tablero a ~4 s, y el primer clic en cada pagina de ~1,5 s a 0,2 s.
+- **Next.js 16.4.6**: corrige siete avisos de seguridad de 16.4.3 (`npm audit --omit=dev`
+  vuelve a 0).
+- El healthcheck del contenedor pregunta cada 2 s durante el arranque: la instancia
+  queda "healthy" a los ~2,6 s en vez de ~5,6 s (o 15 s en Docker anterior a 25).
+
 ## 2.1.1 — 2026-11-11
 
 ### Actualizar desde 2.1.0

@@ -85,6 +85,17 @@ copia `.env.example` a `.env.local` y pone `OPENROUTER_API_KEY`. Sin ella el CRM
 funciona igual (los mensajes entran a la bandeja y crean el contacto), solo que nadie
 contesta del otro lado.
 
+**Si tarda en arrancar.** El primer arranque compila todo y es el lento; los
+siguientes reusan el cache de Next (`.next/dev/cache`) y abren en pocos segundos,
+siempre que se cierre con **Ctrl+C** y no cerrando la ventana (cerrandola el cache
+puede no llegar a guardarse y ademas el servidor viejo queda vivo ocupando el puerto;
+`npm run local` lo detecta y avisa). En **Windows**, el antivirus (Microsoft Defender)
+revisa cada uno de los miles de archivos de `node_modules` y `.next` que se leen al
+compilar, y eso puede multiplicar los tiempos: agrega la carpeta del proyecto como
+exclusion (Seguridad de Windows -> Proteccion contra virus y amenazas -> Administrar la
+configuracion -> Exclusiones -> Agregar carpeta). Trabajar dentro de una carpeta
+sincronizada (OneDrive, Dropbox) tambien lo frena.
+
 Lo que el modo local **no** tiene, porque necesita una instancia de verdad: login,
 equipo con roles, invitaciones por correo y la busqueda semantica del modulo
 propiedades (el Postgres embebido no trae pgvector).
