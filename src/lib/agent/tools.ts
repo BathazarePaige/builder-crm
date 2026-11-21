@@ -117,7 +117,7 @@ async function moverEtapa(args: { etapa?: string; motivo?: string }, ctx: ToolCo
     if (!r.ok) return { ok: false, error: r.error ?? "No se pudo mover la etapa" };
     await db.insert(activities).values({
       type: "note",
-      description: `Agente IA movio la operacion a "${stage.name}"${args.motivo ? `: ${args.motivo}` : ""}`,
+      description: `Agent IA : affaire déplacée en « ${stage.name} »${args.motivo ? `: ${args.motivo}` : ""}`,
       contactId: ctx.contactId,
     });
     return { ok: true, data: { etapa: stage.name, operacion: abierta.id, creada: false } };
@@ -131,7 +131,7 @@ async function moverEtapa(args: { etapa?: string; motivo?: string }, ctx: ToolCo
   await setDealStage({ dealId: nueva.id, stageId: stage.id, justCreated: true });
   await db.insert(activities).values({
     type: "note",
-    description: `Agente IA creo la operacion en "${stage.name}"${args.motivo ? `: ${args.motivo}` : ""}`,
+    description: `Agent IA : affaire créée en « ${stage.name} »${args.motivo ? `: ${args.motivo}` : ""}`,
     contactId: ctx.contactId,
   });
   return { ok: true, data: { etapa: stage.name, operacion: nueva.id, creada: true } };
@@ -225,7 +225,7 @@ async function resumenLead(
   await db.update(contacts).set(set).where(eq(contacts.id, ctx.contactId));
   await db.insert(activities).values({
     type: "note",
-    description: `Resumen del agente IA: ${resumen.slice(0, 500)}`,
+    description: `Résumé de l’agent IA : ${resumen.slice(0, 500)}`,
     contactId: ctx.contactId,
   });
   return { ok: true, data: { guardado: true } };
@@ -252,7 +252,7 @@ async function derivarAsesor(args: { motivo?: string }, ctx: ToolContext): Promi
 
   await db.insert(activities).values({
     type: "note",
-    description: `Agente IA derivo a humano. Motivo: ${motivo}`,
+    description: `Agent IA : transmis à un humain. Motif : ${motivo}`,
     contactId: ctx.contactId,
   });
 

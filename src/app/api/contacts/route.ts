@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
   if (!name) {
     return NextResponse.json(
-      { error: "El nombre es requerido" },
+      { error: "Le nom est obligatoire" },
       { status: 400 }
     );
   }

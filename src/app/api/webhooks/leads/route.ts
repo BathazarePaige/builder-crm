@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
   if (!fields.name) {
     return NextResponse.json(
       {
-        error: "Campo 'name' o 'nombre' es requerido",
+        error: "Le champ 'name' ou 'nombre' est obligatoire",
         received: Object.keys(payload),
         hint: "Campos soportados: name, nombre, full_name, email, correo, phone, telefono, company, empresa, notes, notas, message",
       },

@@ -136,31 +136,31 @@ async function channelOptions(): Promise<SelectOption[]> {
 export const TRIGGERS: TriggerDef[] = [
   {
     key: "deal.stage_changed",
-    label: "Etapa del pipeline",
+    label: "Étape du pipeline",
     description:
-      "Se activa cuando una operacion entra al pipeline o cambia de etapa. Filtra por pipeline y etapa para reaccionar solo a un movimiento concreto.",
+      "Se déclenche quand une affaire entre dans le pipeline ou change d’étape. Filtrez par pipeline et étape pour ne réagir qu’à un mouvement précis.",
     filterFields: [
       { key: "pipelineId", label: "Pipeline", options: pipelineOptions },
-      { key: "stageId", label: "Etapa (nueva)", options: stageOptions },
-      { key: "previousStageId", label: "Etapa anterior", options: stageOptions },
+      { key: "stageId", label: "Étape (nouvelle)", options: stageOptions },
+      { key: "previousStageId", label: "Étape précédente", options: stageOptions },
     ],
     placeholders: ["contacto", "etapa", "etapa_anterior", "pipeline", "operacion", "asesor"],
   },
   {
     key: "contact.assigned",
-    label: "Contacto asignado a un asesor",
+    label: "Contact attribué à un conseiller",
     description:
-      "Se activa cuando se asigna (o cambia) el asesor a cargo de un contacto, desde la ficha o por el agente de IA.",
-    filterFields: [{ key: "ownerId", label: "Asesor asignado", options: memberOptions }],
+      "Se déclenche quand le conseiller d’un contact est attribué ou change, depuis la fiche ou par l’agent IA.",
+    filterFields: [{ key: "ownerId", label: "Conseiller attribué", options: memberOptions }],
     placeholders: ["contacto", "asesor", "quien"],
   },
   {
     key: "contact.created",
-    label: "Lead nuevo",
+    label: "Nouveau lead",
     description:
-      "Se activa cuando entra un contacto nuevo: por un mensaje, por el webhook, por importacion o creado a mano.",
+      "Se déclenche à l’arrivée d’un nouveau contact : par message, webhook, import ou création manuelle.",
     filterFields: [
-      { key: "source", label: "Fuente", options: sourceOptions },
+      { key: "source", label: "Source", options: sourceOptions },
       { key: "channel", label: "Canal", options: channelOptions },
     ],
     placeholders: ["contacto", "fuente"],

@@ -26,7 +26,7 @@ export const metaCloud: Conector = {
   async enviar(ctx, msg) {
     const to = ctx.conversation.participantId;
     if (!to) {
-      return { success: false, error: { message: "La conversacion no tiene telefono de destino" } };
+      return { success: false, error: { message: "La conversation n’a pas de numéro de destination" } };
     }
 
     const [{ sendTextMessage, sendTemplateMessage }, { getAccountByTenant }] = await Promise.all([

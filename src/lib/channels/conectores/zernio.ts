@@ -19,15 +19,15 @@ export const zernio: Conector = {
   async enviar(ctx, msg) {
     const text = msg.text?.trim();
     if (!text && !msg.template) {
-      return { success: false, error: { message: "Mensaje vacio" } };
+      return { success: false, error: { message: "Message vide" } };
     }
 
     const accountId = ctx.account?.zernioAccountId;
     if (!accountId) {
       return {
         success: false,
-        error: { message: "La conversacion no tiene cuenta de Zernio asociada" },
-        hint: "Sincroniza las cuentas en Ajustes > Canales.",
+        error: { message: "La conversation n’a pas de compte Zernio associé" },
+        hint: "Synchronisez les comptes dans Réglages > Canaux.",
       };
     }
 

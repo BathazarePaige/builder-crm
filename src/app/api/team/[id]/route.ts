@@ -28,7 +28,7 @@ export async function PATCH(
     .where(eq(teamMembers.id, id))
     .limit(1);
   if (!target) {
-    return NextResponse.json({ error: "Miembro no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Membre introuvable" }, { status: 404 });
   }
 
   const update: Partial<typeof teamMembers.$inferInsert> = { updatedAt: new Date() };
@@ -55,7 +55,7 @@ export async function PATCH(
       );
     if (otros.length === 0) {
       return NextResponse.json(
-        { error: "Es el unico administrador activo. Nombra otro antes." },
+        { error: "C’est le seul administrateur actif. Nommez-en un autre avant." },
         { status: 400 }
       );
     }

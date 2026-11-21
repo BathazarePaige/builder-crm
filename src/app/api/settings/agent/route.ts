@@ -104,7 +104,7 @@ export async function PUT(request: NextRequest) {
     body.model === undefined
   ) {
     return NextResponse.json(
-      { error: "Nada para actualizar" },
+      { error: "Rien à mettre à jour" },
       { status: 400 }
     );
   }
@@ -115,7 +115,7 @@ export async function PUT(request: NextRequest) {
     const prompt = body.systemPrompt?.trim();
     if (prompt && prompt.length < MIN_PROMPT_LENGTH) {
       return NextResponse.json(
-        { error: `El prompt es demasiado corto (minimo ${MIN_PROMPT_LENGTH} caracteres)` },
+        { error: `Le prompt est trop court (${MIN_PROMPT_LENGTH} caractères minimum)` },
         { status: 400 }
       );
     }
@@ -148,7 +148,7 @@ export async function PUT(request: NextRequest) {
     const trimmed = body.systemPrompt.trim();
     if (trimmed.length < MIN_PROMPT_LENGTH) {
       return NextResponse.json(
-        { error: `El prompt es demasiado corto (minimo ${MIN_PROMPT_LENGTH} caracteres)` },
+        { error: `Le prompt est trop court (${MIN_PROMPT_LENGTH} caractères minimum)` },
         { status: 400 }
       );
     }

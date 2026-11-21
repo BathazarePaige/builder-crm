@@ -135,7 +135,7 @@ async function attemptFetch<T>(
       error: {
         // 408 marca el timeout como retriable sin inventar un status del servidor.
         status: isTimeout ? 408 : 0,
-        message: err instanceof Error ? err.message : "Network error",
+        message: err instanceof Error ? err.message : "Erreur réseau",
       },
     };
   }

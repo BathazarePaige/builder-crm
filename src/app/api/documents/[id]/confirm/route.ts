@@ -15,7 +15,7 @@ export async function POST(
   const doc = await getDocument(id);
   const contact = doc ? await documentContact(doc) : null;
   if (!doc || !contact || !canAccessContact(auth.member, contact)) {
-    return NextResponse.json({ error: "Documento no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
   }
 
   const result = await confirmUpload(id);

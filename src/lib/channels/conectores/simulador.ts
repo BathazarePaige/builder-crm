@@ -17,7 +17,7 @@ export const simulador: Conector = {
   async enviar(_ctx, msg) {
     const text = msg.text?.trim();
     if (!text && !msg.template) {
-      return { success: false, error: { message: "Mensaje vacio" } };
+      return { success: false, error: { message: "Message vide" } };
     }
     return { success: true, externalId: `sim:out:${crypto.randomUUID()}` };
   },

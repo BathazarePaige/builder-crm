@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
   if (!type || !description || !contactId) {
     return NextResponse.json(
-      { error: "Tipo, descripcion y contacto son requeridos" },
+      { error: "Le type, la description et le contact sont obligatoires" },
       { status: 400 }
     );
   }

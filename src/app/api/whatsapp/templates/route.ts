@@ -44,7 +44,7 @@ async function fetchRemoteTemplates(): Promise<{
   const tenantId = await resolveDefaultTenantId();
   const account = await getAccountForChannel(tenantId, "whatsapp");
   if (!account?.zernioAccountId) {
-    return { error: "No hay cuenta de WhatsApp conectada en Zernio" };
+    return { error: "Aucun compte WhatsApp connecté dans Zernio" };
   }
   const remote = await listZernioTemplates(account.zernioAccountId);
   return remote.success
@@ -79,7 +79,7 @@ async function createRemoteTemplate(input: {
   if (!account?.zernioAccountId) {
     return {
       success: false,
-      error: { message: "No hay cuenta de WhatsApp conectada en Zernio" },
+      error: { message: "Aucun compte WhatsApp connecté dans Zernio" },
     };
   }
 
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
   const filledExamples = examples.map((e) => e.trim());
   if (vars.length > 0 && filledExamples.filter(Boolean).length < vars.length) {
     return NextResponse.json(
-      { error: `Hay ${vars.length} variable(s): da un ejemplo para cada una.` },
+      { error: `${vars.length} variable(s) : donnez un exemple pour chacune.` },
       { status: 400 }
     );
   }

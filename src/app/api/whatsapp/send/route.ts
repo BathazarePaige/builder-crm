@@ -134,8 +134,8 @@ async function openConversation(args: {
   if (!body.template) {
     return NextResponse.json(
       {
-        error: "No hay conversacion abierta con este numero",
-        hint: "WhatsApp no permite abrir una conversacion con texto libre. Enviá una plantilla aprobada.",
+        error: "Aucune conversation ouverte avec ce numéro",
+        hint: "WhatsApp n’autorise pas à ouvrir une conversation en texte libre. Envoyez un modèle approuvé.",
       },
       { status: 409 }
     );
@@ -145,7 +145,7 @@ async function openConversation(args: {
   if (!account?.zernioAccountId) {
     return NextResponse.json(
       {
-        error: "No hay cuenta de WhatsApp conectada en Zernio",
+        error: "Aucun compte WhatsApp connecté dans Zernio",
         hint: "Conectala con `npm run zernio:whatsapp` o desde Ajustes > Canales.",
       },
       { status: 409 }

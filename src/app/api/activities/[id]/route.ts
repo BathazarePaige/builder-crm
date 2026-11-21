@@ -31,7 +31,7 @@ export async function PUT(
 
     if (!existing || !(await canAccessContactId(member, existing.contactId))) {
       return NextResponse.json(
-        { error: "Actividad no encontrada" },
+        { error: "Activité introuvable" },
         { status: 404 }
       );
     }
@@ -80,7 +80,7 @@ export async function PUT(
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
-        { error: "No hay campos para actualizar" },
+        { error: "Aucun champ à mettre à jour" },
         { status: 400 }
       );
     }
@@ -120,7 +120,7 @@ export async function DELETE(
 
     if (!existing || !(await canAccessContactId(member, existing.contactId))) {
       return NextResponse.json(
-        { error: "Actividad no encontrada" },
+        { error: "Activité introuvable" },
         { status: 404 }
       );
     }

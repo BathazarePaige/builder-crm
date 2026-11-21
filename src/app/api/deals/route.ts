@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
   if (!title || !contactId) {
     return NextResponse.json(
-      { error: "Titulo y contacto son requeridos" },
+      { error: "Le titre et le contact sont obligatoires" },
       { status: 400 }
     );
   }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
   if (!finalStageId) {
     return NextResponse.json(
-      { error: "No hay etapas de pipeline configuradas" },
+      { error: "Aucune étape de pipeline configurée" },
       { status: 400 }
     );
   }
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     const msg = error instanceof Error ? error.message : "Unknown";
     if (msg.includes("FOREIGN KEY") || msg.includes("foreign key")) {
       return NextResponse.json(
-        { error: "Contacto no encontrado" },
+        { error: "Contact introuvable" },
         { status: 400 }
       );
     }

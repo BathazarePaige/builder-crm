@@ -103,6 +103,6 @@ export async function enviarEnlaceDeAcceso(email: string): Promise<{ error?: str
     });
     return error ? { error: error.message } : {};
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "No se pudo enviar el correo" };
+    return { error: err instanceof Error ? err.message : "Impossible d’envoyer l’e-mail" };
   }
 }

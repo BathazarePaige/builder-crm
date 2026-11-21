@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   if (pipelineExists.length === 0) {
-    return NextResponse.json({ error: "Pipeline no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Pipeline introuvable" }, { status: 404 });
   }
 
   const existing = await db

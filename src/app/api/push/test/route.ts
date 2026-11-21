@@ -22,7 +22,7 @@ export async function POST() {
     // claves parciales): queda en el log del servidor y afuera va algo generico.
     console.error("[push] fallo la notificacion de prueba:", err);
     return NextResponse.json(
-      { error: "No se pudo enviar la notificacion de prueba" },
+      { error: "Impossible d’envoyer la notification de test" },
       { status: 500 }
     );
   }

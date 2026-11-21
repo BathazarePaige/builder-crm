@@ -42,14 +42,14 @@ export async function assignContact(input: {
     .where(eq(contacts.id, input.contactId))
     .limit(1);
 
-  if (!contact) return { ok: false, owner: null, error: "Contacto no encontrado" };
+  if (!contact) return { ok: false, owner: null, error: "Contact introuvable" };
 
   let owner: TeamMember | null = null;
   if (input.ownerId) {
     owner = await getMember(input.ownerId);
-    if (!owner) return { ok: false, owner: null, error: "El asesor no existe" };
+    if (!owner) return { ok: false, owner: null, error: "Ce conseiller n’existe pas" };
     if (!owner.active) {
-      return { ok: false, owner: null, error: "El asesor esta inactivo" };
+      return { ok: false, owner: null, error: "Le conseiller est inactif" };
     }
   }
 

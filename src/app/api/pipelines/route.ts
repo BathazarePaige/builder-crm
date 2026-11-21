@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
   if (!name) {
-    return NextResponse.json({ error: "Nombre requerido" }, { status: 400 });
+    return NextResponse.json({ error: "Nom obligatoire" }, { status: 400 });
   }
 
   const existing = await db.select({ order: pipelines.order }).from(pipelines);

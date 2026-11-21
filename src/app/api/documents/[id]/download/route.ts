@@ -18,7 +18,7 @@ export async function GET(
   const doc = await getDocument(id);
   const contact = doc ? await documentContact(doc) : null;
   if (!doc || doc.status !== "ready" || !contact || !canAccessContact(auth.member, contact)) {
-    return NextResponse.json({ error: "Documento no encontrado" }, { status: 404 });
+    return NextResponse.json({ error: "Document introuvable" }, { status: 404 });
   }
 
   const inline = request.nextUrl.searchParams.get("dl") !== "1";

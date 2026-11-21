@@ -15,7 +15,7 @@ export const SOURCE_LABELS: Record<LeadSource, string> = {
   import: "Importé",
   webhook: "Webhook",
   gohighlevel: "GoHighLevel",
-  simulador: "Simulador",
+  simulador: "Simulateur",
   otro: "Autre",
 };
 

@@ -59,7 +59,7 @@ export async function PUT(request: NextRequest) {
     const existingRows = await db.select().from(deals).where(eq(deals.id, body.dealId)).limit(1);
     const existing = existingRows[0];
     if (!existing) {
-      return NextResponse.json({ error: "Deal no encontrado" }, { status: 404 });
+      return NextResponse.json({ error: "Affaire introuvable" }, { status: 404 });
     }
 
     // Unico camino de cambio de etapa: emite `deal.stage_changed`.
@@ -100,7 +100,7 @@ export async function PUT(request: NextRequest) {
 
     if (!defaultPipelineId) {
       return NextResponse.json(
-        { error: "No hay pipeline default configurado" },
+        { error: "Aucun pipeline par défaut configuré" },
         { status: 400 }
       );
     }

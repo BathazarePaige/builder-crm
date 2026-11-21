@@ -47,7 +47,7 @@ export async function PATCH(
 
   if (Object.keys(update).length === 1) {
     return NextResponse.json(
-      { error: "Nada para actualizar" },
+      { error: "Rien à mettre à jour" },
       { status: 400 }
     );
   }

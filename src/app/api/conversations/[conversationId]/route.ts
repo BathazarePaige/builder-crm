@@ -21,12 +21,12 @@ export async function DELETE(
   const { conversation, contact } = await getConversation(conversationId);
   const accesible = contact ? canAccessContact(auth.member, contact) : true;
   if (!conversation || !accesible) {
-    return NextResponse.json({ error: "Conversacion no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: "Conversation introuvable" }, { status: 404 });
   }
 
   const result = await deleteConversation(conversationId);
   if (!result.deleted) {
-    return NextResponse.json({ error: "Conversacion no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: "Conversation introuvable" }, { status: 404 });
   }
   return NextResponse.json({ success: true, messages: result.messages });
 }

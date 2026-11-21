@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   if (!porSecreto) {
     const member = await getCurrentMember();
     if (!member || member.role !== "admin") {
-      return NextResponse.json({ error: "Solo un administrador puede cargar la demo" }, { status: 403 });
+      return NextResponse.json({ error: "Seul un administrateur peut charger la démo" }, { status: 403 });
     }
   }
 
@@ -29,6 +29,6 @@ export async function POST(request: NextRequest) {
     console.error("[seed] fallo:", err);
     // Un error de Postgres trae nombres de tablas y restricciones: no sale de aca.
     console.error("[seed] fallo cargando la demo:", err);
-    return NextResponse.json({ ok: false, error: "No se pudieron cargar los datos demo" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: "Impossible de charger les données de démo" }, { status: 500 });
   }
 }

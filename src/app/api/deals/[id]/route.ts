@@ -20,7 +20,7 @@ export async function GET(
 
   if (!deal || !(await canAccessContactId(member, deal.contactId))) {
     return NextResponse.json(
-      { error: "Deal no encontrado" },
+      { error: "Affaire introuvable" },
       { status: 404 }
     );
   }
@@ -49,7 +49,7 @@ export async function PUT(
 
   if (!existing || !(await canAccessContactId(member, existing.contactId))) {
     return NextResponse.json(
-      { error: "Deal no encontrado" },
+      { error: "Affaire introuvable" },
       { status: 404 }
     );
   }
@@ -67,7 +67,7 @@ export async function PUT(
   }
   if (body.contactId !== undefined) {
     if (!(await canAccessContactId(member, String(body.contactId)))) {
-      return NextResponse.json({ error: "Contacto no encontrado" }, { status: 404 });
+      return NextResponse.json({ error: "Contact introuvable" }, { status: 404 });
     }
     updateData.contactId = body.contactId;
   }
@@ -103,7 +103,7 @@ export async function DELETE(
 
   if (!existing || !(await canAccessContactId(member, existing.contactId))) {
     return NextResponse.json(
-      { error: "Deal no encontrado" },
+      { error: "Affaire introuvable" },
       { status: 404 }
     );
   }

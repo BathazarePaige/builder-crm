@@ -29,14 +29,14 @@ export async function setDealStage(input: {
     .from(deals)
     .where(eq(deals.id, input.dealId))
     .limit(1);
-  if (!deal) return { ok: false, error: "Deal no encontrado", changed: false };
+  if (!deal) return { ok: false, error: "Affaire introuvable", changed: false };
 
   const [stage] = await db
     .select()
     .from(pipelineStages)
     .where(eq(pipelineStages.id, input.stageId))
     .limit(1);
-  if (!stage) return { ok: false, error: "Etapa no encontrada", changed: false };
+  if (!stage) return { ok: false, error: "Étape introuvable", changed: false };
 
   const previousStageId = input.justCreated ? null : deal.stageId;
   if (!input.justCreated && previousStageId === input.stageId) {

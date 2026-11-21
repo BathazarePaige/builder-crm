@@ -27,7 +27,7 @@ export async function GET(
   // 404 tambien para lo ajeno: no confirmar que existe.
   if (!contact || !canAccessContact(auth.member, contact)) {
     return NextResponse.json(
-      { error: "Contacto no encontrado" },
+      { error: "Contact introuvable" },
       { status: 404 }
     );
   }
@@ -82,7 +82,7 @@ export async function PUT(
 
   if (!existing || !canAccessContact(auth.member, existing)) {
     return NextResponse.json(
-      { error: "Contacto no encontrado" },
+      { error: "Contact introuvable" },
       { status: 404 }
     );
   }
@@ -92,7 +92,7 @@ export async function PUT(
   if (body.ownerId !== undefined) {
     if (auth.member.role !== "admin") {
       return NextResponse.json(
-        { error: "Solo un administrador puede cambiar el propietario" },
+        { error: "Seul un administrateur peut changer le responsable" },
         { status: 403 }
       );
     }
@@ -161,7 +161,7 @@ export async function DELETE(
 
   if (!existing || !canAccessContact(auth.member, existing)) {
     return NextResponse.json(
-      { error: "Contacto no encontrado" },
+      { error: "Contact introuvable" },
       { status: 404 }
     );
   }
