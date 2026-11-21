@@ -60,7 +60,7 @@ export async function sendPushToMember(
 
   if (!ensureConfigured()) {
     throw new Error(
-      "Faltan NEXT_PUBLIC_VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY. Generarlas con `npx web-push generate-vapid-keys`."
+      "NEXT_PUBLIC_VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY manquantes. Générez-les avec `npx web-push generate-vapid-keys`."
     );
   }
 
@@ -98,7 +98,7 @@ export async function sendPushToMember(
         } else {
           outcome.failed++;
           console.warn(
-            `[push] fallo envio a ${sub.endpoint.slice(0, 40)}... status=${status}`,
+            `[push] échec de l’envoi vers ${sub.endpoint.slice(0, 40)}... status=${status}`,
             err instanceof Error ? err.message : err
           );
         }

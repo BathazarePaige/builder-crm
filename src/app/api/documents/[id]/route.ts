@@ -20,7 +20,7 @@ export async function DELETE(
   try {
     await deleteDocument(id);
   } catch (err) {
-    console.error("[documents] delete fallo", id, err);
+    console.error("[documents] échec de la suppression", id, err);
     return NextResponse.json({ error: "Impossible de supprimer du stockage" }, { status: 502 });
   }
   return NextResponse.json({ success: true });

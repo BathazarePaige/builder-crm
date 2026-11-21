@@ -215,9 +215,9 @@ const push: ActionDef = {
         tag: `auto-${ctx.contactId}`,
       });
       delivered++;
-      if ("error" in out.push) parts.push(`${displayName(m)}: en el CRM (push fallo: ${out.push.error})`);
-      else if (out.push.noDevices) parts.push(`${displayName(m)}: en el CRM (sin push: no activo ningun dispositivo)`);
-      else parts.push(`${displayName(m)}: en el CRM + push a ${out.push.sent} dispositivo${out.push.sent === 1 ? "" : "s"}`);
+      if ("error" in out.push) parts.push(`${displayName(m)} : dans le CRM (échec du push : ${out.push.error})`);
+      else if (out.push.noDevices) parts.push(`${displayName(m)} : dans le CRM (pas de push : aucun appareil activé)`);
+      else parts.push(`${displayName(m)} : dans le CRM + push vers ${out.push.sent} appareil${out.push.sent === 1 ? "" : "s"}`);
     }
     return delivered > 0
       ? { status: "done", detail: parts.join(" · ") }

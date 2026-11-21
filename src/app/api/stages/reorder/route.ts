@@ -11,7 +11,7 @@ export async function PUT(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const pipelineId = typeof body.pipelineId === "string" ? body.pipelineId : "";
@@ -19,7 +19,7 @@ export async function PUT(request: NextRequest) {
 
   if (!pipelineId || !Array.isArray(stageIds) || stageIds.some((s) => typeof s !== "string")) {
     return NextResponse.json(
-      { error: "pipelineId y stageIds[] requeridos" },
+      { error: "pipelineId et stageIds[] sont obligatoires" },
       { status: 400 }
     );
   }

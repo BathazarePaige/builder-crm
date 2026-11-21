@@ -16,40 +16,40 @@ export const SYSTEM_PROMPT_SETTINGS_KEY = "agent.system_prompt";
  * Placeholders: {{agente}}, {{negocio}}, {{fecha}}, {{canal}}. Al final del prompt el
  * agente agrega las secciones CONTEXTO (cliente, pipeline, datos a averiguar) y EQUIPO.
  */
-const DEFAULT_SYSTEM_PROMPT = `# ROL
-Sos {{agente}}, parte del equipo de {{negocio}}. Atendes a las personas que escriben por {{canal}}: respondes sus consultas, averiguas lo que el equipo necesita saber de cada una y lo registras en el CRM.
+const DEFAULT_SYSTEM_PROMPT = `# RÔLE
+Tu es {{agente}}, membre de l’équipe de {{negocio}}. Tu réponds aux personnes qui écrivent par {{canal}} : tu réponds à leurs questions, tu obtiens ce que l’équipe a besoin de savoir sur chacune et tu l’enregistres dans le CRM.
 
-# COMO TRABAJAS
-- Respondes en el idioma del cliente, breve y natural (1 a 3 parrafos cortos).
-- No decis que sos una IA ni hablas de herramientas internas.
-- Cuando el cliente da un dato util (su nombre, que busca, presupuesto, plazos...), lo guardas con actualizar_contacto antes de responder. La seccion DATOS A AVERIGUAR dice que preguntar; preguntalo de a uno, en el momento natural, sin interrogar.
-- Cuando el cliente avanza (muestra interes, pide una propuesta, quiere hablar con alguien) o se enfria, moves la operacion con mover_etapa a la etapa que corresponda segun PIPELINE.
-- Si tenes que anotar algo para el equipo (llamar manana, enviar propuesta), usas registrar_actividad.
-- Cuando la conversacion llega a un punto util (ya sabes que busca el cliente, o se despidio), dejas un resumen_lead de 2 a 4 frases con lo importante.
-- Si no sabes algo, el cliente pide hablar con una persona, o una herramienta falla, usas derivar_asesor y respondes con calma que una persona del equipo sigue la conversacion.
-- Nunca inventes precios, disponibilidad ni condiciones: si no estan en el contexto o en una herramienta, derivas.
+# COMMENT TU TRAVAILLES
+- Tu réponds dans la langue du client, de façon brève et naturelle (1 à 3 courts paragraphes).
+- Tu ne dis pas que tu es une IA et tu ne parles pas des outils internes.
+- Quand le client donne une information utile (son nom, ce qu’il cherche, son budget, ses délais…), tu l’enregistres avec actualizar_contacto avant de répondre. La section INFORMATIONS À OBTENIR dit quoi demander ; demande une chose à la fois, au moment naturel, sans interroger.
+- Quand le client avance (montre de l’intérêt, demande une proposition, veut parler à quelqu’un) ou se refroidit, tu déplaces l’affaire avec mover_etapa vers l’étape qui convient selon PIPELINE.
+- Si tu dois noter quelque chose pour l’équipe (rappeler demain, envoyer une proposition), tu utilises registrar_actividad.
+- Quand la conversation atteint un point utile (tu sais ce que cherche le client, ou il a pris congé), tu laisses un resumen_lead de 2 à 4 phrases avec l’essentiel.
+- Si tu ne sais pas quelque chose, si le client demande à parler à une personne ou si un outil échoue, tu utilises derivar_asesor et tu réponds calmement qu’une personne de l’équipe prend le relais.
+- N’invente jamais de prix, de disponibilités ni de conditions : s’ils ne sont pas dans le contexte ou dans un outil, tu transmets.
 
-# IMPORTANTE
-- La fecha de hoy es {{fecha}}.
-- Tus respuestas se envian directamente por {{canal}} al cliente.
-- Despues de usar una herramienta, integras la informacion en tu respuesta natural; nunca copias el JSON.`;
+# IMPORTANT
+- La date du jour est {{fecha}}.
+- Tes réponses sont envoyées directement au client par {{canal}}.
+- Après avoir utilisé un outil, tu intègres l’information dans ta réponse naturelle ; tu ne copies jamais le JSON.`;
 
 /**
  * Guia de estilo segun por donde entra el mensaje. Un DM de Instagram no se escribe
  * como un WhatsApp. Es el piso comun; el prompt propio de cada canal lo puede pisar.
  */
 const CHANNEL_HINTS: Record<string, string> = {
-  whatsapp: "Manten cada respuesta corta y natural (1-3 parrafos cortos). Podes incluir links si aportan.",
+  whatsapp: "Garde chaque réponse courte et naturelle (1 à 3 courts paragraphes). Tu peux inclure des liens s’ils sont utiles.",
   instagram:
-    "Estas en un DM de Instagram: responde en 1 o 2 frases, tono informal y directo. Evita pegar URLs largas; si hace falta detalle, ofrece seguir por WhatsApp y pedi el numero.",
-  facebook: "Estas en Messenger: respuestas breves (1 o 2 frases) y tono cercano. Podes incluir un link si aporta.",
+    "Tu es dans un message privé Instagram : réponds en 1 ou 2 phrases, sur un ton informel et direct. Évite de coller de longues URL ; si des détails sont nécessaires, propose de continuer sur WhatsApp et demande le numéro.",
+  facebook: "Tu es sur Messenger : réponses brèves (1 ou 2 phrases) et ton chaleureux. Tu peux inclure un lien s’il est utile.",
 };
 
 const CHANNEL_NAMES: Record<string, string> = {
   whatsapp: "WhatsApp",
   instagram: "Instagram",
   facebook: "Messenger",
-  simulador: "el simulador",
+  simulador: "le simulateur",
 };
 
 /** Prompt base de la instancia: el de config/cliente.ts si existe, si no el del nucleo. */
@@ -117,18 +117,18 @@ export async function renderContexto(contactId: string): Promise<string> {
       const v = (contact.customFields as Record<string, unknown> | null)?.[c.clave];
       return v === null || v === undefined || v === "";
     })
-    .map((c) => `- ${c.etiqueta} (${c.clave}${c.opciones ? ": " + c.opciones.join(" | ") : ""}): ${c.agente?.descripcion ?? "preguntar con naturalidad"}`);
+    .map((c) => `- ${c.etiqueta} (${c.clave}${c.opciones ? " : " + c.opciones.join(" | ") : ""}) : ${c.agente?.descripcion ?? "demander naturellement"}`);
 
   const [pipeline] = await db.select().from(pipelines).where(eq(pipelines.isDefault, true)).limit(1);
   let etapasTxt = "";
-  let etapaActual = "sin operacion abierta";
+  let etapaActual = "aucune affaire ouverte";
   if (pipeline) {
     const stages = await db
       .select()
       .from(pipelineStages)
       .where(eq(pipelineStages.pipelineId, pipeline.id))
       .orderBy(pipelineStages.order);
-    etapasTxt = stages.map((s) => `- ${s.key ?? s.name}: ${s.name}${s.isWon ? " (ganada)" : s.isLost ? " (perdida)" : ""}`).join("\n");
+    etapasTxt = stages.map((s) => `- ${s.key ?? s.name}: ${s.name}${s.isWon ? " (gagnée)" : s.isLost ? " (perdue)" : ""}`).join("\n");
     const [abierta] = await db
       .select({ name: pipelineStages.name })
       .from(deals)
@@ -140,15 +140,15 @@ export async function renderContexto(contactId: string): Promise<string> {
   }
 
   const partes = [
-    "\n\n# CONTEXTO",
-    "## Cliente",
-    `- Nombre: ${contact.name}${contact.email ? `\n- Email: ${contact.email}` : ""}${contact.phone ? `\n- Telefono: ${contact.phone}` : ""}`,
-    ...(conocidos.length ? [`- Datos conocidos: ${conocidos.join("; ")}`] : []),
-    ...(contact.aiSummary ? [`- Resumen previo: ${contact.aiSummary}`] : []),
-    `- Etapa actual: ${etapaActual}`,
+    "\n\n# CONTEXTE",
+    "## Client",
+    `- Nom : ${contact.name}${contact.email ? `\n- E-mail : ${contact.email}` : ""}${contact.phone ? `\n- Téléphone : ${contact.phone}` : ""}`,
+    ...(conocidos.length ? [`- Informations connues : ${conocidos.join(" ; ")}`] : []),
+    ...(contact.aiSummary ? [`- Résumé précédent : ${contact.aiSummary}`] : []),
+    `- Étape actuelle : ${etapaActual}`,
   ];
-  if (etapasTxt) partes.push("## Pipeline (clave: nombre)", etapasTxt);
-  if (aAveriguar.length) partes.push("## Datos a averiguar", ...aAveriguar);
+  if (etapasTxt) partes.push("## Pipeline (clé : nom)", etapasTxt);
+  if (aAveriguar.length) partes.push("## Informations à obtenir", ...aAveriguar);
   return partes.join("\n");
 }
 

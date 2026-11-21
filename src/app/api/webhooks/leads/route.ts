@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     const secretHeader = request.headers.get("x-webhook-secret");
     if (!secretHeader || secretHeader !== secreto) {
       return NextResponse.json(
-        { error: "Secret invalido o faltante" },
+        { error: "Secret invalide ou manquant" },
         { status: 401 }
       );
     }
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
   try {
     payload = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const fields = extractFields(payload);
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       {
         error: "Le champ 'name' ou 'nombre' est obligatoire",
         received: Object.keys(payload),
-        hint: "Campos soportados: name, nombre, full_name, email, correo, phone, telefono, company, empresa, notes, notas, message",
+        hint: "Champs acceptés : name, nombre, full_name, email, correo, phone, telefono, company, empresa, notes, notas, message",
       },
       { status: 400 }
     );
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        error: `Error al crear contacto: ${error instanceof Error ? error.message : "Unknown"}`,
+        error: `Erreur lors de la création du contact : ${error instanceof Error ? error.message : "Unknown"}`,
       },
       { status: 500 }
     );

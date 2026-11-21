@@ -51,7 +51,7 @@ export async function PUT(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   // Update a single deal's stage (drag and drop)
@@ -83,7 +83,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "No se pueden reemplazar etapas cuando hay deals activos. Elimina los deals primero.",
+            "Impossible de remplacer les étapes tant qu’il y a des affaires actives. Supprimez d’abord les affaires.",
         },
         { status: 400 }
       );
@@ -128,5 +128,5 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updated);
   }
 
-  return NextResponse.json({ error: "Request invalido" }, { status: 400 });
+  return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
 }

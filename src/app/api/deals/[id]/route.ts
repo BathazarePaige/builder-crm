@@ -41,7 +41,7 @@ export async function PUT(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const existingRows = await db.select().from(deals).where(eq(deals.id, id)).limit(1);

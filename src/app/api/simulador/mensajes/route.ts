@@ -8,7 +8,7 @@ export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   if (!moduloActivo("simulador")) {
-    return NextResponse.json({ error: "Simulador desactivado" }, { status: 404 });
+    return NextResponse.json({ error: "Simulateur désactivé" }, { status: 404 });
   }
   const auth = await autorizarSimulador(request);
   if ("response" in auth) return auth.response;
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const conversationId = typeof body?.conversationId === "string" ? body.conversationId : "";
   const texto = typeof body?.texto === "string" ? body.texto.trim() : "";
   if (!conversationId || !texto) {
-    return NextResponse.json({ error: "conversationId y texto son requeridos" }, { status: 400 });
+    return NextResponse.json({ error: "conversationId et texto sont obligatoires" }, { status: 400 });
   }
 
   // Que el agente no pueda contestar NO es un error de esta ruta: el mensaje entro al
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   const r = await enviarMensajeSimulado({ conversationId, texto: texto.slice(0, 4000) });
   if ("error" in r) {
     const mensaje =
-      r.error === "no_simulada" ? "Esa conversacion no es del simulador." : "Conversacion no encontrada.";
+      r.error === "no_simulada" ? "Cette conversation ne vient pas du simulateur." : "Conversation introuvable.";
     return NextResponse.json({ error: r.error, mensaje }, { status: r.error === "no_encontrada" ? 404 : 400 });
   }
   return NextResponse.json(r);

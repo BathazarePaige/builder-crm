@@ -49,13 +49,13 @@ export async function deliverMessage(
     return {
       ok: false,
       messageId: null,
-      error: `sin conector para el proveedor "${conversation.provider}"`,
+      error: `aucun connecteur pour le fournisseur "${conversation.provider}"`,
     };
   }
 
   const body = bodyOf(msg);
   if (!body) {
-    return { ok: false, messageId: null, error: "mensaje vacio" };
+    return { ok: false, messageId: null, error: "message vide" };
   }
 
   // Fila optimista antes de salir a la red: si el proveedor tarda o falla, el mensaje

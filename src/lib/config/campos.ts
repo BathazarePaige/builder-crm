@@ -25,7 +25,7 @@ function limpiar(campo: CampoConfig, crudo: unknown): { ok: true; valor: ValorCa
     case "seleccion": {
       const v = String(crudo);
       if (!campo.opciones?.includes(v)) {
-        return { ok: false, error: `${campo.etiqueta}: valor fuera de las opciones (${campo.opciones?.join(", ")})` };
+        return { ok: false, error: `${campo.etiqueta} : valeur hors des options (${campo.opciones?.join(", ")})` };
       }
       return { ok: true, valor: v };
     }
@@ -60,13 +60,13 @@ export function validarCamposPersonalizados(
     entrada = {};
   }
   if (typeof entrada !== "object" || Array.isArray(entrada)) {
-    return { ok: false, error: "customFields debe ser un objeto" };
+    return { ok: false, error: "customFields doit être un objet" };
   }
   const obj = entrada as Record<string, unknown>;
   const conocidas = new Map(campos.map((c) => [c.clave, c]));
 
   for (const k of Object.keys(obj)) {
-    if (!conocidas.has(k)) return { ok: false, error: `Campo desconocido: ${k}` };
+    if (!conocidas.has(k)) return { ok: false, error: `Champ inconnu : ${k}` };
   }
 
   const valores: ValoresCampos = {};

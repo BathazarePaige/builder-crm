@@ -191,7 +191,7 @@ export async function purgeContactDocuments(contactId: string): Promise<void> {
   try {
     await deleteObjects(rows.map((r) => r.key));
   } catch (err) {
-    console.error("[documents] purge fallo para contacto", contactId, err);
+    console.error("[documents] échec de la purge pour le contact", contactId, err);
   }
 }
 

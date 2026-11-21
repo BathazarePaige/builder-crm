@@ -40,7 +40,7 @@ export function urlPublica(): string | null {
 }
 
 const SIN_BASE =
-  "Falta APP_BASE_URL: sin la URL publica de la instancia el enlace del correo no sabe a donde volver.";
+  "APP_BASE_URL manquante : sans l’URL publique de l’instance, le lien de l’e-mail ne sait pas où revenir.";
 
 /**
  * Cliente anonimo de un solo uso, con flujo implicito y sin guardar nada.
@@ -54,7 +54,7 @@ const SIN_BASE =
 function clienteSinEstado() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) throw new Error("Falta NEXT_PUBLIC_SUPABASE_URL o NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+  if (!url || !anon) throw new Error("NEXT_PUBLIC_SUPABASE_URL ou NEXT_PUBLIC_SUPABASE_ANON_KEY manquante.");
   return createSupabaseClient(url, anon, {
     auth: { flowType: "implicit", persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
@@ -80,7 +80,7 @@ export async function invitarPorCorreo(
     redirectTo: `${base}${RUTA_DEFINIR_CLAVE}`,
   });
   if (error || !data?.user) {
-    return { error: error?.message ?? "No se pudo enviar la invitacion" };
+    return { error: error?.message ?? "Impossible d’envoyer l’invitation" };
   }
   return { userId: data.user.id };
 }

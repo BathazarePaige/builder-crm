@@ -66,7 +66,7 @@ export async function* iterateConversations(
       // No es un error de la request: Zernio degrada por cuenta. Si no se loguea, una
       // sincronizacion parcial se lee como completa.
       console.warn(
-        "[zernio] cuentas que fallaron en la consulta:",
+        "[zernio] comptes en échec lors de la requête :",
         meta.failedAccounts.map((a) => `${a.accountUsername ?? a.accountId}: ${a.error}`)
       );
     }
@@ -75,7 +75,7 @@ export async function* iterateConversations(
 
     if (!pagination?.hasMore || !pagination.nextCursor) return;
     if (pagination.nextCursor === cursor) {
-      console.warn("[zernio] nextCursor no avanza, corto la paginacion");
+      console.warn("[zernio] nextCursor n’avance pas, pagination arrêtée");
       return;
     }
     cursor = pagination.nextCursor;

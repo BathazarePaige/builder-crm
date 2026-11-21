@@ -72,10 +72,10 @@ function normalizar(s: string): string {
 
 async function moverEtapa(args: { etapa?: string; motivo?: string }, ctx: ToolContext): Promise<ToolResult> {
   const q = normalizar(String(args.etapa ?? ""));
-  if (!q) return { ok: false, error: "etapa vacia" };
+  if (!q) return { ok: false, error: "étape vide" };
 
   const [pipeline] = await db.select().from(pipelines).where(eq(pipelines.isDefault, true)).limit(1);
-  if (!pipeline) return { ok: false, error: "No hay pipeline configurado" };
+  if (!pipeline) return { ok: false, error: "Aucun pipeline configuré" };
 
   const stages = await db
     .select()
@@ -89,7 +89,7 @@ async function moverEtapa(args: { etapa?: string; motivo?: string }, ctx: ToolCo
   if (!stage) {
     return {
       ok: false,
-      error: `Etapa desconocida "${args.etapa}". Disponibles: ${stages.map((s) => s.key ?? s.name).join(", ")}`,
+      error: `Étape inconnue « ${args.etapa} ». Disponibles : ${stages.map((s) => s.key ?? s.name).join(", ")}`,
     };
   }
 
@@ -111,10 +111,10 @@ async function moverEtapa(args: { etapa?: string; motivo?: string }, ctx: ToolCo
 
   if (abierta) {
     if (abierta.stageId === stage.id) {
-      return { ok: true, data: { etapa: stage.name, sin_cambio: true, message: `Ya estaba en ${stage.name}.` } };
+      return { ok: true, data: { etapa: stage.name, sin_cambio: true, message: `Déjà en « ${stage.name} ».` } };
     }
     const r = await setDealStage({ dealId: abierta.id, stageId: stage.id });
-    if (!r.ok) return { ok: false, error: r.error ?? "No se pudo mover la etapa" };
+    if (!r.ok) return { ok: false, error: r.error ?? "Impossible de changer d’étape" };
     await db.insert(activities).values({
       type: "note",
       description: `Agent IA : affaire déplacée en « ${stage.name} »${args.motivo ? `: ${args.motivo}` : ""}`,
@@ -142,7 +142,7 @@ async function actualizarContacto(
   ctx: ToolContext
 ): Promise<ToolResult> {
   const [actual] = await db.select().from(contacts).where(eq(contacts.id, ctx.contactId)).limit(1);
-  if (!actual) return { ok: false, error: "contacto no encontrado" };
+  if (!actual) return { ok: false, error: "contact introuvable" };
 
   const set: Partial<typeof contacts.$inferInsert> = { updatedAt: new Date() };
   const cambios: string[] = [];
@@ -171,7 +171,7 @@ async function actualizarContacto(
     cambios.push(...Object.keys(v.valores));
   }
 
-  if (cambios.length === 0) return { ok: false, error: "nada para actualizar" };
+  if (cambios.length === 0) return { ok: false, error: "rien à mettre à jour" };
   await db.update(contacts).set(set).where(eq(contacts.id, ctx.contactId));
   return { ok: true, data: { actualizado: cambios } };
 }
@@ -190,7 +190,7 @@ async function registrarActividad(
   ctx: ToolContext
 ): Promise<ToolResult> {
   const descripcion = String(args.descripcion ?? "").trim();
-  if (!descripcion) return { ok: false, error: "descripcion vacia" };
+  if (!descripcion) return { ok: false, error: "description vide" };
   const tipo = TIPOS_ACTIVIDAD[normalizar(String(args.tipo ?? "nota"))] ?? "note";
   let scheduledAt: Date | null = null;
   if (args.fecha) {
@@ -209,7 +209,7 @@ async function resumenLead(
   ctx: ToolContext
 ): Promise<ToolResult> {
   const resumen = String(args.resumen ?? "").trim();
-  if (!resumen) return { ok: false, error: "resumen vacio" };
+  if (!resumen) return { ok: false, error: "résumé vide" };
 
   const set: Partial<typeof contacts.$inferInsert> = {
     aiSummary: resumen.slice(0, 2000),
@@ -232,7 +232,7 @@ async function resumenLead(
 }
 
 async function derivarAsesor(args: { motivo?: string }, ctx: ToolContext): Promise<ToolResult> {
-  const motivo = String(args.motivo ?? "derivado por el agente").slice(0, 300);
+  const motivo = String(args.motivo ?? "transmis par l’agent").slice(0, 300);
   const now = new Date();
 
   // Se apaga el agente en ESTA conversacion, no en el contacto entero: derivar una
@@ -259,7 +259,7 @@ async function derivarAsesor(args: { motivo?: string }, ctx: ToolContext): Promi
   return {
     ok: true,
     stop: true,
-    data: { derivado: true, motivo, message: "Agente pausado en esta conversacion. Una persona del equipo sigue." },
+    data: { derivado: true, motivo, message: "Agent en pause dans cette conversation. Une personne de l’équipe prend le relais." },
   };
 }
 
@@ -270,15 +270,15 @@ async function asignarAsesor(args: { asesor?: string; motivo?: string }, ctx: To
     return {
       ok: false,
       error:
-        `Hay varias personas que coinciden con "${args.asesor}": ` +
+        `Plusieurs personnes correspondent à « ${args.asesor} » : ` +
         found.candidates.map(displayName).join(", ") +
-        ". Especifica cual.",
+        ". Précisez laquelle.",
     };
   }
   if (found.status === "not_found") {
     return {
       ok: false,
-      error: `No existe "${args.asesor}". Disponibles: ` + (found.available.map(displayName).join(", ") || "ninguno"),
+      error: `« ${args.asesor} » n’existe pas. Disponibles : ` + (found.available.map(displayName).join(", ") || "aucun"),
     };
   }
 
@@ -296,8 +296,8 @@ async function asignarAsesor(args: { asesor?: string; motivo?: string }, ctx: To
       asignado_a: displayName(found.member),
       ya_estaba_asignado: result.unchanged ?? false,
       message: result.unchanged
-        ? `El contacto ya estaba asignado a ${displayName(found.member)}.`
-        : `Contacto asignado a ${displayName(found.member)}. Se le envio un aviso.`,
+        ? `Le contact était déjà attribué à ${displayName(found.member)}.`
+        : `Contact attribué à ${displayName(found.member)}. Une notification lui a été envoyée.`,
     },
   };
 }
@@ -307,35 +307,35 @@ function toolsGenericas(): ToolAgente[] {
   const etiquetaAsesor = getConfig().roles.etiquetaAsesor.toLowerCase();
   const descripcionCampos =
     campos.length > 0
-      ? "Claves disponibles: " +
+      ? "Clés disponibles : " +
         campos
           .map((c) => `${c.clave} (${c.tipo}${c.opciones ? ": " + c.opciones.join("|") : ""})`)
           .join("; ")
-      : "No hay campos personalizados configurados.";
+      : "Aucun champ personnalisé configuré.";
 
   return [
     {
       definicion: definir(
         "mover_etapa",
-        "Mueve la operacion del contacto a una etapa del pipeline (o la crea en esa etapa si no tiene una abierta). " +
-          "Usar cuando el cliente avanza o retrocede en el proceso; las etapas disponibles estan en la seccion PIPELINE del contexto.",
+        "Déplace l’affaire du contact vers une étape du pipeline (ou la crée à cette étape s’il n’en a pas d’ouverte). " +
+          "À utiliser quand le client avance ou recule dans le processus ; les étapes disponibles sont dans la section PIPELINE du contexte.",
         {
           type: "object",
           properties: {
-            etapa: { type: "string", description: "Clave o nombre de la etapa, como figura en PIPELINE." },
-            motivo: { type: "string", description: "Por que se mueve, en pocas palabras." },
+            etapa: { type: "string", description: "Clé ou nom de l’étape, tel qu’il figure dans PIPELINE." },
+            motivo: { type: "string", description: "Pourquoi l’affaire change d’étape, en quelques mots." },
           },
           required: ["etapa"],
           additionalProperties: false,
         }
       ),
-      descripcionUI: "Mueve (o crea) la operacion del contacto en el pipeline. Que etapa usar en cada momento lo decide el prompt.",
+      descripcionUI: "Déplace (ou crée) l’affaire du contact dans le pipeline. Le prompt décide quelle étape utiliser à chaque moment.",
       ejecutar: (a, ctx) => moverEtapa(a as { etapa?: string; motivo?: string }, ctx),
     },
     {
       definicion: definir(
         "actualizar_contacto",
-        "Guarda en la ficha del contacto los datos que vas averiguando: nombre, email, telefono, notas y los campos personalizados del negocio. " +
+        "Enregistre dans la fiche du contact les informations que tu obtiens : nom, e-mail, téléphone, notes et champs personnalisés de l’entreprise. " +
           descripcionCampos,
         {
           type: "object",
@@ -343,86 +343,86 @@ function toolsGenericas(): ToolAgente[] {
             nombre: { type: "string" },
             email: { type: "string" },
             telefono: { type: "string" },
-            notas: { type: "string", description: "Observacion breve para el equipo." },
+            notas: { type: "string", description: "Remarque brève pour l’équipe." },
             campos: {
               type: "object",
-              description: "Pares clave: valor de los campos personalizados. " + descripcionCampos,
+              description: "Paires clé : valeur des champs personnalisés. " + descripcionCampos,
               additionalProperties: true,
             },
           },
           additionalProperties: false,
         }
       ),
-      descripcionUI: "Actualiza la ficha del contacto (datos basicos y campos personalizados de config/cliente.ts).",
+      descripcionUI: "Met à jour la fiche du contact (informations de base et champs personnalisés de config/cliente.ts).",
       ejecutar: (a, ctx) => actualizarContacto(a as Parameters<typeof actualizarContacto>[0], ctx),
     },
     {
       definicion: definir(
         "registrar_actividad",
-        "Anota una actividad en la ficha para el equipo: una nota, o una tarea/seguimiento con fecha (por ejemplo 'llamar el lunes').",
+        "Ajoute une activité dans la fiche pour l’équipe : une note, ou une tâche/relance datée (par exemple « appeler lundi »).",
         {
           type: "object",
           properties: {
             tipo: { type: "string", enum: ["nota", "tarea", "llamada", "reunion", "email"] },
             descripcion: { type: "string" },
-            fecha: { type: "string", description: "ISO 8601 si es una tarea con fecha (opcional)." },
+            fecha: { type: "string", description: "ISO 8601 s’il s’agit d’une tâche datée (facultatif)." },
           },
           required: ["descripcion"],
           additionalProperties: false,
         }
       ),
-      descripcionUI: "Registra notas y tareas con fecha en la ficha del contacto.",
+      descripcionUI: "Enregistre des notes et des tâches datées dans la fiche du contact.",
       ejecutar: (a, ctx) => registrarActividad(a as Parameters<typeof registrarActividad>[0], ctx),
     },
     {
       definicion: definir(
         "resumen_lead",
-        "Deja en la ficha un resumen de 2 a 4 frases de lo que busca el cliente, su situacion y los proximos pasos. " +
-          "Usar cuando la conversacion llego a un punto util o el cliente se despidio. Puede incluir campos personalizados.",
+        "Laisse dans la fiche un résumé de 2 à 4 phrases : ce que cherche le client, sa situation et les prochaines étapes. " +
+          "À utiliser quand la conversation a atteint un point utile ou que le client a pris congé. Peut inclure des champs personnalisés.",
         {
           type: "object",
           properties: {
             resumen: { type: "string" },
-            campos: { type: "object", description: "Campos personalizados confirmados. " + descripcionCampos, additionalProperties: true },
+            campos: { type: "object", description: "Champs personnalisés confirmés. " + descripcionCampos, additionalProperties: true },
           },
           required: ["resumen"],
           additionalProperties: false,
         }
       ),
-      descripcionUI: "Escribe el resumen del lead en la ficha (visible en contactos y en el chat).",
+      descripcionUI: "Écrit le résumé du lead dans la fiche (visible dans les contacts et dans la conversation).",
       ejecutar: (a, ctx) => resumenLead(a as Parameters<typeof resumenLead>[0], ctx),
     },
     {
       definicion: definir(
         "derivar_asesor",
-        "Pasa la conversacion a una persona del equipo y PAUSA al agente en este hilo. " +
-          "Usar cuando la consulta excede lo que sabes, una herramienta falla, o el cliente pide hablar con alguien.",
+        "Transmet la conversation à une personne de l’équipe et MET EN PAUSE l’agent dans ce fil. " +
+          "À utiliser quand la demande dépasse ce que tu sais, qu’un outil échoue ou que le client demande à parler à quelqu’un.",
         {
           type: "object",
-          properties: { motivo: { type: "string", description: "Razon corta de la derivacion." } },
+          properties: { motivo: { type: "string", description: "Raison courte du transfert." } },
           required: ["motivo"],
           additionalProperties: false,
         }
       ),
-      descripcionUI: "Permite al agente derivar a un humano (pausa el agente solo en esa conversacion). Recomendado dejar activa.",
+      descripcionUI: "Permet à l’agent de transmettre à un humain (met l’agent en pause dans cette conversation seulement). Recommandé de la laisser active.",
       ejecutar: (a, ctx) => derivarAsesor(a as { motivo?: string }, ctx),
     },
     {
       definicion: definir(
         "asignar_asesor",
-        `Asigna este contacto a un ${etiquetaAsesor} del equipo, que recibe un aviso. NO pausa al agente. ` +
-          "Las personas disponibles estan en la seccion EQUIPO del contexto; usa el nombre tal cual aparece.",
+        `Attribue ce contact à un ${etiquetaAsesor} de l’équipe, qui reçoit une notification. Ne met PAS l’agent en pause. ` +
+          "Les personnes disponibles sont dans la section ÉQUIPE du contexte ; utilise le nom tel qu’il apparaît.",
         {
           type: "object",
           properties: {
-            asesor: { type: "string", description: "Nombre (o email) como figura en EQUIPO." },
+            asesor: { type: "string", description: "Nom (ou e-mail) tel qu’il figure dans ÉQUIPE." },
             motivo: { type: "string" },
           },
           required: ["asesor"],
           additionalProperties: false,
         }
       ),
-      descripcionUI: `Permite al agente asignar el contacto a un ${etiquetaAsesor} por nombre. Dispara la automatizacion de aviso.`,
+      descripcionUI: `Permet à l’agent d’attribuer le contact à un ${etiquetaAsesor} par son nom. Déclenche l’automatisation de notification.`,
       ejecutar: (a, ctx) => asignarAsesor(a as { asesor?: string; motivo?: string }, ctx),
     },
   ];
@@ -451,12 +451,12 @@ export function esNombreDeTool(name: string): boolean {
 
 export async function executeTool(name: string, args: unknown, ctx: ToolContext): Promise<ToolResult> {
   const tool = listarTools().find((t) => t.definicion.function.name === name);
-  if (!tool) return { ok: false, error: `Tool desconocida: ${name}` };
+  if (!tool) return { ok: false, error: `Outil inconnu : ${name}` };
   const argumentos = args && typeof args === "object" && !Array.isArray(args) ? (args as Record<string, unknown>) : {};
   try {
     return await tool.ejecutar(argumentos, ctx);
   } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : "Error ejecutando tool" };
+    return { ok: false, error: err instanceof Error ? err.message : "Erreur lors de l’exécution de l’outil" };
   }
 }
 

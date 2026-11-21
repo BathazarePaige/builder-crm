@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return new Response("Tipo invalido. Use ?type=contacts o ?type=deals", {
+  return new Response("Type invalide. Utilisez ?type=contacts ou ?type=deals", {
     status: 400,
   });
 }

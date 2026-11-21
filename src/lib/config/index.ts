@@ -29,7 +29,7 @@ function validar(): { config: ConfigCliente | null; errores: string[] } {
   const vistas = new Set(r.data.contacto.campos.map((c) => c.clave));
   for (const campo of camposDeModulos()) {
     if (vistas.has(campo.clave)) {
-      problemas.push(`contacto.campos: la clave "${campo.clave}" esta repetida entre config/cliente.ts y un modulo`);
+      problemas.push(`contacto.campos : la clé "${campo.clave}" est en double entre config/cliente.ts et un module`);
     }
     vistas.add(campo.clave);
   }
@@ -44,7 +44,7 @@ function validar(): { config: ConfigCliente | null; errores: string[] } {
 export function getConfig(): ConfigCliente {
   const { config, errores } = validar();
   if (!config) {
-    throw new Error(`config/cliente.ts invalido:\n${errores.map((e) => `  - ${e}`).join("\n")}`);
+    throw new Error(`config/cliente.ts invalide :\n${errores.map((e) => `  - ${e}`).join("\n")}`);
   }
   return config;
 }

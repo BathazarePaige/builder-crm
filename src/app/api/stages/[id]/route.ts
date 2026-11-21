@@ -15,7 +15,7 @@ export async function PUT(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const updates: { name?: string; color?: string } = {};

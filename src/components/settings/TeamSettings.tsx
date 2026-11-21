@@ -340,7 +340,7 @@ function AddMemberDialog({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="asesor@empresa.com"
+              placeholder="conseiller@entreprise.com"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">

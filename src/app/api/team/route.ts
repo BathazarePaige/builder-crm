@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const email = (body.email ?? "").trim().toLowerCase();
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     });
     if (error || !data.user) {
       return NextResponse.json(
-        { error: error?.message ?? "No se pudo crear el usuario" },
+        { error: error?.message ?? "Impossible de créer l’utilisateur" },
         { status: 502 }
       );
     }

@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const valid = validateAutomation(body);
@@ -55,10 +55,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   if (typeof body.enabled !== "boolean") {
-    return NextResponse.json({ error: "Falta enabled" }, { status: 400 });
+    return NextResponse.json({ error: "enabled manquant" }, { status: 400 });
   }
 
   const ok = await setAutomationEnabled(key, body.enabled);

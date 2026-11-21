@@ -15,7 +15,7 @@ const hex = z
 const clave = z
   .string()
   .min(1)
-  .regex(/^[a-z][a-z0-9_]*$/, "Clave en snake_case, empieza con letra (ej. tipo_operacion)");
+  .regex(/^[a-z][a-z0-9_]*$/, "Clé en snake_case, commençant par une lettre (ex. tipo_operacion)");
 
 /**
  * Zona horaria IANA. Se valida contra el propio entorno (`Intl` existe igual en Node y
@@ -32,7 +32,7 @@ const zonaIana = z
     } catch {
       ctx.addIssue({
         code: "custom",
-        message: `zona horaria desconocida: "${valor}". Va un identificador IANA, como America/Santiago, America/Mexico_City o Europe/Madrid`,
+        message: `fuseau horaire inconnu : "${valor}". Indiquez un identifiant IANA, comme Europe/Paris, America/Montreal ou Africa/Abidjan`,
       });
     }
   });
@@ -43,7 +43,7 @@ export const esquemaMarca = z.object({
   /** Nombre corto para el icono de la PWA y las notificaciones (max 12). */
   nombreCorto: z.string().min(1).max(12),
   /** Una frase: aparece en el login y en la descripcion de la PWA. */
-  descripcion: z.string().max(200).default("CRM multicanal con agente de IA."),
+  descripcion: z.string().max(200).default("CRM multicanal avec agent IA."),
   /** Rutas publicas (dentro de public/marca/). */
   logo: z.string().min(1).default("/marca/logo.png"),
   icono: z.string().min(1).default("/marca/icono.png"),
@@ -65,10 +65,10 @@ export const esquemaPipeline = z.object({
   nombre: z.string().min(1).max(60).default("Ventas"),
   etapas: z
     .array(esquemaEtapa)
-    .min(2, "Un pipeline necesita al menos dos etapas")
+    .min(2, "Un pipeline doit avoir au moins deux étapes")
     .refine(
       (e) => new Set(e.map((x) => x.clave)).size === e.length,
-      "Hay etapas con la misma clave"
+      "Plusieurs étapes ont la même clé"
     ),
 });
 
@@ -100,7 +100,7 @@ export const esquemaCampo = z
   })
   .refine(
     (c) => c.tipo !== "seleccion" || (c.opciones && c.opciones.length > 0),
-    "Un campo de tipo seleccion necesita opciones"
+    "Un champ de type sélection a besoin d’options"
   );
 
 export const esquemaAgente = z.object({
@@ -115,7 +115,7 @@ export const esquemaAgente = z.object({
     .string()
     .min(1)
     .max(500)
-    .default("Te paso con una persona del equipo que te va a ayudar con esto. Un momento."),
+    .default("Je vous mets en relation avec une personne de l’équipe qui va vous aider. Un instant."),
 });
 
 export const esquemaModulosNucleo = z.object({
@@ -192,13 +192,13 @@ export const esquemaConfig = z.object({
         .default([])
         .refine(
           (c) => new Set(c.map((x) => x.clave)).size === c.length,
-          "Hay campos con la misma clave"
+          "Plusieurs champs ont la même clé"
         ),
     })
     .default({ campos: [] }),
   agente: esquemaAgente.default({
-    nombre: "Asistente",
-    mensajeDerivacion: "Te paso con una persona del equipo que te va a ayudar con esto. Un momento.",
+    nombre: "Assistant",
+    mensajeDerivacion: "Je vous mets en relation avec une personne de l’équipe qui va vous aider. Un instant.",
   }),
   /** Datos de demostracion del nicho. Sin esto, la demo del nucleo es generica. */
   demo: esquemaDemo.optional(),

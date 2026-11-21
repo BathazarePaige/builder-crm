@@ -13,7 +13,7 @@ export async function pedirEnlaceDeAcceso(
   formData: FormData
 ): Promise<{ ok?: true; error?: string }> {
   if (!correoDeAccesoActivo()) {
-    return { error: "Esta instancia no manda correos: pedile el acceso a un administrador." };
+    return { error: "Cette instance n’envoie pas d’e-mails : demandez l’accès à un administrateur." };
   }
 
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -27,7 +27,7 @@ export async function pedirEnlaceDeAcceso(
     // boton pensando que no paso nada.
     const m = error.toLowerCase();
     if (m.includes("rate") || m.includes("security purposes") || m.includes("seconds")) {
-      return { error: "Ya se mando uno hace poco. Espera un minuto y volve a intentar." };
+      return { error: "Un e-mail vient déjà d’être envoyé. Attendez une minute et réessayez." };
     }
     return { error };
   }

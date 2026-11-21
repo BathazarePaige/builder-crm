@@ -24,7 +24,7 @@ export function verifyZernioSignature(
 ): boolean {
   if (!secret) {
     console.warn(
-      "[zernio] ZERNIO_WEBHOOK_SECRET no configurado: se rechaza el webhook"
+      "[zernio] ZERNIO_WEBHOOK_SECRET non configuré : webhook refusé"
     );
     return false;
   }

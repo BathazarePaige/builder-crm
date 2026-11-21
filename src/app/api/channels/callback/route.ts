@@ -37,11 +37,11 @@ export async function GET(request: NextRequest) {
     const cuenta = await getAccount(accountId);
     if (!cuenta.success) {
       console.warn(
-        `[channels] la vuelta del OAuth trae un accountId que Zernio no reconoce (${accountId}): se ignora`
+        `[channels] le retour OAuth contient un accountId inconnu de Zernio (${accountId}) : ignoré`
       );
     } else if (cuenta.data.platform !== platform) {
       console.warn(
-        `[channels] el accountId ${accountId} es de ${cuenta.data.platform}, no de ${platform}: se ignora`
+        `[channels] l’accountId ${accountId} est de ${cuenta.data.platform}, pas de ${platform} : ignoré`
       );
     } else {
       const tenantId = await resolveDefaultTenantId();
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         platform: platform ?? null,
         accountId,
         username,
-        error: ok ? null : params.get("error") ?? "No se pudo conectar la cuenta",
+        error: ok ? null : params.get("error") ?? "Impossible de connecter le compte",
       },
     }),
     { headers: { "Content-Type": "text/html; charset=utf-8" } }
@@ -97,10 +97,10 @@ function popupHtml({ origin, payload }: PopupHtmlArgs): string {
   );
 
   return `<!doctype html>
-<html lang="es">
-<head><meta charset="utf-8"><title>Conectando…</title></head>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Connexion…</title></head>
 <body style="font:14px/1.5 system-ui,sans-serif;padding:32px;color:#334155">
-<p>${payload.ok ? "Cuenta conectada. Podés cerrar esta ventana." : "No se pudo conectar la cuenta."}</p>
+<p>${payload.ok ? "Compte connecté. Vous pouvez fermer cette fenêtre." : "Impossible de connecter le compte."}</p>
 <script>
 (function () {
   var data = ${data};

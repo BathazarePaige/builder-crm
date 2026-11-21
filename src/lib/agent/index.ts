@@ -165,9 +165,9 @@ async function renderTeamBlock(currentOwnerId: string | null): Promise<string> {
   const lines = members.map((m) => `- ${displayName(m)}${m.role === "admin" ? " (admin)" : ""}`);
   const actual = currentOwnerId ? members.find((m) => m.id === currentOwnerId) : null;
   return (
-    `\n\n# EQUIPO\n${etiqueta}es a los que podes asignar este contacto con asignar_asesor:\n` +
+    `\n\n# ÉQUIPE\nPersonnes (${etiqueta.toLowerCase()}s) à qui tu peux attribuer ce contact avec asignar_asesor :\n` +
     lines.join("\n") +
-    (actual ? `\nEste contacto ya esta asignado a ${displayName(actual)}.` : "\nEste contacto todavia no tiene asignacion.")
+    (actual ? `\nCe contact est déjà attribué à ${displayName(actual)}.` : "\nCe contact n’est encore attribué à personne.")
   );
 }
 

@@ -36,18 +36,18 @@ interface Texto {
 
 const TEXTOS: Record<TipoPlantilla, Texto> = {
   invitacion: {
-    titulo: (m) => `Te sumaron a ${m}`,
+    titulo: (m) => `Vous avez été ajouté à ${m}`,
     entrada:
-      "Ya tenes tu lugar en el equipo. Solo falta que elijas una contrasena para entrar.",
-    boton: "Elegir mi contrasena",
-    nota: "Si no esperabas esta invitacion, podes ignorar este correo: sin definir la contrasena, la cuenta no se usa.",
+      "Votre place dans l’équipe est prête. Il ne reste qu’à choisir un mot de passe pour vous connecter.",
+    boton: "Choisir mon mot de passe",
+    nota: "Si vous n’attendiez pas cette invitation, ignorez cet e-mail : sans mot de passe défini, le compte reste inutilisé.",
   },
   recuperacion: {
-    titulo: (m) => `Volver a entrar a ${m}`,
+    titulo: (m) => `Retrouver l’accès à ${m}`,
     entrada:
-      "Pediste recuperar el acceso. Este enlace te deja elegir una contrasena nueva.",
-    boton: "Elegir una contrasena nueva",
-    nota: "Si no pediste esto, ignora el correo: tu contrasena actual sigue funcionando y nadie entro.",
+      "Vous avez demandé à retrouver l’accès. Ce lien vous permet de choisir un nouveau mot de passe.",
+    boton: "Choisir un nouveau mot de passe",
+    nota: "Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail : votre mot de passe actuel fonctionne toujours et personne ne s’est connecté.",
   },
 };
 
@@ -63,7 +63,7 @@ export function plantillaCorreo(tipo: TipoPlantilla, base: string | null): strin
     : "";
 
   return `<!doctype html>
-<html lang="es">
+<html lang="fr">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -86,13 +86,13 @@ ${cabecera}
 <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:12px 24px;border-radius:10px;background:${m.colorPrimario};color:${sobrePrimario};font-size:15px;font-weight:600;text-decoration:none;">${escapar(t.boton)}</a>
 </td></tr>
 <tr><td style="padding:8px 32px 0;">
-<p style="margin:0;font-size:12px;line-height:1.6;color:#98a2b3;">Si el boton no funciona, copia este enlace en el navegador:<br /><a href="{{ .ConfirmationURL }}" style="color:#667085;word-break:break-all;">{{ .ConfirmationURL }}</a></p>
+<p style="margin:0;font-size:12px;line-height:1.6;color:#98a2b3;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br /><a href="{{ .ConfirmationURL }}" style="color:#667085;word-break:break-all;">{{ .ConfirmationURL }}</a></p>
 </td></tr>
 <tr><td style="padding:20px 32px 28px;">
-<p style="margin:0;font-size:12px;line-height:1.6;color:#98a2b3;">${escapar(t.nota)} El enlace sirve una sola vez y vence en 24 horas.</p>
+<p style="margin:0;font-size:12px;line-height:1.6;color:#98a2b3;">${escapar(t.nota)} Le lien ne sert qu’une fois et expire dans 24 heures.</p>
 </td></tr>
 </table>
-<p style="margin:16px 0 0;font-size:11px;color:#98a2b3;">${escapar(m.nombre)} &middot; enviado a {{ .Email }}</p>
+<p style="margin:16px 0 0;font-size:11px;color:#98a2b3;">${escapar(m.nombre)} &middot; envoyé à {{ .Email }}</p>
 </td></tr>
 </table>
 </body>

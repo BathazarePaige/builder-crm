@@ -18,7 +18,7 @@ export async function syncAccountsFromZernio(): Promise<{
 }> {
   const tenantId = await resolveDefaultTenantId();
   if (!tenantId) {
-    return { ok: false, synced: 0, skipped: 0, error: "No existe el tenant default" };
+    return { ok: false, synced: 0, skipped: 0, error: "Le tenant par défaut n’existe pas" };
   }
 
   const result = await listZernioAccounts();

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   const { title, value, stageId, contactId, expectedClose, probability, notes } = body;
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: `Error al crear deal: ${msg}` },
+      { error: `Erreur lors de la création de l’affaire : ${msg}` },
       { status: 500 }
     );
   }

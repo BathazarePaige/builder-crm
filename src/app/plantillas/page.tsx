@@ -184,7 +184,7 @@ function TemplateCard({ template }: { template: Template }) {
 
         <p className="text-[13px] text-foreground/90 leading-relaxed whitespace-pre-wrap line-clamp-4">
           {body || (
-            <span className="italic text-muted-foreground">(sin cuerpo)</span>
+            <span className="italic text-muted-foreground">(sans texte)</span>
           )}
         </p>
 

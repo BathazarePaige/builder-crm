@@ -30,10 +30,10 @@ export const simulador: Conector = {
       faltan: [],
       cuentas: [],
       notas: [
-        "Para demos y autoverificacion: las conversaciones simuladas no salen a ningun canal real.",
+        "Pour les démos et l’autovérification : les conversations simulées ne partent vers aucun canal réel.",
         process.env.OPENROUTER_API_KEY
-          ? "Agente listo para responder."
-          : "Falta OPENROUTER_API_KEY: el simulador no puede hacer responder al agente.",
+          ? "Agent prêt à répondre."
+          : "OPENROUTER_API_KEY manquante : le simulateur ne peut pas faire répondre l’agent.",
       ],
     };
   },

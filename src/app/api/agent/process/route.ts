@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!body.jobId) {
-    return NextResponse.json({ error: "jobId requerido" }, { status: 400 });
+    return NextResponse.json({ error: "jobId obligatoire" }, { status: 400 });
   }
 
   return await processJob(body.jobId);

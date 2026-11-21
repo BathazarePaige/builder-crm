@@ -174,7 +174,7 @@ export default function SettingsPage() {
                 <p className="pl-4">-d &apos;{`{"name":"Juan","email":"j@test.com","phone":"555-1234"}`}&apos;</p>
               </div>
               <p className="text-xs text-muted-foreground">
-                Champs acceptés en espagnol et en anglais : name/nombre, email/correo, phone/telefono, company/empresa, notes/notas.
+                Colonnes acceptées : name, email, phone, company, notes (les équivalents nombre, correo, telefono, empresa et notas fonctionnent aussi).
                 Si <code className="bg-muted px-1 rounded">LEADS_WEBHOOK_SECRET</code> est défini, envoyez-le dans l’en-tête{" "}
                 <code className="bg-muted px-1 rounded">x-webhook-secret</code>.
               </p>

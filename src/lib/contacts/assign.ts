@@ -69,14 +69,14 @@ export async function assignContact(input: {
 
   const byLabel =
     input.by.type === "agent"
-      ? "el agente de IA"
+      ? "l’agent IA"
       : input.by.type === "automation"
         ? "una automatizacion"
         : displayName(input.by.member);
   const description = owner
     ? `Asignado a ${displayName(owner)} por ${byLabel}` +
       (input.reason ? `. Motivo: ${input.reason}` : "")
-    : `Se quito el propietario (${byLabel})`;
+    : `Responsable retiré (${byLabel})`;
 
   await db.insert(activities).values({
     type: "note",

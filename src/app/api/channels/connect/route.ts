@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   if (!isChannel(platform)) {
     return NextResponse.json(
-      { error: "platform invalido (whatsapp | instagram | facebook)" },
+      { error: "platform invalide (whatsapp | instagram | facebook)" },
       { status: 400 }
     );
   }

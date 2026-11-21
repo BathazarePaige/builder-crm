@@ -127,7 +127,7 @@ export async function PUT(request: NextRequest) {
     });
     if (!saved) {
       return NextResponse.json(
-        { error: "No existe el tenant default" },
+        { error: "Le tenant par défaut n’existe pas" },
         { status: 500 }
       );
     }
@@ -158,7 +158,7 @@ export async function PUT(request: NextRequest) {
   if (body.enabledTools !== undefined) {
     if (!Array.isArray(body.enabledTools)) {
       return NextResponse.json(
-        { error: "enabledTools debe ser un array" },
+        { error: "enabledTools doit être un tableau" },
         { status: 400 }
       );
     }

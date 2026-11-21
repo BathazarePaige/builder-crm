@@ -151,7 +151,7 @@ export function ContactForm({ open, onClose, initialData }: ContactFormProps) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
-              <Input id="email" type="email" {...register("email")} placeholder="correo@ejemplo.com" />
+              <Input id="email" type="email" {...register("email")} placeholder="nom@exemple.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Téléphone</Label>

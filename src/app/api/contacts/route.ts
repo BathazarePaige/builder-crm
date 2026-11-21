@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const { name, email, phone, company, source, score, notes, tags, ownerId, customFields } = body;
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ...result, ownerId: owner }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: `Error al crear contacto: ${error instanceof Error ? error.message : "Unknown"}` },
+      { error: `Erreur lors de la création du contact : ${error instanceof Error ? error.message : "Unknown"}` },
       { status: 500 }
     );
   }

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   const endpoint = body.endpoint ?? "";
@@ -53,10 +53,10 @@ export async function DELETE(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   if (!body.endpoint) {
-    return NextResponse.json({ error: "Falta endpoint" }, { status: 400 });
+    return NextResponse.json({ error: "endpoint manquant" }, { status: 400 });
   }
 
   await removeSubscription(auth.member.id, body.endpoint);

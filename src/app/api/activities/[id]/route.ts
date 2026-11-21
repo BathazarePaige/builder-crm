@@ -18,7 +18,7 @@ export async function PUT(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   try {
@@ -45,7 +45,7 @@ export async function PUT(
         const parsed = new Date(body.completedAt);
         if (isNaN(parsed.getTime())) {
           return NextResponse.json(
-            { error: "completedAt debe ser una fecha valida" },
+            { error: "completedAt doit être une date valide" },
             { status: 400 }
           );
         }
@@ -56,7 +56,7 @@ export async function PUT(
     if (body.description !== undefined) {
       if (typeof body.description !== "string" || !body.description.trim()) {
         return NextResponse.json(
-          { error: "description debe ser un texto no vacio" },
+          { error: "description doit être un texte non vide" },
           { status: 400 }
         );
       }
@@ -70,7 +70,7 @@ export async function PUT(
         const parsed = new Date(body.scheduledAt);
         if (isNaN(parsed.getTime())) {
           return NextResponse.json(
-            { error: "scheduledAt debe ser una fecha valida" },
+            { error: "scheduledAt doit être une date valide" },
             { status: 400 }
           );
         }
@@ -95,7 +95,7 @@ export async function PUT(
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
-      { error: `Error al actualizar: ${error instanceof Error ? error.message : "Unknown"}` },
+      { error: `Erreur lors de la mise à jour : ${error instanceof Error ? error.message : "Unknown"}` },
       { status: 500 }
     );
   }
@@ -129,7 +129,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
-      { error: `Error al eliminar: ${error instanceof Error ? error.message : "Unknown"}` },
+      { error: `Erreur lors de la suppression : ${error instanceof Error ? error.message : "Unknown"}` },
       { status: 500 }
     );
   }

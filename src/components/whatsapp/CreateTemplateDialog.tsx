@@ -220,7 +220,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
             </p>
             {!sequential && (
               <p className="text-[11px] text-destructive">
-                Las variables deben ir en orden desde {"{{1}}"} sin saltos.
+                Les variables doivent se suivre à partir de {"{{1}}"}, sans trou.
               </p>
             )}
           </div>

@@ -118,16 +118,16 @@ export const zernio: Conector = {
 
 function hintForZernioError(status: number, channel: Channel, code?: string): string | undefined {
   if (code === "TEMPLATE_REQUIRED") {
-    return "WhatsApp no permite texto libre fuera de la ventana de 24h: hay que mandar una plantilla aprobada.";
+    return "WhatsApp n’autorise pas le texte libre hors de la fenêtre de 24 h : il faut envoyer un modèle approuvé.";
   }
   if (status === 401 || status === 403) {
-    return "Zernio rechazo las credenciales. Revisa ZERNIO_API_KEY y que la cuenta siga conectada.";
+    return "Zernio a refusé les identifiants. Vérifiez ZERNIO_API_KEY et que le compte est toujours connecté.";
   }
   if (status === 429) {
-    return "Zernio o Meta estan limitando el envio. Reintenta en unos minutos.";
+    return "Zernio ou Meta limitent l’envoi. Réessayez dans quelques minutes.";
   }
   if (status === 400 && channel !== "whatsapp") {
-    return "Meta puede haber rechazado el mensaje por estar fuera de la ventana de 24h.";
+    return "Meta a peut-être refusé le message parce qu’il est hors de la fenêtre de 24 h.";
   }
   return undefined;
 }

@@ -44,18 +44,18 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
 
   if (!body.to) {
     return NextResponse.json(
-      { error: "Campo 'to' requerido (numero E.164, ej +5491134567890)" },
+      { error: "Champ 'to' obligatoire (numéro E.164, ex. +33612345678)" },
       { status: 400 }
     );
   }
   if (!body.text && !body.template) {
     return NextResponse.json(
-      { error: "Tenes que enviar 'text' (texto libre) o 'template' (plantilla)" },
+      { error: "Il faut envoyer 'text' (texte libre) ou 'template' (modèle)" },
       { status: 400 }
     );
   }
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "No hay conversacion abierta y WHATSAPP_PROVIDER=meta. Volve a poner el proveedor en zernio para poder iniciar conversaciones.",
+          "Aucune conversation ouverte et WHATSAPP_PROVIDER=meta. Remettez le fournisseur sur zernio pour pouvoir démarrer des conversations.",
       },
       { status: 409 }
     );
@@ -146,7 +146,7 @@ async function openConversation(args: {
     return NextResponse.json(
       {
         error: "Aucun compte WhatsApp connecté dans Zernio",
-        hint: "Conectala con `npm run zernio:whatsapp` o desde Ajustes > Canales.",
+        hint: "Connectez-le avec `npm run zernio:whatsapp` ou depuis Réglages > Canaux.",
       },
       { status: 409 }
     );
@@ -169,7 +169,7 @@ async function openConversation(args: {
         error: result.error.message,
         hint:
           result.error.code === "TEMPLATE_REQUIRED"
-            ? "La plantilla no fue aceptada. Revisá que esté APPROVED y que la cantidad de variables coincida."
+            ? "Le modèle n’a pas été accepté. Vérifiez qu’il est APPROVED et que le nombre de variables correspond."
             : undefined,
       },
       { status: 502 }
@@ -251,7 +251,7 @@ async function findOrCreateContactByPhone(
 
   await db.insert(activities).values({
     type: "note",
-    description: "Contacto creado al enviar primer WhatsApp saliente",
+    description: "Contact créé lors de l’envoi du premier WhatsApp sortant",
     contactId: created.id,
     createdAt: now,
   });

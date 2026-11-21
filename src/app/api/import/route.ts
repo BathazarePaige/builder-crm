@@ -11,13 +11,13 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "JSON invalido" }, { status: 400 });
+    return NextResponse.json({ error: "JSON invalide" }, { status: 400 });
   }
   const { contacts: contactList } = body;
 
   if (!Array.isArray(contactList) || contactList.length === 0) {
     return NextResponse.json(
-      { error: "Se requiere un array de contactos" },
+      { error: "Un tableau de contacts est requis" },
       { status: 400 }
     );
   }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   for (const contact of contactList) {
     if (!contact.name) {
       results.failed++;
-      results.errors.push(`Contacto sin nombre: ${JSON.stringify(contact)}`);
+      results.errors.push(`Contact sans nom : ${JSON.stringify(contact)}`);
       continue;
     }
 

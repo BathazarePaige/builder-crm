@@ -36,7 +36,7 @@ export async function autorizarSimulador(
   if (secreto && bearer === secreto) {
     const admin = (await listMembers({ onlyActive: true })).find((m) => m.role === "admin");
     if (admin) return { member: admin };
-    return { response: NextResponse.json({ error: "La instancia no tiene ningun administrador" }, { status: 409 }) };
+    return { response: NextResponse.json({ error: "L’instance n’a aucun administrateur" }, { status: 409 }) };
   }
   return requireAdmin();
 }
@@ -47,7 +47,7 @@ export async function crearConversacionSimulada(input: {
   member: TeamMember;
 }): Promise<{ conversationId: string; contactId: string }> {
   const tenantId = await resolveDefaultTenantId();
-  if (!tenantId) throw new Error("No existe el tenant default (correr las migraciones)");
+  if (!tenantId) throw new Error("Le tenant par défaut n’existe pas (lancez les migrations)");
 
   const uuid = crypto.randomUUID();
   const externalId = `sim:${uuid}`;
@@ -139,7 +139,7 @@ async function turnoDelAgente(conversationId: string): Promise<ResultadoSimulaci
     return await runAgentForConversation(conversationId);
   } catch (err) {
     const detalle = err instanceof Error ? err.message : String(err);
-    console.error("[simulador] el agente fallo:", detalle);
+    console.error("[simulador] échec de l’agent :", detalle);
     return { ok: false, reason: detalle.slice(0, 200) };
   }
 }

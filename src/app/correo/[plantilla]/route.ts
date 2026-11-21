@@ -22,7 +22,7 @@ export async function GET(
   const { plantilla } = await params;
   const nombre = plantilla.replace(/\.html$/, "");
   if (!esPlantilla(nombre)) {
-    return NextResponse.json({ error: "Plantilla desconocida" }, { status: 404 });
+    return NextResponse.json({ error: "Modèle inconnu" }, { status: 404 });
   }
   return new NextResponse(plantillaCorreo(nombre, urlPublica()), {
     headers: {
