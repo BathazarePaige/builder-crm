@@ -77,7 +77,7 @@ export function PipelineWorkspace({ pipelines, deals }: PipelineWorkspaceProps) 
   if (pipelines.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
-        No hay pipelines configurados. Recargá la página después de aplicar la migración.
+        Aucun pipeline configuré. Rechargez la page après avoir appliqué la migration.
       </div>
     );
   }

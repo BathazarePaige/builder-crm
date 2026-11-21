@@ -53,7 +53,7 @@ export function PipelineHeader({
   const handleCreate = async () => {
     const name = newName.trim();
     if (!name) {
-      toast.error("Nombre requerido");
+      toast.error("Nom obligatoire");
       return;
     }
     setCreating(true);
@@ -65,14 +65,14 @@ export function PipelineHeader({
       });
       if (!res.ok) throw new Error("error");
       const created = (await res.json()) as { id: string };
-      toast.success("Pipeline creado");
+      toast.success("Pipeline créé");
       setNewName("");
       setCreateOpen(false);
       router.refresh();
       // Select after refresh
       setTimeout(() => onSelect(created.id), 0);
     } catch {
-      toast.error("No se pudo crear el pipeline");
+      toast.error("Impossible de créer le pipeline");
     } finally {
       setCreating(false);
     }
@@ -89,7 +89,7 @@ export function PipelineHeader({
               }
             >
               <span className="truncate flex-1 text-left">
-                {selected?.name ?? "Sin pipeline"}
+                {selected?.name ?? "Aucun pipeline"}
               </span>
               <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
             </DropdownMenuTrigger>
@@ -117,13 +117,13 @@ export function PipelineHeader({
                 className="cursor-pointer text-primary-ink"
               >
                 <Plus className="h-4 w-4" />
-                Crear pipeline nuevo
+                Nouveau pipeline
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           <span className="text-sm text-muted-foreground tabular-nums">
-            {dealCount} {dealCount === 1 ? "oportunidad" : "oportunidades"}
+            {dealCount} {dealCount === 1 ? "affaire" : "affaires"}
           </span>
         </div>
 
@@ -138,7 +138,7 @@ export function PipelineHeader({
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
-              aria-label="Vista kanban"
+              aria-label="Vue kanban"
               title="Kanban"
             >
               <LayoutGrid className="h-3.5 w-3.5" />
@@ -152,8 +152,8 @@ export function PipelineHeader({
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
-              aria-label="Vista lista"
-              title="Lista"
+              aria-label="Vue liste"
+              title="Liste"
             >
               <List className="h-3.5 w-3.5" />
             </button>
@@ -162,8 +162,8 @@ export function PipelineHeader({
             type="button"
             onClick={onOpenEditor}
             className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card text-muted-foreground hover:bg-muted/40 hover:text-foreground transition-colors cursor-pointer"
-            aria-label="Editar pipeline"
-            title="Editar pipeline"
+            aria-label="Modifier le pipeline"
+            title="Modifier le pipeline"
           >
             <Settings2 className="h-4 w-4" />
           </button>
@@ -173,20 +173,20 @@ export function PipelineHeader({
       <Dialog open={createOpen} onOpenChange={(v) => !v && setCreateOpen(false)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Crear pipeline nuevo</DialogTitle>
+            <DialogTitle>Nouveau pipeline</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="new-pipeline-name">Nombre</Label>
+              <Label htmlFor="new-pipeline-name">Nom</Label>
               <Input
                 id="new-pipeline-name"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="Ej: Funnel redes sociales"
+                placeholder="Ex. : Tunnel réseaux sociaux"
                 autoFocus
               />
               <p className="text-xs text-muted-foreground">
-                Se creará con etapas por defecto: Prospecto · Contactado · Propuesta · Negociación · Cerrado Ganado · Cerrado Perdido.
+                Il sera créé avec les étapes par défaut : Prospect · Contacté · Proposition · Négociation · Gagné · Perdu.
               </p>
             </div>
             <div className="flex justify-end gap-2 pt-2">
@@ -195,14 +195,14 @@ export function PipelineHeader({
                 onClick={() => setCreateOpen(false)}
                 className="cursor-pointer"
               >
-                Cancelar
+                Annuler
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={creating}
                 className="cursor-pointer"
               >
-                {creating ? "Creando..." : "Crear"}
+                {creating ? "Création…" : "Créer"}
               </Button>
             </div>
           </div>

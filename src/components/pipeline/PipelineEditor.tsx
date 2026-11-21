@@ -96,16 +96,16 @@ export function PipelineEditor({
         body: JSON.stringify({ name: trimmed }),
       });
       if (!res.ok) throw new Error();
-      toast.success("Pipeline renombrado");
+      toast.success("Pipeline renommé");
       router.refresh();
     } catch {
-      toast.error("No se pudo renombrar");
+      toast.error("Impossible de renommer");
       setName(pipeline.name);
     }
   };
 
   const handleDeletePipeline = async () => {
-    if (!confirm(`¿Borrar el pipeline "${pipeline.name}"?`)) return;
+    if (!confirm(`Supprimer le pipeline « ${pipeline.name} » ?`)) return;
     try {
       const res = await fetch(`/api/pipelines/${pipeline.id}`, {
         method: "DELETE",
@@ -113,16 +113,16 @@ export function PipelineEditor({
       if (res.status === 409) {
         const body = (await res.json()) as { dealCount?: number };
         toast.error(
-          `No se puede borrar: tiene ${body.dealCount ?? 0} deals. Movélos primero.`
+          `Suppression impossible : il contient ${body.dealCount ?? 0} affaires. Déplacez-les d’abord.`
         );
         return;
       }
       if (!res.ok) throw new Error();
-      toast.success("Pipeline borrado");
+      toast.success("Pipeline supprimé");
       onPipelineDeleted();
       router.refresh();
     } catch {
-      toast.error("No se pudo borrar");
+      toast.error("Impossible de supprimer");
     }
   };
 
@@ -138,7 +138,7 @@ export function PipelineEditor({
       if (!res.ok) throw new Error();
       router.refresh();
     } catch {
-      toast.error("No se pudo renombrar la etapa");
+      toast.error("Impossible de renommer l’étape");
     }
   };
 
@@ -149,13 +149,13 @@ export function PipelineEditor({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pipelineId: pipeline.id,
-          name: "Nueva etapa",
+          name: "Nouvelle étape",
         }),
       });
       if (!res.ok) throw new Error();
       router.refresh();
     } catch {
-      toast.error("No se pudo agregar la etapa");
+      toast.error("Impossible d’ajouter l’étape");
     }
   };
 
@@ -165,7 +165,7 @@ export function PipelineEditor({
       if (res.status === 409) {
         const targetCandidate = stages.find((s) => s.id !== stage.id);
         if (!targetCandidate) {
-          toast.error("No hay otra etapa donde mover los deals");
+          toast.error("Aucune autre étape où déplacer les affaires");
           return;
         }
         setMoveDialog({ stage, targetStageId: targetCandidate.id });
@@ -174,7 +174,7 @@ export function PipelineEditor({
       if (!res.ok) throw new Error();
       router.refresh();
     } catch {
-      toast.error("No se pudo borrar la etapa");
+      toast.error("Impossible de supprimer l’étape");
     }
   };
 
@@ -203,11 +203,11 @@ export function PipelineEditor({
 
       const res = await fetch(`/api/stages/${stage.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
-      toast.success(`Etapa borrada y ${toMove.length} deals movidos`);
+      toast.success(`Étape supprimée, ${toMove.length} affaires déplacées`);
       setMoveDialog(null);
       router.refresh();
     } catch {
-      toast.error("No se pudo mover y borrar");
+      toast.error("Impossible de déplacer et supprimer");
     }
   };
 
@@ -235,7 +235,7 @@ export function PipelineEditor({
       router.refresh();
     } catch {
       setStages(stagesSnapshot.current);
-      toast.error("No se pudo reordenar");
+      toast.error("Impossible de réordonner");
     }
   };
 
@@ -244,13 +244,13 @@ export function PipelineEditor({
       <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
         <SheetContent className="w-full sm:max-w-md flex flex-col gap-0">
           <SheetHeader>
-            <SheetTitle>Editar pipeline</SheetTitle>
+            <SheetTitle>Modifier le pipeline</SheetTitle>
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-5">
             <div className="space-y-2">
               <Label htmlFor="pipeline-name" className="text-xs">
-                Nombre del pipeline
+                Nom du pipeline
               </Label>
               <div className="flex gap-2">
                 <Input
@@ -269,7 +269,7 @@ export function PipelineEditor({
                     variant="ghost"
                     size="icon"
                     onClick={handleDeletePipeline}
-                    aria-label="Borrar pipeline"
+                    aria-label="Supprimer le pipeline"
                     className="text-destructive hover:text-destructive cursor-pointer shrink-0"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -278,13 +278,13 @@ export function PipelineEditor({
               </div>
               {otherPipelines.length === 0 && (
                 <p className="text-xs text-muted-foreground">
-                  No podés borrar el último pipeline.
+                  Impossible de supprimer le dernier pipeline.
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs">Etapas</Label>
+              <Label className="text-xs">Étapes</Label>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -315,7 +315,7 @@ export function PipelineEditor({
                 className="w-full cursor-pointer mt-2"
               >
                 <Plus className="h-3.5 w-3.5" />
-                Agregar etapa
+                Ajouter une étape
               </Button>
             </div>
           </div>
@@ -328,14 +328,14 @@ export function PipelineEditor({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Mover deals antes de borrar</DialogTitle>
+            <DialogTitle>Déplacer les affaires avant de supprimer</DialogTitle>
           </DialogHeader>
           {moveDialog && (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                La etapa <span className="font-medium">{moveDialog.stage.name}</span>{" "}
-                tiene {dealsByStage[moveDialog.stage.id] ?? 0} deal(s). Elegí
-                a qué etapa moverlos:
+                L’étape <span className="font-medium">{moveDialog.stage.name}</span>{" "}
+                contient {dealsByStage[moveDialog.stage.id] ?? 0} affaire(s). Choisissez
+                l’étape de destination :
               </p>
               <Select
                 value={moveDialog.targetStageId}
@@ -365,13 +365,13 @@ export function PipelineEditor({
                   onClick={() => setMoveDialog(null)}
                   className="cursor-pointer"
                 >
-                  Cancelar
+                  Annuler
                 </Button>
                 <Button
                   onClick={confirmMoveAndDelete}
                   className="cursor-pointer"
                 >
-                  Mover y borrar
+                  Déplacer et supprimer
                 </Button>
               </div>
             </div>
@@ -415,7 +415,7 @@ function SortableStageRow({
         {...attributes}
         {...listeners}
         className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none"
-        aria-label="Reordenar"
+        aria-label="Réordonner"
       >
         <GripVertical className="h-4 w-4" />
       </button>
@@ -445,7 +445,7 @@ function SortableStageRow({
         variant="ghost"
         size="icon-sm"
         onClick={onDelete}
-        aria-label="Borrar etapa"
+        aria-label="Supprimer l’étape"
         className="text-muted-foreground hover:text-destructive cursor-pointer"
       >
         <Trash2 className="h-3.5 w-3.5" />
