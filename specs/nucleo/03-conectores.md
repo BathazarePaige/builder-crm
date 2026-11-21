@@ -95,4 +95,4 @@ Sin cambios: responde por `deliverMessage`.
 - Implementar el conector Cloud API completo (ingesta, conexion desde la UI, Tech
   Provider). Queda la interfaz, el `enviar` existente y la guia.
 - Mover la ingesta legacy de `/api/webhooks/whatsapp` al conector (se hace al
-  implementar Cloud API).
+  implementar Cloud API). Hecho en `12-whatsapp-directo.md`.

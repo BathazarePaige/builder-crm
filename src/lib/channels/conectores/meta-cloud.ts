@@ -1,32 +1,33 @@
 import "server-only";
+import { verifyWebhookSignature } from "@/lib/meta-whatsapp";
+import { idEventoMeta } from "../meta-cloud-eventos";
 import type { Conector, EstadoConector } from "../conector";
 
 /**
- * Conector Meta Cloud API (WhatsApp directo, sin Zernio). PARCIAL a proposito.
+ * Conector Meta Cloud API (WhatsApp directo, sin Zernio).
  *
- * Que hay:
  *  - `enviar`: texto y plantillas por Graph API (src/lib/meta-whatsapp.ts), con las
  *    credenciales de `whatsapp_accounts` o del entorno (WHATSAPP_*).
+ *  - `webhook`: firma `X-Hub-Signature-256` con WHATSAPP_APP_SECRET, id de evento por
+ *    `wamid` y la ingesta en `../meta-cloud-ingesta.ts` (import dinamico). La ruta es
+ *    `/api/webhooks/whatsapp`, que suma el GET del handshake del hub.
  *  - `estado`: que falta para operar.
  *
- * Que NO hay todavia (y es lo que implementa el futuro conector "Cloud API / Tech
- * Provider", ver ../README.md):
- *  - `webhook`: la ingesta sigue en la ruta legacy /api/webhooks/whatsapp, que solo
- *    procesa mensajes con WHATSAPP_PROVIDER=meta. Al implementarla aqui, esa ruta
- *    pasa a ser `manejarWebhook(metaCloud, req)` y se borra su logica propia.
- *  - Conexion desde la UI (Embedded Signup). Hoy: scripts/connect-whatsapp-account.ts.
+ * Los numeros se conectan desde Ajustes -> Canales (`/api/channels/meta`), que valida
+ * el token contra Graph y suscribe la app al WABA. Embedded Signup queda pendiente.
  *
- * Se activa como transporte de WhatsApp con WHATSAPP_PROVIDER=meta (valvula de escape).
+ * Se activa como transporte de WhatsApp con WHATSAPP_PROVIDER=meta. Con Zernio como
+ * proveedor, el webhook responde 200 y no ingesta (si no, el agente contestaria dos veces).
  */
 export const metaCloud: Conector = {
   id: "meta",
-  nombre: "Meta Cloud API (WhatsApp directo)",
+  nombre: "Meta Cloud API (WhatsApp direct)",
   canales: ["whatsapp"],
 
   async enviar(ctx, msg) {
     const to = ctx.conversation.participantId;
     if (!to) {
-      return { success: false, error: { message: "La conversacion no tiene telefono de destino" } };
+      return { success: false, error: { message: "La conversation n’a pas de numéro de destination" } };
     }
 
     const [{ sendTextMessage, sendTemplateMessage }, { getAccountByTenant }] = await Promise.all([
@@ -57,7 +58,18 @@ export const metaCloud: Conector = {
     return { success: true, externalId: result.messageId ?? null };
   },
 
-  // webhook: pendiente (ver cabecera). La ruta legacy /api/webhooks/whatsapp sigue activa.
+  webhook: {
+    verificar(rawBody, headers) {
+      return verifyWebhookSignature(rawBody, headers.get("x-hub-signature-256"));
+    },
+    idEvento(_rawBody, _headers, payload) {
+      return idEventoMeta(payload);
+    },
+    async procesar(payload) {
+      const { procesarEventoMeta } = await import("../meta-cloud-ingesta");
+      return procesarEventoMeta(payload);
+    },
+  },
 
   async estado(): Promise<EstadoConector> {
     const activo = (process.env.WHATSAPP_PROVIDER || "zernio").toLowerCase() === "meta";
@@ -65,18 +77,15 @@ export const metaCloud: Conector = {
     let cuentas: EstadoConector["cuentas"] = [];
 
     try {
-      const { getPrimaryAccount } = await import("@/lib/whatsapp-accounts");
-      const cuenta = await getPrimaryAccount();
-      if (cuenta) {
-        cuentas = [
-          {
-            id: cuenta.id,
-            canal: "whatsapp",
-            nombre: cuenta.displayPhone ?? cuenta.phoneNumberId,
-            estado: cuenta.accessToken ? "active" : "sin token",
-          },
-        ];
-      }
+      const { listarCuentasWhatsapp } = await import("@/lib/whatsapp-accounts");
+      cuentas = (await listarCuentasWhatsapp())
+        .filter((c) => c.status === "active")
+        .map((c) => ({
+          id: c.id,
+          canal: "whatsapp" as const,
+          nombre: c.displayPhone ?? c.phoneNumberId,
+          estado: c.tieneToken ? "active" : "sin token",
+        }));
     } catch {
       /* sin base o sin tabla: se evalua solo por entorno */
     }
@@ -90,14 +99,16 @@ export const metaCloud: Conector = {
 
     const notas = [
       activo
-        ? "Activo como transporte de WhatsApp (WHATSAPP_PROVIDER=meta). La ingesta entra por /api/webhooks/whatsapp."
-        : "Inactivo: WhatsApp va por Zernio. Para usarlo, WHATSAPP_PROVIDER=meta.",
-      "Conector parcial: envio y estado. El conector Cloud API / Tech Provider completo esta documentado en src/lib/channels/conectores/README.md.",
+        ? "Actif comme transport WhatsApp (WHATSAPP_PROVIDER=meta). Les messages arrivent par /api/webhooks/whatsapp."
+        : "Inactif : WhatsApp passe par Zernio. Pour l’utiliser, WHATSAPP_PROVIDER=meta.",
     ];
+    if (activo && cuentas.length === 0) {
+      notas.push("Aucun numéro connecté : connecte-le plus bas, dans WhatsApp direct.");
+    }
 
     return {
       id: "meta",
-      nombre: "Meta Cloud API (WhatsApp directo)",
+      nombre: "Meta Cloud API (WhatsApp direct)",
       configurado: faltan.length === 0,
       faltan,
       cuentas,
@@ -110,13 +121,13 @@ export const metaCloud: Conector = {
 function hintForMetaError(code: number | undefined): string | undefined {
   switch (code) {
     case 131030:
-      return "El numero no esta en la lista de destinatarios permitidos de la app de Meta.";
+      return "Le numéro n’est pas dans la liste des destinataires autorisés de l’app Meta.";
     case 131047:
-      return "Pasaron mas de 24h desde el ultimo mensaje del cliente: hay que usar una plantilla aprobada.";
+      return "Plus de 24 h depuis le dernier message du client : il faut utiliser un modèle approuvé.";
     case 132000:
-      return "La plantilla no coincide con la cantidad de variables esperadas.";
+      return "Le modèle ne correspond pas au nombre de variables attendu.";
     case 190:
-      return "El token de acceso de Meta expiro.";
+      return "Le jeton d’accès Meta a expiré.";
     default:
       return undefined;
   }

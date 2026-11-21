@@ -66,6 +66,9 @@ export const esquemaEnv = z.object({
   WHATSAPP_APP_SECRET: opcional,
   WHATSAPP_WEBHOOK_VERIFY_TOKEN: opcional,
   WHATSAPP_API_VERSION: opcional,
+  META_APP_ID: opcional,
+  META_ES_CONFIG_ID: opcional,
+  WHATSAPP_TWO_STEP_PIN: opcional,
 
   // --- Push (Web Push / VAPID) ---
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: opcional,
@@ -92,7 +95,7 @@ export function getEnv(): Env {
     const detalle = resultado.error.issues
       .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
       .join("\n");
-    throw new Error(`Variables de entorno invalidas o faltantes:\n${detalle}\nRevisa .env.example.`);
+    throw new Error(`Variables d’environnement invalides ou manquantes :\n${detalle}\nVoir .env.example.`);
   }
   cache = resultado.data;
   return cache;

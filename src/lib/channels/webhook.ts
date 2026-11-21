@@ -27,13 +27,13 @@ const MAX_ATTEMPTS = 3;
 
 export async function manejarWebhook(conector: Conector, request: NextRequest): Promise<NextResponse> {
   if (!conector.webhook) {
-    return NextResponse.json({ error: "Este conector no recibe webhooks" }, { status: 404 });
+    return NextResponse.json({ error: "Ce connecteur ne reçoit pas de webhooks" }, { status: 404 });
   }
 
   const rawBody = await request.text();
 
   if (!conector.webhook.verificar(rawBody, request.headers)) {
-    console.warn(`[webhook ${conector.id}] firma invalida`);
+    console.warn(`[webhook ${conector.id}] signature invalide`);
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
@@ -98,7 +98,7 @@ export async function barrerWebhook(conector: Conector, request: NextRequest): P
     if (row.attempts >= MAX_ATTEMPTS) {
       await db
         .update(webhookEvents)
-        .set({ status: "failed", error: `sin procesar tras ${row.attempts} intentos`, processedAt: new Date() })
+        .set({ status: "failed", error: `non traite apres ${row.attempts} tentatives`, processedAt: new Date() })
         .where(eq(webhookEvents.eventId, row.eventId));
       continue;
     }
@@ -129,6 +129,9 @@ async function ejecutarEvento(conector: Conector, eventId: string, payload: unkn
         .update(webhookEvents)
         .set({ attempts: (await intentos(eventId)) + 1, error: result.reason ?? null })
         .where(eq(webhookEvents.eventId, eventId));
+      // Lo que si entro en este intento ya encolo jobs: dispararlos igual. El reintento
+      // no los vuelve a crear (el mensaje ya existe y la ingesta lo ve duplicado).
+      await dispararJobs(conector, result.jobIds, headers);
       return;
     }
 
@@ -137,18 +140,21 @@ async function ejecutarEvento(conector: Conector, eventId: string, payload: unkn
       .set({ status: result.status, error: result.reason ?? null, processedAt: new Date() })
       .where(eq(webhookEvents.eventId, eventId));
 
-    if (result.jobIds.length > 0) {
-      const { triggerAgentWorker, getWorkerBaseUrl } = await import("@/lib/agent/trigger");
-      await triggerAgentWorker(result.jobIds, getWorkerBaseUrl(headers), `${conector.id}-webhook`);
-    }
+    await dispararJobs(conector, result.jobIds, headers);
   } catch (err) {
-    console.error(`[webhook ${conector.id}] error procesando evento`, eventId, err);
+    console.error(`[webhook ${conector.id}] erreur pendant le traitement de l'evenement`, eventId, err);
     await db
       .update(webhookEvents)
-      .set({ status: "failed", error: err instanceof Error ? err.message : "error desconocido", processedAt: new Date() })
+      .set({ status: "failed", error: err instanceof Error ? err.message : "erreur inconnue", processedAt: new Date() })
       .where(eq(webhookEvents.eventId, eventId))
       .catch(() => {});
   }
+}
+
+async function dispararJobs(conector: Conector, jobIds: string[], headers: Headers): Promise<void> {
+  if (jobIds.length === 0) return;
+  const { triggerAgentWorker, getWorkerBaseUrl } = await import("@/lib/agent/trigger");
+  await triggerAgentWorker(jobIds, getWorkerBaseUrl(headers), `${conector.id}-webhook`);
 }
 
 async function intentos(eventId: string): Promise<number> {

@@ -13,6 +13,7 @@
 const ENDPOINTS = [
   "/api/agent/process",
   "/api/webhooks/zernio",
+  "/api/webhooks/whatsapp",
   "/api/automations/process",
 ];
 
@@ -25,7 +26,7 @@ export function iniciarBarridos() {
 
   const secreto = process.env.AGENT_WORKER_SECRET;
   if (!secreto) {
-    console.warn("[barridos] AGENT_WORKER_SECRET vacio: los barridos no arrancan");
+    console.warn("[barridos] AGENT_WORKER_SECRET vide : les balayages ne demarrent pas");
     return;
   }
 
@@ -41,7 +42,7 @@ export function iniciarBarridos() {
         });
         if (!res.ok) console.warn(`[barridos] ${ruta} -> ${res.status}`);
       } catch (err) {
-        console.warn(`[barridos] ${ruta} fallo:`, err instanceof Error ? err.message : err);
+        console.warn(`[barridos] ${ruta} a echoue :`, err instanceof Error ? err.message : err);
       }
     }
   };
@@ -51,5 +52,5 @@ export function iniciarBarridos() {
   primero.unref?.();
   globalThis.__builderBarridos = setInterval(correr, minutos * 60_000);
   globalThis.__builderBarridos.unref?.();
-  console.log(`[barridos] activos cada ${minutos} min`);
+  console.log(`[barridos] actifs toutes les ${minutos} min`);
 }

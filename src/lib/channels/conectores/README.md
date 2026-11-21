@@ -6,7 +6,7 @@ conocen la interfaz `Conector` (`../conector.ts`): `enviar`, `webhook` y `estado
 | Conector | Archivo | Canales | Estado |
 |---|---|---|---|
 | Zernio | `zernio.ts` | WhatsApp, Instagram, Messenger | Completo. Camino normal. |
-| Meta Cloud API (directo) | `meta-cloud.ts` | WhatsApp | Parcial: `enviar` + `estado`. La ingesta vive en la ruta legacy `/api/webhooks/whatsapp`. |
+| Meta Cloud API (directo) | `meta-cloud.ts` | WhatsApp | Completo con `WHATSAPP_PROVIDER=meta`: `enviar`, `webhook` (`/api/webhooks/whatsapp`) y `estado`. Numero conectado desde Ajustes. |
 | Simulador | `simulador.ts` | todos (de prueba) | Guarda en vez de enviar; para demos y autoverificacion. |
 
 ## Como fluye un mensaje
@@ -22,32 +22,46 @@ conocen la interfaz `Conector` (`../conector.ts`): `enviar`, `webhook` y `estado
   `updateMessageStatus`). `GET` con `AGENT_WORKER_SECRET` barre lo que quedo colgado.
 - **Estado**: `GET /api/channels` devuelve `estado()` de cada conector.
 
-## Agregar el conector de la API oficial de WhatsApp (Cloud API / Tech Provider)
+## WhatsApp directo (Meta Cloud API)
 
-No esta implementado a proposito (brief, requisito 3). Cuando toque:
+Spec: `specs/nucleo/12-whatsapp-directo.md`.
 
-1. **Completar `meta-cloud.ts`** (o crear `cloud-api.ts` con `id: "meta"`):
-   - `webhook.verificar`: `X-Hub-Signature-256` con `WHATSAPP_APP_SECRET`
-     (`verifyWebhookSignature` de `src/lib/meta-whatsapp.ts` ya lo hace).
-   - `webhook.idEvento`: el `wamid` del mensaje o el `id` del status; `null` si no hay
-     (el nucleo usa el hash del cuerpo).
-   - `webhook.procesar`: recorrer `entry[].changes[].value.messages[]` y `statuses[]`,
-     resolver la cuenta por `metadata.phone_number_id` (`whatsapp_accounts`), y llamar
-     a las funciones de `../ingest.ts`. La logica de referencia esta en
-     `src/app/api/webhooks/whatsapp/route.ts` (`handleInboundMessage`,
-     `handleStatusUpdate`): migrarla aqui y dejar esa ruta como
-     `manejarWebhook(metaCloud, req)` mas el `GET` de verificacion del hub
-     (`hub.challenge`).
-2. **Conexion desde la UI**: Embedded Signup de Meta (o pegar token + ids) que escriba
-   en `whatsapp_accounts`; hoy existe solo `scripts/connect-whatsapp-account.ts`.
-3. **Registrar**: ya esta en `index.ts`. Si se crea otro id, agregar el valor a
-   `PROVIDERS` en `../types.ts`.
-4. **Tech Provider**: la instancia del cliente recibe su token desde la plataforma de la
-   agencia; el webhook se enruta con `override_callback_uri` por WABA hacia
-   `https://<instancia>/api/webhooks/whatsapp`. Mismo conector, otra forma de obtener
-   credenciales.
-5. **Probar**: `probar-instancia` ya cubre bandeja, agente y pipeline con el simulador;
-   para Cloud API, mandar un mensaje real al numero de prueba y ver que entra.
+- **Entra**: `/api/webhooks/whatsapp` es `manejarWebhook(metaCloud, req)` como Zernio;
+  el `GET` con `hub.mode` responde el handshake del hub y sin el hace el barrido.
+  `verificar` usa `X-Hub-Signature-256` con `WHATSAPP_APP_SECRET`; `idEvento` es
+  `meta:<wamid>` para mensajes y `meta:<wamid>:<estado>` para estados (si no, el `read`
+  se descartaria como duplicado del `delivered`). La lectura del payload es pura
+  (`../meta-cloud-eventos.ts`) y la persistencia (`../meta-cloud-ingesta.ts`) usa
+  `ingest.ts`, igual que Zernio. Solo ingesta numeros activos de `whatsapp_accounts`
+  y solo con `WHATSAPP_PROVIDER=meta` (si no, el agente contestaria dos veces).
+- **Conectar**: Ajustes -> Canales -> WhatsApp direct (solo admin). El boton abre un
+  asistente (`src/components/settings/whatsapp/`): elegir el caso (app WhatsApp Business
+  en coexistencia, numero nuevo, o credenciales a mano), una explicacion de lo que va a
+  pedir Meta y un guia paso a paso al lado de la ventana de Meta (Embedded Signup,
+  `FB.login` con `config_id`). El navegador manda el `code` y los ids que Meta anuncia
+  por `postMessage` a `/api/channels/meta/embedded`, que cambia el code por el token con
+  `WHATSAPP_APP_SECRET`, registra el numero si es nuevo (PIN de 6 digitos), suscribe la
+  app al WABA y guarda (`meta-cloud-alta.ts`). La carga manual va por `/api/channels/meta`.
+  El token nunca vuelve al navegador. Variables: `META_APP_ID`, `META_ES_CONFIG_ID`.
+- **Coexistencia**: lo que el negocio contesta desde el celular llega en
+  `smb_message_echoes` y entra como saliente (sin disparar al agente).
+- **Lado Meta** (una vez por app): app de tipo Business con WhatsApp y Facebook Login
+  for Business; una configuracion de Embedded Signup (da el config id); el dominio de la
+  instancia en "Allowed domains" del login; el webhook de la app apuntando a
+  `/api/webhooks/whatsapp` con los campos `messages` y `smb_message_echoes`. Para conectar
+  numeros de OTRAS empresas la app tiene que ser Tech Provider (verificacion del negocio
+  y acceso avanzado a `whatsapp_business_management` y `whatsapp_business_messaging`);
+  sin eso solo funciona con cuentas que administran la app.
+- **SaaS (una app de Meta, una instancia por cliente)**: al suscribir la app al WABA se
+  manda `override_callback_uri` = `APP_BASE_URL/api/webhooks/whatsapp` con
+  `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, asi los mensajes de cada numero llegan a SU instancia
+  aunque la app tenga una sola URL. Todas las instancias comparten `META_APP_ID`,
+  `META_ES_CONFIG_ID` y `WHATSAPP_APP_SECRET` (la firma la hace la app). Sin https o sin
+  verify token no se manda y el alta lo avisa.
+- **Pendiente**: sincronizar contactos e historial de la app (`smb_app_data`) y
+  descargar medios.
+- **Probar**: mandar un mensaje real al numero de prueba de Meta y ver que entra en la
+  bandeja; `probar-instancia` sigue cubriendo bandeja, agente y pipeline.
 
 Nada de esto toca la bandeja ni el agente: hablan con `Conector`, no con Meta.
 

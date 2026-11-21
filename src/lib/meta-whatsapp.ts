@@ -41,7 +41,7 @@ function resolveCreds(
   }
   if (PHONE_NUMBER_ID && ACCESS_TOKEN) {
     console.warn(
-      "[meta-whatsapp] sin cuenta resuelta, usando credenciales de env (fallback)"
+      "[meta-whatsapp] aucun compte resolu, identifiants de l'environnement utilises (secours)"
     );
     return { phoneNumberId: PHONE_NUMBER_ID, accessToken: ACCESS_TOKEN };
   }
@@ -73,7 +73,7 @@ export async function sendTextMessage(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin credenciales de WhatsApp (ni cuenta ni env)" },
+      error: { message: "Aucun identifiant WhatsApp (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -123,7 +123,7 @@ export async function sendTemplateMessage(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin credenciales de WhatsApp (ni cuenta ni env)" },
+      error: { message: "Aucun identifiant WhatsApp (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -196,7 +196,7 @@ function resolveWabaCreds(
   }
   if (WABA_ID && ACCESS_TOKEN) {
     console.warn(
-      "[meta-whatsapp] sin cuenta resuelta para plantillas, usando env (fallback)"
+      "[meta-whatsapp] aucun compte resolu pour les modeles, variables d'environnement utilisees (secours)"
     );
     return { wabaId: WABA_ID, accessToken: ACCESS_TOKEN };
   }
@@ -211,7 +211,7 @@ export async function createTemplate(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin WABA/token para crear plantilla (ni cuenta ni env)" },
+      error: { message: "Aucun WABA ni jeton pour créer le modèle (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -262,7 +262,7 @@ export async function getTemplates(
   if (!creds) {
     return {
       success: false,
-      error: { message: "Sin WABA/token para listar plantillas (ni cuenta ni env)" },
+      error: { message: "Aucun WABA ni jeton pour lister les modèles (ni compte connecté ni variables d’environnement)" },
     };
   }
 
@@ -293,20 +293,21 @@ export async function getTemplates(
  */
 export function verifyWebhookSignature(
   rawBody: string,
-  signatureHeader: string | null
+  signatureHeader: string | null | undefined,
+  secret: string = APP_SECRET
 ): boolean {
-  if (!APP_SECRET) {
-    console.warn("[meta-whatsapp] WHATSAPP_APP_SECRET no configurado — firma no validada");
+  if (!secret) {
+    console.warn("[meta-whatsapp] WHATSAPP_APP_SECRET non defini : signature non verifiee");
     return false;
   }
   if (!signatureHeader) return false;
 
   const expected = crypto
-    .createHmac("sha256", APP_SECRET)
+    .createHmac("sha256", secret)
     .update(rawBody)
     .digest("hex");
 
-  const provided = signatureHeader.replace(/^sha256=/, "");
+  const provided = signatureHeader.replace(/^sha256=/, "").toLowerCase();
 
   if (expected.length !== provided.length) return false;
   try {
@@ -316,6 +317,127 @@ export function verifyWebhookSignature(
     );
   } catch {
     return false;
+  }
+}
+
+// ============================================================
+// Conexion de un numero desde Ajustes
+// ============================================================
+
+export interface NumeroMeta {
+  id: string;
+  displayPhone: string | null;
+  verifiedName: string | null;
+}
+
+/**
+ * Comprueba que el token sirve para ese phone_number_id y trae el numero visible.
+ * Es la validacion antes de guardar: un token o un id equivocados fallan aca, con el
+ * mensaje de Graph, y no el dia que el agente intenta contestar.
+ */
+export async function obtenerNumeroMeta(
+  phoneNumberId: string,
+  accessToken: string
+): Promise<{ success: true; numero: NumeroMeta } | { success: false; error: MetaError }> {
+  const url = `${GRAPH_BASE}/${encodeURIComponent(phoneNumberId)}?fields=display_phone_number,verified_name`;
+  try {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error) {
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
+    }
+    return {
+      success: true,
+      numero: {
+        id: String(json.id ?? phoneNumberId),
+        displayPhone: json.display_phone_number ?? null,
+        verifiedName: json.verified_name ?? null,
+      },
+    };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
+  }
+}
+
+/**
+ * Suscribe la app de Meta al WABA para que sus mensajes lleguen al webhook. Sin esto el
+ * numero envia pero no recibe, y no hay ningun error que lo avise. Idempotente.
+ */
+export async function suscribirAppAWaba(
+  wabaId: string,
+  accessToken: string,
+  /**
+   * Varias instancias con UNA sola app de Meta (modelo SaaS / Tech Provider): la app
+   * tiene una sola URL de webhook, asi que cada WABA declara la suya y Meta le manda
+   * ahi los mensajes de ese numero. Meta verifica la URL con el GET del hub antes de
+   * aceptarla. Sin esto, todos los mensajes van a la URL de la app.
+   */
+  webhookPropio?: { url: string; verifyToken: string } | null
+): Promise<{ success: boolean; error?: MetaError }> {
+  const url = `${GRAPH_BASE}/${encodeURIComponent(wabaId)}/subscribed_apps`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify(
+        webhookPropio ? { override_callback_uri: webhookPropio.url, verify_token: webhookPropio.verifyToken } : {}
+      ),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error || json.success === false) {
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
+  }
+}
+
+/**
+ * Embedded Signup: cambia el `code` que devuelve FB.login por el token del negocio.
+ * El code vale 30 segundos y solo se puede cambiar una vez; el secreto de la app no sale
+ * del servidor. Sin `redirect_uri`: con el SDK de JavaScript Meta no lo pide.
+ */
+export async function intercambiarCodigoMeta(
+  code: string,
+  appId: string,
+  appSecret: string
+): Promise<{ success: true; accessToken: string } | { success: false; error: MetaError }> {
+  const params = new URLSearchParams({ client_id: appId, client_secret: appSecret, code });
+  try {
+    const res = await fetch(`${GRAPH_BASE}/oauth/access_token?${params}`);
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error || !json.access_token) {
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
+    }
+    return { success: true, accessToken: String(json.access_token) };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
+  }
+}
+
+/**
+ * Registra un numero NUEVO en Cloud API (sin esto envia error 133010 "not registered").
+ * No se llama en coexistencia: ese numero ya esta registrado en la app del celular.
+ */
+export async function registrarNumeroMeta(
+  phoneNumberId: string,
+  accessToken: string,
+  pin: string
+): Promise<{ success: boolean; error?: MetaError }> {
+  try {
+    const res = await fetch(`${GRAPH_BASE}/${encodeURIComponent(phoneNumberId)}/register`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ messaging_product: "whatsapp", pin }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error || json.success === false) {
+      return { success: false, error: json.error ?? { message: `Graph a repondu ${res.status}` } };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: { message: err instanceof Error ? err.message : "Network error" } };
   }
 }
 
