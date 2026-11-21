@@ -89,10 +89,10 @@ export const zernio: Conector = {
 
     const notas: string[] = [];
     if (!hasZernioWebhookSecret()) {
-      notas.push("Sin ZERNIO_WEBHOOK_SECRET el webhook rechaza todo (fail-closed): no entran mensajes.");
+      notas.push("Sans ZERNIO_WEBHOOK_SECRET, le webhook refuse tout : aucun message n’entre.");
     }
     if (!process.env.ZERNIO_PROFILE_ID) {
-      notas.push("Sin ZERNIO_PROFILE_ID se usa el perfil Default de la cuenta de Zernio.");
+      notas.push("Sans ZERNIO_PROFILE_ID, le profil Default du compte Zernio est utilisé.");
     }
 
     let cuentas: EstadoConector["cuentas"] = [];
@@ -108,7 +108,7 @@ export const zernio: Conector = {
             estado: a.status,
           }));
       } catch {
-        notas.push("No se pudieron listar las cuentas conectadas.");
+        notas.push("Impossible de lister les comptes connectés.");
       }
     }
 

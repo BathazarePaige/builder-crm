@@ -11,7 +11,7 @@ import type { Conector, EstadoConector } from "../conector";
  */
 export const simulador: Conector = {
   id: "simulador",
-  nombre: "Simulador",
+  nombre: "Simulateur",
   canales: ["whatsapp", "instagram", "facebook"],
 
   async enviar(_ctx, msg) {
@@ -25,7 +25,7 @@ export const simulador: Conector = {
   async estado(): Promise<EstadoConector> {
     return {
       id: "simulador",
-      nombre: "Simulador",
+      nombre: "Simulateur",
       configurado: true,
       faltan: [],
       cuentas: [],

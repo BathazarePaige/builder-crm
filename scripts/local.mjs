@@ -168,7 +168,7 @@ try {
   if (yaEsta.rows.length === 0) {
     await db.query(
       `insert into auth.users (id, email, raw_user_meta_data)
-       values ($1, $2, '{"full_name":"Cuenta demo"}'::jsonb)
+       values ($1, $2, '{"full_name":"Compte démo"}'::jsonb)
        on conflict (id) do nothing`,
       [ID_ADMIN, EMAIL_ADMIN]
     );
@@ -179,7 +179,7 @@ try {
       // tenga con quien entrar.
       await db.query(
         `insert into public.team_members (id, email, name, role, active)
-         values ($1, $2, 'Cuenta demo', 'admin', true) on conflict (id) do nothing`,
+         values ($1, $2, 'Compte démo', 'admin', true) on conflict (id) do nothing`,
         [ID_ADMIN, EMAIL_ADMIN]
       );
     }

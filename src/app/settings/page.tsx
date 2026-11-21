@@ -70,7 +70,7 @@ export default function SettingsPage() {
               ))}
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              Las etapas se editan desde el{" "}
+              Les étapes se modifient depuis le{" "}
               <Link href="/pipeline" className="text-primary-ink hover:underline">
                 Pipeline
               </Link>
