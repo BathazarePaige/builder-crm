@@ -39,7 +39,7 @@ function CustomTooltip({
   const datum = payload[0].payload;
   return (
     <div className="rounded-lg border border-border bg-card shadow-lg px-3 py-2 text-[12px]">
-      <p className="font-semibold mb-1" style={{ color: datum.color }}>
+      <p className="font-semibold mb-1 text-foreground">
         {datum.name}
       </p>
       <div className="space-y-0.5 text-muted-foreground">
@@ -101,9 +101,9 @@ export function PipelineChart({ data }: PipelineChartProps) {
                 content={<CustomTooltip />}
                 cursor={{ fill: "var(--muted)", opacity: 0.4 }}
               />
-              <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+              <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={56}>
                 {data.map((entry, index) => (
-                  <Cell key={index} fill={entry.color} />
+                  <Cell key={index} fill="var(--chart-1)" />
                 ))}
               </Bar>
             </BarChart>

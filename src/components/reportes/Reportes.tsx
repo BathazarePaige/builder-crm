@@ -117,7 +117,7 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
               r === dias ? "border-primary-ink bg-primary/10 text-primary-ink font-medium" : "border-border text-muted-foreground hover:text-foreground"
             )}
           >
-            Ultimos {r} dias
+            {r} derniers jours
           </Link>
         ))}
       </div>
@@ -174,8 +174,8 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
                   <YAxis tick={EJE} tickLine={false} axisLine={false} width={40} allowDecimals={false} />
                   <Tooltip content={<TooltipBox />} cursor={{ stroke: "var(--viz-axis)" }} />
                   <Legend iconType="plainline" wrapperStyle={{ fontSize: 12 }} />
-                  <Line type="monotone" name="Entrantes" dataKey="entrantes" stroke="var(--viz-1)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
-                  <Line type="monotone" name="Salientes" dataKey="salientes" stroke="var(--viz-2)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
+                  <Line type="monotone" name="Reçus" dataKey="entrantes" stroke="var(--viz-1)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
+                  <Line type="monotone" name="Envoyés" dataKey="salientes" stroke="var(--viz-2)" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--card)" }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -259,7 +259,7 @@ export function Reportes({ reporte }: { reporte: Reporte }) {
                     }}
                     cursor={{ fill: "var(--muted)", opacity: 0.4 }}
                   />
-                  <Bar name="Operaciones" dataKey="cantidad" radius={[0, 4, 4, 0]}>
+                  <Bar name="Affaires" dataKey="cantidad" radius={[0, 4, 4, 0]}>
                     {reporte.embudo.map((e) => (
                       <Cell key={e.etapa} fill={e.color} />
                     ))}

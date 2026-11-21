@@ -21,8 +21,8 @@ interface Props {
 }
 
 const OPS = [
-  { value: "eq", label: "es" },
-  { value: "neq", label: "no es" },
+  { value: "eq", label: "est" },
+  { value: "neq", label: "n’est pas" },
 ];
 
 /**

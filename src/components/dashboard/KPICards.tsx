@@ -17,8 +17,6 @@ interface KPI {
   title: string;
   value: string;
   icon: typeof Users;
-  iconClass: string;
-  watermarkClass: string;
   /** Solo cuando hay una comparacion real; nunca un numero inventado. */
   delta?: { pct: number | null; label: string };
   sparkline?: number[];
@@ -35,8 +33,6 @@ export function KPICards({ stats, contactos }: KPICardsProps) {
       title: "Contacts",
       value: stats.totalContacts.toLocaleString("fr-FR"),
       icon: Users,
-      iconClass: "bg-sky-50 text-sky-600",
-      watermarkClass: "text-sky-500/8",
       delta: contactos
         ? { pct: deltaContactos, label: `${contactos.actual} nouveaux en 7 jours` }
         : undefined,
@@ -46,27 +42,21 @@ export function KPICards({ stats, contactos }: KPICardsProps) {
       title: "Affaires en cours",
       value: stats.activeDeals.toLocaleString("fr-FR"),
       icon: Briefcase,
-      iconClass: "bg-violet-50 text-violet-600",
-      watermarkClass: "text-violet-500/8",
     },
     {
       title: "Valeur du pipeline",
       value: formatCurrency(stats.totalPipelineValue),
       icon: DollarSign,
-      iconClass: "bg-emerald-50 text-emerald-600",
-      watermarkClass: "text-emerald-500/8",
     },
     {
       title: "Taux de conversion",
       value: `${stats.conversionRate}%`,
       icon: TrendingUp,
-      iconClass: "bg-amber-50 text-amber-600",
-      watermarkClass: "text-amber-500/8",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card) => {
         const pct = card.delta?.pct ?? null;
         const isPositive = (pct ?? 0) >= 0;
@@ -74,27 +64,18 @@ export function KPICards({ stats, contactos }: KPICardsProps) {
         return (
           <Card
             key={card.title}
-            className="surface-card relative overflow-hidden hover:border-border transition-colors group"
+            className="surface-card relative overflow-hidden gap-3"
           >
-            <card.icon
-              aria-hidden
-              className={cn(
-                "absolute -bottom-4 -right-4 h-24 w-24 group-hover:scale-110 transition-transform duration-300",
-                card.watermarkClass,
-              )}
-            />
             <CardHeader className="flex flex-row items-center justify-between pb-2 relative">
               <CardTitle className="text-[13px] font-medium text-muted-foreground">
                 {card.title}
               </CardTitle>
-              <div className={cn("rounded-lg p-2", card.iconClass)}>
-                <card.icon className="h-4 w-4" />
-              </div>
+              <card.icon aria-hidden className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent className="relative">
               <div className="flex items-end justify-between gap-3">
                 <div className="space-y-1.5 min-w-0">
-                  <div className="text-3xl font-semibold tracking-tight font-heading truncate">
+                  <div className="text-[28px] leading-none font-semibold tracking-tight tabular-nums truncate">
                     {card.value}
                   </div>
                   {card.delta && (
@@ -117,7 +98,7 @@ export function KPICards({ stats, contactos }: KPICardsProps) {
                       data={card.sparkline.map((v, i) => ({ i, v }))}
                       margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
                     >
-                      <Line type="monotone" dataKey="v" stroke="var(--primary)" strokeWidth={1.75} dot={false} />
+                      <Line type="monotone" dataKey="v" stroke="var(--primary-ink)" strokeWidth={1.75} dot={false} />
                     </LineChart>
                   </div>
                 )}

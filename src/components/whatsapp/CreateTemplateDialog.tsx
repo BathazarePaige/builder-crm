@@ -34,6 +34,7 @@ interface Props {
 }
 
 const LANGUAGES = [
+  { code: "fr", label: "Français" },
   { code: "es", label: "Espagnol" },
   { code: "es_AR", label: "Espagnol (Argentine)" },
   { code: "es_MX", label: "Espagnol (Mexique)" },
@@ -43,7 +44,7 @@ const LANGUAGES = [
 export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("UTILITY");
-  const [language, setLanguage] = useState("es");
+  const [language, setLanguage] = useState("fr");
   const [bodyText, setBodyText] = useState("");
   const [examples, setExamples] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -54,7 +55,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
   function reset() {
     setName("");
     setCategory("UTILITY");
-    setLanguage("es");
+    setLanguage("fr");
     setBodyText("");
     setExamples([]);
   }
@@ -210,7 +211,7 @@ export function CreateTemplateDialog({ open, onClose, onCreated }: Props) {
               id="tpl-body"
               value={bodyText}
               onChange={(e) => setBodyText(e.target.value)}
-              placeholder={"Hola {{1}}, te recordamos tu visita a {{2}}."}
+              placeholder={"Bonjour {{1}}, nous vous rappelons votre visite à {{2}}."}
               rows={4}
             />
             <p className="text-[11px] text-muted-foreground">

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, Users, FileText, Clock } from "lucide-react";
 import { formatDistanceToNow, isToday, isYesterday, differenceInDays } from "date-fns";
-import { es } from "date-fns/locale";
+import { fr } from "date-fns/locale";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 
@@ -110,7 +110,7 @@ export function RecentActivity({ activities }: RecentActivityProps) {
                             <span className="mx-1.5 text-border">·</span>
                             {formatDistanceToNow(activity.createdAtDate, {
                               addSuffix: true,
-                              locale: es,
+                              locale: fr,
                             })}
                           </p>
                         </div>
