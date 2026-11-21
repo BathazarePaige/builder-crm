@@ -52,9 +52,14 @@ Spec: `specs/nucleo/12-whatsapp-directo.md`.
   numeros de OTRAS empresas la app tiene que ser Tech Provider (verificacion del negocio
   y acceso avanzado a `whatsapp_business_management` y `whatsapp_business_messaging`);
   sin eso solo funciona con cuentas que administran la app.
-- **Pendiente**: Tech Provider multi-instancia (la instancia recibe su token desde la
-  plataforma de la agencia y el webhook se enruta con `override_callback_uri` por WABA),
-  sincronizar contactos e historial de la app (`smb_app_data`) y descargar medios.
+- **SaaS (una app de Meta, una instancia por cliente)**: al suscribir la app al WABA se
+  manda `override_callback_uri` = `APP_BASE_URL/api/webhooks/whatsapp` con
+  `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, asi los mensajes de cada numero llegan a SU instancia
+  aunque la app tenga una sola URL. Todas las instancias comparten `META_APP_ID`,
+  `META_ES_CONFIG_ID` y `WHATSAPP_APP_SECRET` (la firma la hace la app). Sin https o sin
+  verify token no se manda y el alta lo avisa.
+- **Pendiente**: sincronizar contactos e historial de la app (`smb_app_data`) y
+  descargar medios.
 - **Probar**: mandar un mensaje real al numero de prueba de Meta y ver que entra en la
   bandeja; `probar-instancia` sigue cubriendo bandeja, agente y pipeline.
 

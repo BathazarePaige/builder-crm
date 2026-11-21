@@ -3,6 +3,7 @@ import { obtenerNumeroMeta, registrarNumeroMeta, suscribirAppAWaba } from "@/lib
 import { conectarCuentaWhatsapp, type CuentaWhatsappPublica } from "@/lib/whatsapp-accounts";
 import { resolveDefaultTenantId } from "@/lib/tenants";
 import { whatsappProvider } from "./provider";
+import { webhookPropioInstancia } from "./meta-cloud-conexion";
 
 /**
  * Alta de un numero por Meta Cloud API, compartida por los dos caminos de Ajustes: la
@@ -42,7 +43,16 @@ export async function darDeAltaNumero(input: AltaNumeroInput): Promise<AltaNumer
   }
 
   if (wabaId) {
-    const sub = await suscribirAppAWaba(wabaId, accessToken);
+    const webhook = webhookPropioInstancia(
+      process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_APP_URL,
+      process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN
+    );
+    const sub = await suscribirAppAWaba(wabaId, accessToken, webhook);
+    if (sub.success && !webhook) {
+      avisos.push(
+        "APP_BASE_URL (en https) ou WHATSAPP_WEBHOOK_VERIFY_TOKEN manque : les messages de ce numero iront a l'URL de webhook de l'app Meta, pas forcement a cette instance."
+      );
+    }
     if (!sub.success) {
       avisos.push(
         `Impossible d'abonner l'application au compte WhatsApp Business (${sub.error?.message ?? "sans detail"}) : le numero enverra mais ne recevra rien tant que ce n'est pas fait.`

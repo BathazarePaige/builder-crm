@@ -99,11 +99,14 @@ a paso al lado de la ventana de Meta).
 - FR-009 `POST /api/channels/meta/embedded` (admin): cambia el code por el token con el
   secreto de la app, registra el numero si es nuevo, suscribe la app al WABA, guarda.
 - FR-010 `smb_message_echoes` entra como mensaje saliente.
+- FR-012 Modelo SaaS (pedido del dueno 2026-11-21: que cualquier cliente conecte su
+  numero): la suscripcion al WABA lleva `override_callback_uri` hacia la instancia, para
+  que una sola app de Meta (Tech Provider) sirva a muchas instancias.
 - FR-011 Sin `META_APP_ID`, `META_ES_CONFIG_ID` o `WHATSAPP_APP_SECRET`, el asistente lo
   dice y ofrece solo la carga manual.
 
 ## Fuera de alcance
 
-- Tech Provider multi-instancia, sincronizar contactos e historial de la app
+- Una sola instancia multi-cliente (decision pendiente del dueno). Sincronizar contactos e historial de la app
   (`smb_app_data`).
 - Medios (descargar imagenes/audios de Graph): se guardan como `[imagen]`, `[audio]`.

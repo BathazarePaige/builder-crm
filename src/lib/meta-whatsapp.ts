@@ -365,13 +365,23 @@ export async function obtenerNumeroMeta(
  */
 export async function suscribirAppAWaba(
   wabaId: string,
-  accessToken: string
+  accessToken: string,
+  /**
+   * Varias instancias con UNA sola app de Meta (modelo SaaS / Tech Provider): la app
+   * tiene una sola URL de webhook, asi que cada WABA declara la suya y Meta le manda
+   * ahi los mensajes de ese numero. Meta verifica la URL con el GET del hub antes de
+   * aceptarla. Sin esto, todos los mensajes van a la URL de la app.
+   */
+  webhookPropio?: { url: string; verifyToken: string } | null
 ): Promise<{ success: boolean; error?: MetaError }> {
   const url = `${GRAPH_BASE}/${encodeURIComponent(wabaId)}/subscribed_apps`;
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify(
+        webhookPropio ? { override_callback_uri: webhookPropio.url, verify_token: webhookPropio.verifyToken } : {}
+      ),
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || json.error || json.success === false) {

@@ -35,3 +35,21 @@ export type ConexionMeta = z.infer<typeof conexionMetaSchema>;
 export function urlWebhookMeta(baseUrl: string): string {
   return `${baseUrl.replace(/\/$/, "")}/api/webhooks/whatsapp`;
 }
+
+/**
+ * URL de webhook propia de esta instancia para `override_callback_uri` (modelo SaaS: una
+ * app de Meta, una instancia por cliente). Meta exige https y un verify token; sin
+ * alguno de los dos devuelve null y la WABA usa la URL de la app.
+ */
+export function webhookPropioInstancia(
+  baseUrl: string | undefined,
+  verifyToken: string | undefined
+): { url: string; verifyToken: string } | null {
+  if (!baseUrl || !verifyToken) return null;
+  try {
+    if (new URL(baseUrl).protocol !== "https:") return null;
+  } catch {
+    return null;
+  }
+  return { url: urlWebhookMeta(baseUrl), verifyToken };
+}

@@ -114,3 +114,21 @@ describe("coexistencia: lo que se contesta desde el celular", () => {
     expect(idEventoMeta(eco)).toBe("meta:wamid.ECO");
   });
 });
+
+describe("webhook propio de la instancia (una app de Meta, muchas instancias)", () => {
+  it("arma la URL de esta instancia para override_callback_uri", async () => {
+    const { webhookPropioInstancia } = await import("@/lib/channels/meta-cloud-conexion");
+    expect(webhookPropioInstancia("https://crm.cliente.com/", "tok")).toEqual({
+      url: "https://crm.cliente.com/api/webhooks/whatsapp",
+      verifyToken: "tok",
+    });
+  });
+
+  it("no lo arma sin https o sin verify token: Meta lo rechazaria", async () => {
+    const { webhookPropioInstancia } = await import("@/lib/channels/meta-cloud-conexion");
+    expect(webhookPropioInstancia("http://localhost:3000", "tok")).toBeNull();
+    expect(webhookPropioInstancia("https://crm.cliente.com", "")).toBeNull();
+    expect(webhookPropioInstancia(undefined, "tok")).toBeNull();
+    expect(webhookPropioInstancia("no es url", "tok")).toBeNull();
+  });
+});
