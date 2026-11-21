@@ -43,10 +43,18 @@ export default function RootLayout({
 }>) {
   const { idioma } = getConfig();
   return (
-    <html lang={idioma} className="h-full antialiased">
-      <head>
+    // translate="no" + notranslate: el traductor de Edge/Chrome reescribe los nodos de
+    // texto por debajo de React y el siguiente render revienta con "removeChild".
+    // suppressHydrationWarning en html/head/body/style: las extensiones les inyectan
+    // atributos y estilos antes de hidratar; solo silencia ese nivel, no los hijos.
+    <html lang={idioma} translate="no" className="h-full antialiased" suppressHydrationWarning>
+      <head suppressHydrationWarning>
+        <meta name="google" content="notranslate" />
         {/* Colores de la marca en SSR: sin flash del color por defecto. */}
-        <style dangerouslySetInnerHTML={{ __html: cssVariablesMarca() }} />
+        <style
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: cssVariablesMarca() }}
+        />
         {/* Config publica en tiempo de ejecucion: ver src/lib/config-publica.ts. */}
         <script
           id={ID_CONFIG_PUBLICA}
@@ -54,7 +62,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: configPublicaSerializada() }}
         />
       </head>
-      <body className="min-h-full bg-background">
+      <body className="min-h-full bg-background" suppressHydrationWarning>
         <TooltipProvider>
           <AppShell>{children}</AppShell>
           <Toaster />
