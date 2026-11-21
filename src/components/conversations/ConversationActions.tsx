@@ -45,13 +45,13 @@ export function ConversationActions({ conversationId, name, messageCount }: Prop
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(body.error ?? "No se pudo eliminar la conversacion");
+        toast.error(body.error ?? "Impossible de supprimer la conversation");
         return;
       }
       toast.success(
         body.messages === 1
-          ? "Conversacion eliminada (1 mensaje)"
-          : `Conversacion eliminada (${body.messages ?? 0} mensajes)`
+          ? "Conversation supprimée (1 message)"
+          : `Conversation supprimée (${body.messages ?? 0} messages)`
       );
       setOpen(false);
       router.push("/conversations");
@@ -70,7 +70,7 @@ export function ConversationActions({ conversationId, name, messageCount }: Prop
               variant="ghost"
               size="icon"
               className="h-8 w-8 shrink-0 cursor-pointer text-muted-foreground hover:text-foreground"
-              aria-label="Opciones de la conversacion"
+              aria-label="Options de la conversation"
             />
           }
         >
@@ -82,7 +82,7 @@ export function ConversationActions({ conversationId, name, messageCount }: Prop
             className="text-destructive cursor-pointer"
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Eliminar conversacion
+            Supprimer la conversation
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -90,16 +90,16 @@ export function ConversationActions({ conversationId, name, messageCount }: Prop
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Eliminar la conversacion con {name}?</DialogTitle>
+            <DialogTitle>Supprimer la conversation avec {name} ?</DialogTitle>
             <DialogDescription>
-              Se borran {messageCount === 1 ? "1 mensaje" : `${messageCount} mensajes`} de
-              este hilo. No se puede deshacer.
+              {messageCount === 1 ? "1 message" : `${messageCount} messages`} de ce fil
+              seront supprimés. C’est définitif.
             </DialogDescription>
           </DialogHeader>
 
           <p className="text-sm text-muted-foreground">
-            El contacto, sus operaciones y sus documentos <strong>no</strong> se tocan. Si
-            vuelve a escribir, se abre un hilo nuevo.
+            Le contact, ses affaires et ses documents ne sont <strong>pas</strong> touchés.
+            S’il écrit à nouveau, un nouveau fil s’ouvre.
           </p>
 
           <DialogFooter>
@@ -109,7 +109,7 @@ export function ConversationActions({ conversationId, name, messageCount }: Prop
               disabled={deleting}
               className="cursor-pointer"
             >
-              Cancelar
+              Annuler
             </Button>
             <Button
               variant="destructive"
@@ -117,7 +117,7 @@ export function ConversationActions({ conversationId, name, messageCount }: Prop
               disabled={deleting}
               className="cursor-pointer"
             >
-              {deleting ? "Eliminando…" : "Eliminar"}
+              {deleting ? "Suppression…" : "Supprimer"}
             </Button>
           </DialogFooter>
         </DialogContent>

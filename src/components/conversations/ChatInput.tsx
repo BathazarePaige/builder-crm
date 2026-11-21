@@ -45,7 +45,7 @@ export function ChatInput({
     if (!body || sending) return;
 
     setSending(true);
-    toast.message("Enviando...", { id: "sending-msg" });
+    toast.message("Envoi…", { id: "sending-msg" });
     try {
       // Endpoint generico por conversacion: el servidor resuelve el canal, el proveedor
       // y (en IG/Messenger) si hace falta la etiqueta HUMAN_AGENT.
@@ -66,11 +66,11 @@ export function ChatInput({
         return;
       }
 
-      toast.success("Enviado", { id: "sending-msg", duration: 2000 });
+      toast.success("Envoyé", { id: "sending-msg", duration: 2000 });
       setText("");
       notifyRefresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Network error", {
+      toast.error(err instanceof Error ? err.message : "Erreur réseau", {
         id: "sending-msg",
         duration: 10000,
       });
@@ -95,23 +95,23 @@ export function ChatInput({
   return (
     <div className="shrink-0 border-t border-border bg-card px-3 md:px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {outsideWindow && (
-        <div className="max-w-2xl mx-auto mb-2 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+        <div className="max-w-2xl mx-auto mb-2 flex items-center gap-2 rounded-md bg-amber-50 px-3 py-2 text-[12px] text-amber-900">
           <Clock className="h-3.5 w-3.5 shrink-0" />
           <span className="flex-1">
             {lastInboundAt
-              ? "Pasaron mas de 24h desde el ultimo mensaje del cliente."
-              : "Sin mensajes del cliente todavia."}{" "}
+              ? "Plus de 24 h depuis le dernier message du client."
+              : "Le client n’a pas encore écrit."}{" "}
             {caps.templates
-              ? "Fuera de esa ventana WhatsApp solo permite enviar plantillas aprobadas."
-              : "El mensaje se envia con la etiqueta HUMAN_AGENT, que Meta permite hasta 7 dias."}
+              ? "Hors de cette fenêtre, WhatsApp n’accepte que des modèles approuvés."
+              : "Le message part avec l’étiquette HUMAN_AGENT, autorisée par Meta jusqu’à 7 jours."}
           </span>
           {caps.templates && (
             <button
               type="button"
               onClick={() => setPickerOpen(true)}
-              className="shrink-0 font-medium underline underline-offset-2 hover:text-amber-900 cursor-pointer dark:hover:text-amber-200"
+              className="shrink-0 font-medium underline underline-offset-2 hover:text-amber-950 cursor-pointer"
             >
-              Usar plantilla
+              Utiliser un modèle
             </button>
           )}
         </div>
@@ -127,8 +127,8 @@ export function ChatInput({
             onClick={() => setPickerOpen(true)}
             disabled={sending}
             className="shrink-0 h-10 w-10 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-50 cursor-pointer transition-colors"
-            aria-label="Enviar plantilla"
-            title="Enviar plantilla"
+            aria-label="Envoyer un modèle"
+            title="Envoyer un modèle"
           >
             <FileText className="h-4.5 w-4.5" />
           </button>
@@ -138,17 +138,18 @@ export function ChatInput({
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKey}
-          placeholder="Escribe un mensaje..."
+          placeholder="Écrire un message…"
+          aria-label="Message"
           rows={1}
-          className="flex-1 resize-none min-h-[40px] max-h-32 bg-muted/30 border border-transparent rounded-2xl px-4 py-2.5 text-base md:text-[13px] outline-none hover:bg-muted/50 focus:bg-card focus:border-primary-ink/40 focus:ring-2 focus:ring-primary/15 transition-all"
+          className="flex-1 resize-none min-h-[40px] max-h-32 bg-card border border-input rounded-lg px-3.5 py-2.5 text-base md:text-[13.5px] outline-none focus:border-ring/50 focus:ring-2 focus:ring-ring/15 transition-colors"
           style={{ fieldSizing: "content" } as React.CSSProperties}
           disabled={sending}
         />
         <button
           type="submit"
           disabled={sending}
-          className="shrink-0 h-10 w-10 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer transition-colors shadow-sm shadow-primary/20"
-          aria-label="Enviar mensaje"
+          className="shrink-0 h-10 w-10 inline-flex items-center justify-center rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 cursor-pointer transition-colors"
+          aria-label="Envoyer le message"
         >
           {sending ? (
             <Loader2 className="h-4 w-4 animate-spin" />

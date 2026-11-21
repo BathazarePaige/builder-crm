@@ -62,7 +62,7 @@ export function TemplatePicker({
       );
       setTemplates(approved);
     } catch {
-      toast.error("No se pudieron cargar las plantillas");
+      toast.error("Impossible de charger les modèles");
     } finally {
       setLoading(false);
     }
@@ -98,7 +98,7 @@ export function TemplatePicker({
   async function send() {
     if (!selected || sending) return;
     if (!allFilled) {
-      toast.error("Completa todas las variables");
+      toast.error("Remplissez toutes les variables");
       return;
     }
     setSending(true);
@@ -132,11 +132,11 @@ export function TemplatePicker({
         });
         return;
       }
-      toast.success("Plantilla enviada", { duration: 2000 });
+      toast.success("Modèle envoyé", { duration: 2000 });
       onSent();
       onClose();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Error de red");
+      toast.error(e instanceof Error ? e.message : "Erreur réseau");
     } finally {
       setSending(false);
     }
@@ -152,16 +152,16 @@ export function TemplatePicker({
                 type="button"
                 onClick={() => setSelected(null)}
                 className="cursor-pointer text-muted-foreground hover:text-foreground"
-                aria-label="Volver"
+                aria-label="Retour"
               >
                 <ArrowLeft className="h-4 w-4" />
               </button>
             )}
-            {selected ? "Completar plantilla" : "Enviar plantilla"}
+            {selected ? "Compléter le modèle" : "Envoyer un modèle"}
           </DialogTitle>
           {!selected && (
             <DialogDescription>
-              Solo se listan las plantillas aprobadas por Meta.
+              Seuls les modèles approuvés par Meta apparaissent.
             </DialogDescription>
           )}
         </DialogHeader>
@@ -179,13 +179,13 @@ export function TemplatePicker({
               <div className="py-8 text-center">
                 <FileText className="h-8 w-8 mx-auto text-muted-foreground/50" />
                 <p className="mt-2 text-sm text-muted-foreground">
-                  No tenes plantillas aprobadas todavia.
+                  Aucun modèle approuvé pour l’instant.
                 </p>
                 <a
                   href="/plantillas"
                   className="mt-1 inline-block text-xs text-primary-ink hover:underline"
                 >
-                  Crear una plantilla
+                  Créer un modèle
                 </a>
               </div>
             ) : (
@@ -229,7 +229,7 @@ export function TemplatePicker({
                     <Input
                       value={values[v - 1] || ""}
                       onChange={(e) => setValue(v - 1, e.target.value)}
-                      placeholder={`Valor ${v}`}
+                      placeholder={`Valeur ${v}`}
                       className="h-9"
                       autoFocus={v === 1}
                     />
@@ -238,15 +238,15 @@ export function TemplatePicker({
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Esta plantilla no tiene variables para completar.
+                Ce modèle n’a pas de variable à remplir.
               </p>
             )}
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">
-                Vista previa
+                Aperçu
               </Label>
-              <div className="rounded-2xl rounded-bl-md border border-border bg-card px-3.5 py-2 text-[13px] leading-relaxed whitespace-pre-wrap">
+              <div className="rounded-xl border border-border bg-card px-3.5 py-2 text-[13px] leading-relaxed whitespace-pre-wrap">
                 {preview}
               </div>
             </div>
@@ -259,7 +259,7 @@ export function TemplatePicker({
                 disabled={sending}
                 className="cursor-pointer"
               >
-                Volver
+                Retour
               </Button>
               <Button
                 type="button"
@@ -272,7 +272,7 @@ export function TemplatePicker({
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
-                Enviar
+                Envoyer
               </Button>
             </div>
           </div>

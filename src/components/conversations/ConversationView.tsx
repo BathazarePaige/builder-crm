@@ -62,7 +62,7 @@ export function ConversationView({
       <ChatPanelLive
         contact={{
           id: contact?.id ?? "",
-          name: contact?.name ?? conversation.participantName ?? "Sin nombre",
+          name: contact?.name ?? conversation.participantName ?? "Sans nom",
           phone: contact?.phone ?? null,
         }}
         conversation={{
